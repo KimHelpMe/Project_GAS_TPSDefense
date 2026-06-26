@@ -6,6 +6,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Player/CSPlayerState.h"
+#include "AbilitySystem/CSAbilitySystemComponent.h"
+
 
 
 ACSPlayerCharacter::ACSPlayerCharacter()
@@ -38,4 +41,41 @@ ACSPlayerCharacter::ACSPlayerCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
+}
+
+UAbilitySystemComponent* ACSPlayerCharacter::GetAbilitySystemComponent() const
+{
+	// CSPlayerState로 캐스트하여 ASC 반환
+	ACSPlayerState* CSPlayerState = Cast<ACSPlayerState>(GetPlayerState());
+	if (!IsValid(CSPlayerState)) return nullptr;
+
+	return CSPlayerState->GetAbilitySystemComponent();
+}
+
+void ACSPlayerCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	// ASC가 유효하지 않거나 서버가 아니면 조기 반환
+	if (!IsValid(GetAbilitySystemComponent()) || !HasAuthority()) return;
+
+	// 서버 전용: Owner = PlayerState, Avatar = 이 캐릭터
+	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
+
+
+	// 어빌리티 부여는 서버에서만 수행
+	// 서버에서 GiveAbility를 호출하면 클라이언트에는 자동으로 복제(replicate)
+	// 때문에 InitAbilityActorInfo와 달리
+	// 이 함수는 클라이언트와 서버 양쪽에서 호출할 필요가 없다.
+	GiveStartupAbilities();
+}
+
+void ACSPlayerCharacter::OnRep_PlayerState()
+{
+	// 클라이언트 전용: PlayerState가 복제된 시점에 초기화
+
+	Super::OnRep_PlayerState();
+
+	if (!IsValid(GetAbilitySystemComponent())) return;
+	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
 }

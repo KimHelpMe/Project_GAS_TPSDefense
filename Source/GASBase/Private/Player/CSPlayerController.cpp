@@ -7,6 +7,10 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/Character.h"
+#include "GameplayTagContainer.h"
+#include "AbilitySystemComponent.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "GameplayTags/CSGameplayTags.h"
 
 
 void ACSPlayerController::SetupInputComponent()
@@ -32,8 +36,23 @@ void ACSPlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ThisClass::StopJumping);
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
 	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
-	EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Started, this, &ThisClass::Primary);
+
+	EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Triggered, this, &ThisClass::Primary);
+	EnhancedInputComponent->BindAction(SecondaryAction, ETriggerEvent::Started, this, &ThisClass::Secondary);
+	EnhancedInputComponent->BindAction(TertiaryAction, ETriggerEvent::Started, this, &ThisClass::Tertiary);
 }
+
+void ACSPlayerController::ActivateAbility(const FGameplayTag& AbilityTag) const
+{
+	// Blueprint의 "Get Ability System Component" 노드와 동일한 함수
+	// 내부적으로 전달받은 액터가 IAbilitySystemInterface를 구현하는지 확인하고, 
+	// 구현한다면 GetAbilitySystemComponent()를 호출하여 반환
+	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn());
+	if (!IsValid(ASC)) return;
+
+	ASC->TryActivateAbilitiesByTag(AbilityTag.GetSingleTagContainer());
+}
+
 
 void ACSPlayerController::Jump()
 {
@@ -77,5 +96,18 @@ void ACSPlayerController::Look(const FInputActionValue& Value)
 
 void ACSPlayerController::Primary()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Primary Action"));
+	ActivateAbility(CSGameplayTags::Abilities::Primary);
 }
+
+void ACSPlayerController::Secondary()
+{
+	ActivateAbility(CSGameplayTags::Abilities::Secondary);
+
+}
+
+void ACSPlayerController::Tertiary()
+{
+	ActivateAbility(CSGameplayTags::Abilities::Tertiary);
+
+}
+

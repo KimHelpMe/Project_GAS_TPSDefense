@@ -17,6 +17,21 @@ class GASBASE_API ACSPlayerCharacter : public ACSBaseCharacter
 public:
 	ACSPlayerCharacter();
 
+	//~ Begin IAbilityInterface Interface 
+	// PlayerState로부터 ASC를 가져와 반환
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	//~ End IAbilityInterface Interface
+	
+	//~ Begin Character Interface
+	// 서버: 빙의 시 ASC Owner/Avatar 초기화
+	virtual void PossessedBy(AController* NewController) override;
+	//~ End Character Interface
+
+	//~ Begin Pawn Interface
+	// 클라이언트: PlayerState 복제 시 ASC Owner/Avatar 초기화
+	virtual void OnRep_PlayerState() override;
+	//~ End Pawn Interface
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	TObjectPtr<USpringArmComponent> CameraBoom;
