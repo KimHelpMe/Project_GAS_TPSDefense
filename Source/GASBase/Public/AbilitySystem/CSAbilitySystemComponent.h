@@ -21,12 +21,14 @@ class GASBASE_API UCSAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
 
+
 public:
-	UCSAbilitySystemComponent();
+	// 서버: 어빌리티가 ASC에 부여될 때 호출
+	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;
 
-	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	// 클라이언트: 활성화 어빌리티 목록이 리플리케이션될 때 호출되는 RepNotify
+	virtual void OnRep_ActivateAbilities() override;
 
-protected:
-	virtual void BeginPlay() override;
-
+private:
+	void HandleAutoActivatedAbility(const FGameplayAbilitySpec& AbilitySpec);
 };
