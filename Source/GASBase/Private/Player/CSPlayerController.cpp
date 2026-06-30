@@ -82,8 +82,6 @@ void ACSPlayerController::Move(const FInputActionValue& Value)
 
 	GetPawn()->AddMovementInput(ForwardDirection, MovementVector.Y);
 	GetPawn()->AddMovementInput(RightDirection, MovementVector.X);
-
-
 }
 
 void ACSPlayerController::Look(const FInputActionValue& Value)
