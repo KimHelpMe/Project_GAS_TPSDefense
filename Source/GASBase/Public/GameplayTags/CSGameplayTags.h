@@ -1,4 +1,4 @@
-// CSK
+﻿// CSK
 
 #pragma once
 
@@ -22,6 +22,7 @@
 // 내 이름은 김창식!
 // 안녕하세요 ㅎㅎ
 
+// Warning!!!Warning!!!Warning!!!Warning!!!Warning!!!Warning!!!Warning!!!Warning!!!Warning!!!Warning!!!Warning!!!Warning!!!Warning!!!Warning!!!
 
 namespace CSGameplayTags
 {
