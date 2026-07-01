@@ -52,6 +52,14 @@ UAbilitySystemComponent* ACSPlayerCharacter::GetAbilitySystemComponent() const
 	return CSPlayerState->GetAbilitySystemComponent();
 }
 
+UAttributeSet* ACSPlayerCharacter::GetAttributeSet() const
+{
+	ACSPlayerState* CCPlayerState = Cast<ACSPlayerState>(GetPlayerState());
+	if (!IsValid(CCPlayerState)) return nullptr;
+
+	return CCPlayerState->GetAttributeSet();
+}
+
 void ACSPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -65,9 +73,9 @@ void ACSPlayerCharacter::PossessedBy(AController* NewController)
 
 	// 어빌리티 부여는 서버에서만 수행
 	// 서버에서 GiveAbility를 호출하면 클라이언트에는 자동으로 복제(replicate)
-	// 때문에 InitAbilityActorInfo와 달리
-	// 이 함수는 클라이언트와 서버 양쪽에서 호출할 필요가 없다.
 	GiveStartupAbilities();
+
+	InitializeAttributes();
 }
 
 void ACSPlayerCharacter::OnRep_PlayerState()

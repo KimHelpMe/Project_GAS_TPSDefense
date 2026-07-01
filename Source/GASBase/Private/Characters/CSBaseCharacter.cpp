@@ -3,7 +3,7 @@
 #include "Characters/CSBaseCharacter.h"
 #include "AbilitySystem/CSAbilitySystemComponent.h"
 #include "Abilities/GameplayAbility.h"
-
+#include "Net/UnrealNetwork.h"
 
 ACSBaseCharacter::ACSBaseCharacter()
 {
@@ -17,6 +17,13 @@ UAbilitySystemComponent* ACSBaseCharacter::GetAbilitySystemComponent() const
 {
 	// BaseCharacter는 ASC를 직접 소유하지 않음. 자식 클래스에서 오버라이드
 	return nullptr;
+}
+
+void ACSBaseCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, bAlive);
 }
 
 void ACSBaseCharacter::GiveStartupAbilities()
@@ -38,5 +45,35 @@ void ACSBaseCharacter::GiveStartupAbilities()
 		// ASC에 어빌리티 부여
 		GetAbilitySystemComponent()->GiveAbility(AbilitySpec);
 	}
+}
+
+// 보통 InitializeAttributesEffect는 Instant(즉시 적용) 타입 GE로 만들어서
+// Health = MaxHealth, Mana = MaxMana 등 초기값을 SetByCaller나 고정값으로 밀어넣는 용도로 씀
+void ACSBaseCharacter::InitializeAttributes() const
+{
+	if (!IsValid(InitializeAttributesEffect)) return;
+
+	checkf(IsValid(InitializeAttributesEffect), TEXT("InitializeAttributesEffect not set."));
+
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+
+	// GameplayEffect를 적용할 때 "누가, 어떤 상황에서 이 효과를 발생시켰는지"에 대한 컨텍스트 생성
+	FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
+
+	// InitializeAttributesEffect 클래스를 기반으로 실제 적용 가능한 GE Spec(설계도의 인스턴스)을 생성
+	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(InitializeAttributesEffect, 1.f, ContextHandle);
+	
+	// 생성된 Spec을 자기 자신(이 캐릭터의 ASC)에게 즉시 적용
+	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+}
+
+void ACSBaseCharacter::HandleRespawn()
+{
+	bAlive = true;
+}
+
+void ACSBaseCharacter::HandleDeath()
+{
+	bAlive = false;
 }
 
