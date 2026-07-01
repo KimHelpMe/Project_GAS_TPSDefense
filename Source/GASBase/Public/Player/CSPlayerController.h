@@ -28,6 +28,7 @@ private:
 	void StopJumping();
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	void Roll();
 
 	// Callback Ability Func
 	void Primary();
@@ -47,6 +48,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Movement")
 	TObjectPtr<UInputAction> LookAction;
+
+	UPROPERTY(EditDefaultsOnly, Category ="Input|Movement")
+	TObjectPtr<UInputAction> RollAction;
 
 	// Ability
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")

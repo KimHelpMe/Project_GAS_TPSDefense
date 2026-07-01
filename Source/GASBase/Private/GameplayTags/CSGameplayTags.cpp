@@ -13,6 +13,7 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(Primary, "CSGameplayTags.Abilities.Primary");
 		UE_DEFINE_GAMEPLAY_TAG(Secondary, "CSGameplayTags.Abilities.Secondary");
 		UE_DEFINE_GAMEPLAY_TAG(Tertiary, "CSGameplayTags.Abilities.Tertiary");
+		UE_DEFINE_GAMEPLAY_TAG(Roll, "CSGameplayTags.Abilities.Roll");
 	}
 
 	namespace Events
