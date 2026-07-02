@@ -7,12 +7,13 @@
 #include "CSEnemyCharacter.generated.h"
 
 class UAbilitySystemComponent;
+class UAttributeSet;
 
 UCLASS()
 class GASBASE_API ACSEnemyCharacter : public ACSBaseCharacter
 {
 	GENERATED_BODY()
-	
+
 public:
 	ACSEnemyCharacter();
 
@@ -20,10 +21,12 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual UAttributeSet* GetAttributeSet() const override;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "GAS")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
-
+	UPROPERTY()
+	TObjectPtr<UAttributeSet> AttributeSet;
 };

@@ -14,13 +14,21 @@ void UCSAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 
 	// DOREPLIFETIME_CONDITION_NOTIFY: 조건부 리플리케이션 + OnRep 콜백 등록을 동시에 하는 매크로
 	// COND_None: 별도 조건 없이 모든 클라이언트에 리플리케이트
-	// REPNOTIFY_Always: 값이 실제로 바뀌지 않았어도(같은 값이 다시 와도) OnRep을 항상 호출
-
+	// REPNOTIFY_Always: 값이 실제로 바뀌지 않았어도 OnRep을 항상 호출
 	DOREPLIFETIME_CONDITION_NOTIFY(ThisClass, Health, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(ThisClass, MaxHealth, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(ThisClass, Mana, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(ThisClass, MaxMana, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(ThisClass, Stamina, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(ThisClass, MaxStamina, COND_None, REPNOTIFY_Always);
 
+	/** REPNOTIFY_Always를 사용하는 이유
+	 * 기본 동작: 값이 변경된 경우에만 RepNotify 호출
+	 * 문제: GAS의 예측 시스템이 성공하면 서버 확정값과 CurrentValue가 일치 → RepNotify 누락
+	 *       → BaseValue가 교정되지 않아 이후 버프/디버프 계산이 잘못됨
+	 * 해결: REPNOTIFY_Always로 값이 같아도 항상 RepNotify를 호출해 BaseValue를 재교정
+	 */
+
+
+	// 초기화 여부 플래그 복제 등록
 	DOREPLIFETIME(ThisClass, bAttributesInitialized);
 }
 
@@ -36,17 +44,17 @@ void UCSAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
 	}
 
-	if (Data.EvaluatedData.Attribute == GetManaAttribute())
+	if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
 	{
-		SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
+		SetStamina(FMath::Clamp(GetStamina(), 0.f, GetMaxStamina()));
 	}
 
+	// 첫 번째 Effect가 적용될 때만 플래그 설정 및 브로드캐스트 (서버)
 	if (!bAttributesInitialized)
 	{
 		bAttributesInitialized = true;
 
-		// 서버 자신에게는 OnRep이 호출되지 않으므로(로컬 변경은 OnRep 트리거 안 됨)
-		// 서버에서 필요한 로직이 있다면 여기서 직접 브로드캐스트해줘야 함
+		// 서버 자신에게는 OnRep이 호출되지 않으므로 서버에서 필요한 로직이 있다면 여기서 직접 브로드캐스트해줘야 함
 		// (클라이언트들은 bAttributesInitialized가 replicate된 뒤 OnRep_AttributesInitialized에서 브로드캐스트됨)
 		OnAttributesInitialized.Broadcast();
 	}
@@ -55,6 +63,7 @@ void UCSAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 // 클라이언트에서 bAttributesInitialized 값이 리플리케이트되어 도착했을 때 호출됨
 void UCSAttributeSet::OnRep_AttributesInitialized()
 {
+	// 복제된 플래그가 true이면 클라이언트에서도 브로드캐스트
 	if (bAttributesInitialized)
 	{
 		OnAttributesInitialized.Broadcast();
@@ -63,6 +72,7 @@ void UCSAttributeSet::OnRep_AttributesInitialized()
 
 void UCSAttributeSet::OnRep_Health(const FGameplayAttributeData& OldValue)
 {
+	// GAS 예측 시스템에 Rep Notify를 연결하는 필수 매크로
 	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, Health, OldValue);
 }
 
@@ -71,12 +81,12 @@ void UCSAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldValue)
 	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, MaxHealth, OldValue);
 }
 
-void UCSAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldValue)
+void UCSAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldValue)
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, Mana, OldValue);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, Stamina, OldValue);
 }
 
-void UCSAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldValue)
+void UCSAttributeSet::OnRep_MaxStamina(const FGameplayAttributeData& OldValue)
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, MaxMana, OldValue);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, MaxStamina, OldValue);
 }

@@ -37,19 +37,21 @@ public:
 	void OnRep_MaxHealth(const FGameplayAttributeData& OldValue);
 
 	UFUNCTION()
-	void OnRep_Mana(const FGameplayAttributeData& OldValue);
+	void OnRep_Stamina(const FGameplayAttributeData& OldValue);
 
 	UFUNCTION()
-	void OnRep_MaxMana(const FGameplayAttributeData& OldValue);
+	void OnRep_MaxStamina(const FGameplayAttributeData& OldValue);
 
 
 
 public:
-	UPROPERTY(BlueprintAssignable)
-	FAttributesInitialized OnAttributesInitialized;
-
+	// 첫 번째 Gameplay Effect 적용 완료 여부 (서버→클라이언트 복제)
 	UPROPERTY(ReplicatedUsing = OnRep_AttributesInitialized)
 	bool bAttributesInitialized = false;
+
+	// 첫 Effect 적용 시 브로드캐스트되는 델리게이트
+	UPROPERTY(BlueprintAssignable)
+	FAttributesInitialized OnAttributesInitialized;
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health)
 	FGameplayAttributeData Health;
@@ -59,16 +61,13 @@ public:
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(ThisClass, MaxHealth);
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Mana)
-	FGameplayAttributeData Mana;
-	ATTRIBUTE_ACCESSORS(ThisClass, Mana);
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Stamina)
+	FGameplayAttributeData Stamina;
+	ATTRIBUTE_ACCESSORS(ThisClass, Stamina);
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxMana)
-	FGameplayAttributeData MaxMana;
-	ATTRIBUTE_ACCESSORS(ThisClass, MaxMana);
-
-
-
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxStamina)
+	FGameplayAttributeData MaxStamina;
+	ATTRIBUTE_ACCESSORS(ThisClass, MaxStamina);
 
 
 };

@@ -70,12 +70,13 @@ void ACSPlayerCharacter::PossessedBy(AController* NewController)
 	// 서버 전용: Owner = PlayerState, Avatar = 이 캐릭터
 	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
 
-
 	// 어빌리티 부여는 서버에서만 수행
 	// 서버에서 GiveAbility를 호출하면 클라이언트에는 자동으로 복제(replicate)
 	GiveStartupAbilities();
-
 	InitializeAttributes();
+
+	//  초기화 완료 시점을 알리는 델리게이트
+	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
 }
 
 void ACSPlayerCharacter::OnRep_PlayerState()
@@ -86,4 +87,7 @@ void ACSPlayerCharacter::OnRep_PlayerState()
 
 	if (!IsValid(GetAbilitySystemComponent())) return;
 	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
+
+	//  초기화 완료 시점을 알리는 델리게이트
+	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
 }
