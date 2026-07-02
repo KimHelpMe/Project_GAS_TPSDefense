@@ -40,6 +40,7 @@ void UCSAbilitySystemComponent::SetAbilityLevel(TSubclassOf<UGameplayAbility> Ab
 	// (이미 GiveAbility로 부여되어 있어야 찾아짐 - 없으면 nullptr)
 	if (FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromClass(AbilityClass))
 	{
+		// 레벨을 지정한 값으로 설정
 		AbilitySpec->Level = Level;
 
 		// Spec이 변경됐음을 표시 -> 리플리케이션 트리거
@@ -50,11 +51,15 @@ void UCSAbilitySystemComponent::SetAbilityLevel(TSubclassOf<UGameplayAbility> Ab
 
 void UCSAbilitySystemComponent::AddToAbilityLevel(TSubclassOf<UGameplayAbility> AbilityClass, int32 Level)
 {
+	// 서버(Authority)에서만 레벨 변경 허용
 	if (!IsValid(GetAvatarActor()) || !GetAvatarActor()->HasAuthority()) return;
 
 	if (FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromClass(AbilityClass))
 	{
+		// 현재 레벨에 지정한 값만큼 누적 증가
 		AbilitySpec->Level += Level;
+
+		// 변경 사항을 즉시 복제 트리거
 		MarkAbilitySpecDirty(*AbilitySpec);
 	}
 }

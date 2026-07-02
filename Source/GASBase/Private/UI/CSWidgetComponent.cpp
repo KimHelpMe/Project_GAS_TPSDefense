@@ -19,6 +19,7 @@ void UCSWidgetComponent::BeginPlay()
 	{
 		// ASC 미준비 → OnASCInitialized 델리게이트 대기
 		// (ABaseCharacter의 OnASCInitialized에 바인딩)
+		BaseCharacter->OnASCInitialized.AddDynamic(this, &ThisClass::OnASCInitialized);
 		return;
 	}
 
@@ -31,8 +32,6 @@ void UCSWidgetComponent::InitAbilitySystemData()
 {
 	// Owner를 BaseCharacter로 캐스트
 	BaseCharacter = Cast<ACSBaseCharacter>(GetOwner());
-	if (!BaseCharacter.IsValid()) return;
-
 	AttributeSet = Cast<UCSAttributeSet>(BaseCharacter->GetAttributeSet());
 	AbilitySystemComponent = Cast<UCSAbilitySystemComponent>(BaseCharacter->GetAbilitySystemComponent());
 
@@ -41,12 +40,6 @@ void UCSWidgetComponent::InitAbilitySystemData()
 	* 멀티플레이어 클라이언트에서는 ASC Replication이 한 프레임 이상 걸릴 수 있어 포인터가 아직 null일 수 있다.
 	* IsASCInitialized() 조건문은 두 경우를 모두 올바르게 처리
 	*/
-
-	// 이미 초기화된 경우 델리게이트 바인딩 불필요
-	if (!IsASCInitialized())
-	{
-		BaseCharacter->OnASCInitialized.AddDynamic(this, &ThisClass::OnASCInitialized);
-	}
 }
 
 bool UCSWidgetComponent::IsASCInitialized() const
@@ -72,6 +65,8 @@ void UCSWidgetComponent::InitializeAttributeDelegate()
 
 void UCSWidgetComponent::BindToAttributeChanges()
 {
+	UE_LOG(LogTemp, Warning, TEXT("BindToAttributeChanges called on: %s"), *GetOwner()->GetName());
+
 	// AttributeMap의 모든 어트리뷰트 쌍을 순회
 	for (const TTuple<FGameplayAttribute, FGameplayAttribute>& Pair : AttributeMap)
 	{
@@ -80,7 +75,7 @@ void UCSWidgetComponent::BindToAttributeChanges()
 
 		// 2) 소유 위젯이 AttributeWidget이 아닐 경우 → 자식 위젯 전체 순회
 		GetUserWidgetObject()->WidgetTree->ForEachWidget(
-			[this, &Pair](UWidget* ChildWidget)
+		[this, &Pair](UWidget* ChildWidget)
 			{
 				BindWidgetToAttributeChanges(ChildWidget, Pair);
 			});
@@ -89,6 +84,8 @@ void UCSWidgetComponent::BindToAttributeChanges()
 
 void UCSWidgetComponent::BindWidgetToAttributeChanges(UWidget* WidgetObject, const TTuple<FGameplayAttribute, FGameplayAttribute>& Pair)
 {
+	UE_LOG(LogTemp, Warning, TEXT("BindWidget: %s"), *GetOwner()->GetName());
+
 	// AttributeWidget이 아닌 위젯은 처리하지 않음
 	UCSAttributeWidget* AttributeWidget = Cast<UCSAttributeWidget>(WidgetObject);
 	if (!IsValid(AttributeWidget)) return;
@@ -96,8 +93,9 @@ void UCSWidgetComponent::BindWidgetToAttributeChanges(UWidget* WidgetObject, con
 	// 이 위젯이 담당하는 어트리뷰트 쌍이 아니면 무시
 	if (!AttributeWidget->MatchesAttributes(Pair)) return;
 
+
 	// 초기값 설정
-	AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get());
+	AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get(), 0.f);
 
 	// 런타임 변경 구독 — ASC 델리게이트에 람다 바인딩
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Key)
@@ -105,7 +103,7 @@ void UCSWidgetComponent::BindWidgetToAttributeChanges(UWidget* WidgetObject, con
 		(const FOnAttributeChangeData& AttributeChangeData)
 			{
 				// 어트리뷰트 변경 시마다 위젯 업데이트
-				AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get());
+				AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get(), AttributeChangeData.OldValue);
 			});
 }
 
@@ -114,6 +112,7 @@ void UCSWidgetComponent::OnASCInitialized(UAbilitySystemComponent* ASC, UAttribu
 	AbilitySystemComponent = Cast<UCSAbilitySystemComponent>(ASC);
 	AttributeSet = Cast<UCSAttributeSet>(AS);
 
+	if (!IsASCInitialized()) return;
 	InitializeAttributeDelegate(); // ASC 준비 완료 후 다음 단계
 }
 

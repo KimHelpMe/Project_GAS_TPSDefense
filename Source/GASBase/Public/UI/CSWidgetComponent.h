@@ -11,10 +11,11 @@
 
 
 class ACSBaseCharacter;
+class UAbilitySystemComponent;
 class UCSAbilitySystemComponent;
 class UCSAttributeSet;
 
-UCLASS()
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class GASBASE_API UCSWidgetComponent : public UWidgetComponent
 {
 	GENERATED_BODY()
@@ -34,6 +35,7 @@ private:
 	void InitializeAttributeDelegate();
 
 	// 어트리뷰트 변경 이벤트 바인딩
+	UFUNCTION() //zzzzzzzzzzzzzzzzzzzzzㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ 이거 안붙여서 2시간 날림 ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
 	void BindToAttributeChanges();
 
 	// BindToAttributeChanges() 본문에서 반복될 로직을 별도 함수로 분리

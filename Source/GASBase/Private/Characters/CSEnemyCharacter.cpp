@@ -34,18 +34,27 @@ UAbilitySystemComponent* ACSEnemyCharacter::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
+UAttributeSet* ACSEnemyCharacter::GetAttributeSet() const
+{
+	return AttributeSet;
+}
+
 void ACSEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!IsValid(AbilitySystemComponent)) return;
+	if (!IsValid(GetAbilitySystemComponent())) return;
 	
 	// Owner와 Avatar 모두 자기 자신
-	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	GetAbilitySystemComponent()->InitAbilityActorInfo(this, this);
+
+	// 능력치 초기화
+	InitializeAttributes();
 
 	// 초기화 완료 시점을 알리는 델리게이트
 	// HasAuthority() 블록 바깥에서 호출하는 이유 -> 로컬, 서버 동시에 초기화하기 위해 
 	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
+
 
 	// 서버가 아닐 때는 나감요
 	if (!HasAuthority()) return;
@@ -53,11 +62,12 @@ void ACSEnemyCharacter::BeginPlay()
 	// 어빌리티 부여는 서버에서만
 	GiveStartupAbilities();
 
-	// 능력치 초기화
-	InitializeAttributes();
+
+
+	UCSAttributeSet* CC_AttributeSet = Cast<UCSAttributeSet>(GetAttributeSet());
+	if (!IsValid(CC_AttributeSet)) return;
+
+	//GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(CC_AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
 }
 
-UAttributeSet* ACSEnemyCharacter::GetAttributeSet() const
-{
-	return AttributeSet;
-}
+

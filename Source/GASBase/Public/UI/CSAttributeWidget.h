@@ -20,11 +20,11 @@ public:
 	bool MatchesAttributes(const TTuple<FGameplayAttribute, FGameplayAttribute>& Pair) const;
 
 	// 어트리뷰트 값이 변경되었을 때 호출 — AttributeSet에서 수치를 읽어 BP 이벤트 호출
-	void OnAttributeChange(const TTuple<FGameplayAttribute, FGameplayAttribute>& Pair, const UCSAttributeSet* AttributeSet);
+	void OnAttributeChange(const TTuple<FGameplayAttribute, FGameplayAttribute>& Pair, const UCSAttributeSet* AttributeSet, float OldValue);
 
 	// 위젯 블루프린트에서 구현할 이벤트 — 프로그레스바 업데이트 등 디자이너 담당
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "On Attribute Change"))
-	void BP_OnAttributeChange(float NewValue, float NewMaxValue);
+	void BP_OnAttributeChange(float NewValue, float NewMaxValue, float OldValue);
 
 public:
 	/** FGameplayAttribute란?
