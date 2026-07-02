@@ -21,7 +21,6 @@ class GASBASE_API UCSAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
 
-
 public:
 	// 서버: 어빌리티가 ASC에 부여될 때 호출
 	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;
@@ -29,6 +28,15 @@ public:
 	// 클라이언트: 활성화 어빌리티 목록이 리플리케이션될 때 호출되는 RepNotify
 	virtual void OnRep_ActivateAbilities() override;
 
+	// 특정 어빌리티의 레벨을 지정한 값으로 "절대" 세팅
+	UFUNCTION(BlueprintCallable, Category = "GAS|Abilities")
+	void SetAbilityLevel(TSubclassOf<UGameplayAbility> AbilityClass, int32 Level);
+
+	// 특정 어빌리티의 레벨을 기존 값에서 "상대적으로" 증감
+	UFUNCTION(BlueprintCallable, Category = "GAS|Abilities")
+	void AddToAbilityLevel(TSubclassOf<UGameplayAbility> AbilityClass, int32 Level = 1);
+
 private:
 	void HandleAutoActivatedAbility(const FGameplayAbilitySpec& AbilitySpec);
+
 };

@@ -36,6 +36,7 @@ void ACSPlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ThisClass::StopJumping);
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
 	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
+	EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Started, this, &ThisClass::Roll);
 
 	EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Triggered, this, &ThisClass::Primary);
 	EnhancedInputComponent->BindAction(SecondaryAction, ETriggerEvent::Started, this, &ThisClass::Secondary);
@@ -90,6 +91,11 @@ void ACSPlayerController::Look(const FInputActionValue& Value)
 
 	AddYawInput(LookVector.X);
 	AddPitchInput(LookVector.Y);
+}
+
+void ACSPlayerController::Roll()
+{
+	ActivateAbility(CSGameplayTags::Abilities::Roll);
 }
 
 void ACSPlayerController::Primary()

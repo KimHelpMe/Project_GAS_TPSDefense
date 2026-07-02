@@ -22,6 +22,8 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	//~ End IAbilityInterface Interface
 	
+	virtual UAttributeSet* GetAttributeSet() const override;
+
 	//~ Begin Character Interface
 	// 서버: 빙의 시 ASC Owner/Avatar 초기화
 	virtual void PossessedBy(AController* NewController) override;
