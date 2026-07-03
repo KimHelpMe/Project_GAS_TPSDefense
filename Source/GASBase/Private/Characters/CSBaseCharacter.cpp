@@ -19,6 +19,7 @@ UAbilitySystemComponent* ACSBaseCharacter::GetAbilitySystemComponent() const
 	return nullptr;
 }
 
+
 void ACSBaseCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -53,11 +54,12 @@ void ACSBaseCharacter::GiveStartupAbilities()
 // CSEnemyCharacter.cpp — BeginPlay() 안에서 호출
 void ACSBaseCharacter::InitializeAttributes() const
 {
+	// 일단 임시로 사용 ㅇㅇ... 나중에 checkf 방식으로 사용할 예정
 	if (!IsValid(InitializeAttributesEffect)) return;
-
 	checkf(IsValid(InitializeAttributesEffect), TEXT("InitializeAttributesEffect not set."));
 
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	if (!IsValid(ASC)) return;
 
 	// 1. Effect Context 생성
 	// GameplayEffect를 적용할 때 "누가, 어떤 상황에서 이 효과를 발생시켰는지"에 대한 컨텍스트 생성
@@ -70,6 +72,31 @@ void ACSBaseCharacter::InitializeAttributes() const
 	// 3. 자신에게 GE 적용
 	// 생성된 Spec을 자기 자신(이 캐릭터의 ASC)에게 즉시 적용
 	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+}
+
+void ACSBaseCharacter::ResetAttributes()
+{
+	if (!IsValid(ResetAttributesEffect)) return;
+	checkf(IsValid(ResetAttributesEffect), TEXT("ResetAttributesEffect not set."));
+
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	if (!IsValid(ASC)) return;
+
+	FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
+
+	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(ResetAttributesEffect, 1.f, ContextHandle);
+
+	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+
+}
+
+void ACSBaseCharacter::OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData)
+{
+	// Health가 0 이하로 내려가면 사망 처리
+	if (AttributeChangeData.NewValue <= 0.f)
+	{
+		HandleDeath();
+	}
 }
 
 void ACSBaseCharacter::HandleRespawn()

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
-
+#include "GameplayEffectTypes.h"  
 #include "CSBaseCharacter.generated.h"
 
 class UAbilitySystemComponent;
@@ -39,22 +39,39 @@ public:
 	virtual UAttributeSet* GetAttributeSet() const { return nullptr; }
 
 	//~ Begin AActor Interface
+	// bAlive가 리플리케이션 대상이므로 GetLifetimeReplicatedProps()를 오버라이드
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	//~ End AActor Interface
 
+public:
 	// ASC/AttributeSet 초기화 완료 시점을 알리는 델리게이트 (Blueprint에서도 바인딩할 수 있도록 BlueprintAssignable 지정)
 	UPROPERTY(BlueprintAssignable)
 	FASCInitialized OnASCInitialized;
 
+	UFUNCTION(BlueprintCallable, Category = "GAS|Attributes")
+	void ResetAttributes();
+
+	UFUNCTION(BlueprintCallable, Category = "GAS|Death")
+	virtual void HandleRespawn();
+
+
 protected:
+	virtual void HandleDeath();
+
 	// StartupAbilities 배열에 있는 어빌리티들을 ASC에 부여(Give)하는 함수
 	void GiveStartupAbilities();
 
 	// 어트리뷰트를 초기화하는 함수 - GE를 적용해서 Health/Mana 등 초기값 세팅
 	void InitializeAttributes() const;
 
-	virtual void HandleRespawn();
-	virtual void HandleDeath();
+	void OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData);
+
+
+public:
+	bool IsAlive() const { return bAlive; }
+	void SetAlive(bool bAliveStatus) { bAlive = bAliveStatus; }
+
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
@@ -62,6 +79,9 @@ private:
 	// 어트리뷰트 초기화에 사용할 Gameplay Effect 클래스
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Effects")
 	TSubclassOf<UGameplayEffect> InitializeAttributesEffect;
+
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Effects")
+	TSubclassOf<UGameplayEffect> ResetAttributesEffect;
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Replicated)
 	bool bAlive = true;

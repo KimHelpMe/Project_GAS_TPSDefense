@@ -14,11 +14,19 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(Secondary, "CSGameplayTags.Abilities.Secondary");
 		UE_DEFINE_GAMEPLAY_TAG(Tertiary, "CSGameplayTags.Abilities.Tertiary");
 		UE_DEFINE_GAMEPLAY_TAG(Roll, "CSGameplayTags.Abilities.Roll");
+		UE_DEFINE_GAMEPLAY_TAG(Death, "CSGameplayTags.Abilities.Death");
+
 	}
 
 	namespace Events
 	{
 		UE_DEFINE_GAMEPLAY_TAG(HitReact, "CSGameplayTags.Events.HitReact");
+
+	}
+
+	namespace Status
+	{
+		UE_DEFINE_GAMEPLAY_TAG(Dead, "CSGameplayTags.Status.Dead");
 
 	}
 }

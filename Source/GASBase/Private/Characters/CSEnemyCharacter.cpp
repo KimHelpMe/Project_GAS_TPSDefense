@@ -67,7 +67,7 @@ void ACSEnemyCharacter::BeginPlay()
 	UCSAttributeSet* CC_AttributeSet = Cast<UCSAttributeSet>(GetAttributeSet());
 	if (!IsValid(CC_AttributeSet)) return;
 
-	//GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(CC_AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
+	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(CC_AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
 }
 
 

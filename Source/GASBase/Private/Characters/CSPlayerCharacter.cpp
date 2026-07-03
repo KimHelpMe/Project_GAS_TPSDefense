@@ -8,6 +8,7 @@
 #include "Camera/CameraComponent.h"
 #include "Player/CSPlayerState.h"
 #include "AbilitySystem/CSAbilitySystemComponent.h"
+#include "AbilitySystem/CSAttributeSet.h"
 
 
 
@@ -77,6 +78,11 @@ void ACSPlayerCharacter::PossessedBy(AController* NewController)
 
 	//  초기화 완료 시점을 알리는 델리게이트
 	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
+
+	const UCSAttributeSet* AttributeSet = Cast<UCSAttributeSet>(GetAttributeSet());
+	if (!IsValid(AttributeSet)) return;
+
+	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
 }
 
 void ACSPlayerCharacter::OnRep_PlayerState()
@@ -90,4 +96,10 @@ void ACSPlayerCharacter::OnRep_PlayerState()
 
 	//  초기화 완료 시점을 알리는 델리게이트
 	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
+
+	const UCSAttributeSet* AttributeSet = Cast<UCSAttributeSet>(GetAttributeSet());
+	if (!IsValid(AttributeSet)) return;
+
+	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
+
 }

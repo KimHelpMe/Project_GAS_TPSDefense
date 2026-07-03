@@ -54,10 +54,17 @@ namespace CSGameplayTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Secondary);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Tertiary);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Roll);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Death);
 	}
 
 	namespace Events
 	{
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(HitReact);
+	}
+
+	namespace Status
+	{
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Dead);
+
 	}
 }
