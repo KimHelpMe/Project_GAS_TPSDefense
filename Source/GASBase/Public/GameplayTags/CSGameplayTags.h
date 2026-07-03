@@ -14,36 +14,6 @@
 */
 
 
-//ㅁㄴㅇㄹ
-//asdfjfjfj
-// develop
-
-// 깃 허브 테스트
-// 내 이름은 김창식!
-// 안녕하세요 ㅎㅎ
-
-// Warning!!!
-
-//asdf
-//sssssssssssssssssssss
-// 
-//aaaaaaaaaaa
-
-
-// Warning!!!
-// Warning!!!
-// Warning!!!
-// Warning!!!
-// Warning!!!
-// Warning!!!
-// Warning!!!
-// Warning!!!
-// Warning!!!
-// // Warning!!!
-// 
-// Warning!!!
-
-
 namespace CSGameplayTags
 {
 	namespace Abilities
@@ -60,6 +30,7 @@ namespace CSGameplayTags
 	namespace Events
 	{
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(HitReact);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Scored);
 	}
 
 	namespace Status

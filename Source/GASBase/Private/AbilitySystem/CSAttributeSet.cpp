@@ -5,6 +5,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
+#include "GameplayTags/CSGameplayTags.h"
 
 // 어떤 프로퍼티를 리플리케이트할지, 그리고 리플리케이트될 때 어떤 조건/알림 방식을 쓸지 등록하는 함수
 // 엔진이 게임 시작 시 한 번 호출해서 리플리케이션 테이블을 구성함
@@ -28,7 +29,7 @@ void UCSAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	 */
 
 
-	// 초기화 여부 플래그 복제 등록
+	 // 초기화 여부 플래그 복제 등록
 	DOREPLIFETIME(ThisClass, bAttributesInitialized);
 }
 
@@ -47,6 +48,24 @@ void UCSAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 	if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
 	{
 		SetStamina(FMath::Clamp(GetStamina(), 0.f, GetMaxStamina()));
+	}
+
+	// Health 어트리뷰트가 0 이하로 내려간 경우 → 대상 사망 처리
+	if (Data.EvaluatedData.Attribute == GetHealthAttribute() && GetHealth() <= 0.f)
+	{
+
+		// 페이로드 생성 및 설정
+		FGameplayEventData Payload;
+
+		// 피격자의 아바타 액터를 Instigator로 설정
+		Payload.Instigator = Data.Target.GetAvatarActor();
+
+		// 이 게임플레이 이펙트를 발생시킨 주체(공격자) 액터 획득
+		AActor* Causer = Data.EffectSpec.GetEffectContext().GetInstigator();
+
+		// 공격자에게 Scored 이벤트 전송
+		// ex) 경험치, 골드, 아이템 등
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Causer, CSGameplayTags::Events::Scored, Payload);
 	}
 
 	// 첫 번째 Effect가 적용될 때만 플래그 설정 및 브로드캐스트 (서버)

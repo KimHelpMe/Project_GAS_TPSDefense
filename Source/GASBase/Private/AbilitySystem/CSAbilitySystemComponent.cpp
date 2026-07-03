@@ -44,7 +44,7 @@ void UCSAbilitySystemComponent::SetAbilityLevel(TSubclassOf<UGameplayAbility> Ab
 		AbilitySpec->Level = Level;
 
 		// Spec이 변경됐음을 표시 -> 리플리케이션 트리거
-		// FGameplayAbilitySpec은 값만 바꾼다고 자동으로 클라에 리플리케이트 안 됨
+		// FGameplayAbilitySpec은 값만 바꾼다고 자동으로 클라에 리플리케이트 안 됨cs
 		MarkAbilitySpecDirty(*AbilitySpec);
 	}
 }

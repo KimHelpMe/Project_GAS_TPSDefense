@@ -21,6 +21,8 @@ namespace CSGameplayTags
 	namespace Events
 	{
 		UE_DEFINE_GAMEPLAY_TAG(HitReact, "CSGameplayTags.Events.HitReact");
+		UE_DEFINE_GAMEPLAY_TAG(Scored,"CSGameplayTags.Events.Scored");
+
 
 	}
 
