@@ -39,15 +39,18 @@ void ACSPlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
 	EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Started, this, &ThisClass::Roll);
 
-	EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Triggered, this, &ThisClass::Primary);
-	EnhancedInputComponent->BindAction(SecondaryAction, ETriggerEvent::Started, this, &ThisClass::Secondary);
+	EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Triggered, this, &ThisClass::LMB);
+	EnhancedInputComponent->BindAction(SecondaryAction, ETriggerEvent::Started, this, &ThisClass::RMB);
+
 
 	EnhancedInputComponent->BindAction(QAction, ETriggerEvent::Started, this, &ThisClass::Q);
+	EnhancedInputComponent->BindAction(EAction, ETriggerEvent::Started, this, &ThisClass::E);
+	EnhancedInputComponent->BindAction(RAction, ETriggerEvent::Started, this, &ThisClass::R);
 }
 
 void ACSPlayerController::ActivateAbility(const FGameplayTag& AbilityTag) const
 {
-	if (!IsAlive()) return;
+	//if (!IsAlive()) return;
 
 	// Blueprint의 "Get Ability System Component" 노드와 동일한 함수
 	// 내부적으로 전달받은 액터가 IAbilitySystemInterface를 구현하는지 확인하고, 
@@ -61,25 +64,22 @@ void ACSPlayerController::ActivateAbility(const FGameplayTag& AbilityTag) const
 
 void ACSPlayerController::Jump()
 {
-	if (!IsAlive()) return;
-
 	if (!IsValid(GetCharacter())) return;
+	if (!IsAlive()) return;
 	GetCharacter()->Jump();
 }
 
 void ACSPlayerController::StopJumping()
 {
-	if (!IsAlive()) return;
-
 	if (!IsValid(GetCharacter())) return;
+	if (!IsAlive()) return;
 	GetCharacter()->StopJumping();
 }
 
 void ACSPlayerController::Move(const FInputActionValue& Value)
 {
-	if (!IsAlive()) return;
-
 	if (!IsValid(GetPawn())) return;
+	if (!IsAlive()) return;
 
 	// 입력 값을 2D 벡터로 가져옴 
 	const FVector2D MovementVector = Value.Get<FVector2D>();
@@ -108,12 +108,12 @@ void ACSPlayerController::Roll()
 	ActivateAbility(CSGameplayTags::Abilities::Roll);
 }
 
-void ACSPlayerController::Primary()
+void ACSPlayerController::LMB()
 {
 	ActivateAbility(CSGameplayTags::Abilities::Primary);
 }
 
-void ACSPlayerController::Secondary()
+void ACSPlayerController::RMB()
 {
 	ActivateAbility(CSGameplayTags::Abilities::Secondary);
 
@@ -125,6 +125,17 @@ void ACSPlayerController::Q()
 
 }
 
+void ACSPlayerController::E()
+{
+	ActivateAbility(CSGameplayTags::Abilities::E);
+
+}
+
+void ACSPlayerController::R()
+{
+	ActivateAbility(CSGameplayTags::Abilities::R);
+
+}
 bool ACSPlayerController::IsAlive() const
 {
 	// 빙의 중인 폰을 CC_BaseCharacter로 캐스팅

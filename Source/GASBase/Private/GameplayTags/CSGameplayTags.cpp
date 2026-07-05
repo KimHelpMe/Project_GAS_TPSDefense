@@ -12,9 +12,14 @@ namespace CSGameplayTags
 
 		UE_DEFINE_GAMEPLAY_TAG(Primary, "CSGameplayTags.Abilities.Primary");
 		UE_DEFINE_GAMEPLAY_TAG(Secondary, "CSGameplayTags.Abilities.Secondary");
-		UE_DEFINE_GAMEPLAY_TAG(Q, "CSGameplayTags.Abilities.Q");
 		UE_DEFINE_GAMEPLAY_TAG(Roll, "CSGameplayTags.Abilities.Roll");
+
 		UE_DEFINE_GAMEPLAY_TAG(Death, "CSGameplayTags.Abilities.Death");
+
+
+		UE_DEFINE_GAMEPLAY_TAG(Q, "CSGameplayTags.Abilities.Q");
+		UE_DEFINE_GAMEPLAY_TAG(E, "CSGameplayTags.Abilities.E");
+		UE_DEFINE_GAMEPLAY_TAG(R, "CSGameplayTags.Abilities.R");
 
 	}
 

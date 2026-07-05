@@ -31,9 +31,12 @@ private:
 	void Roll();
 
 	// Callback Ability Func
-	void Primary();
-	void Secondary();
+	void LMB();
+	void RMB();
+
 	void Q();
+	void E();
+	void R();
 
 	// 현재 빙의된 폰의 생존 여부를 확인하는 헬퍼 함수
 	bool IsAlive() const;
@@ -62,6 +65,15 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
 	TObjectPtr<UInputAction> SecondaryAction;
 
+	// Q
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
 	TObjectPtr<UInputAction> QAction;
+
+	// E
+	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
+	TObjectPtr<UInputAction> EAction;
+
+	// R
+	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
+	TObjectPtr<UInputAction> RAction;
 };
