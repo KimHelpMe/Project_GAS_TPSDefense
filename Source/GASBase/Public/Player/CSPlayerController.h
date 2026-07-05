@@ -33,7 +33,7 @@ private:
 	// Callback Ability Func
 	void Primary();
 	void Secondary();
-	void Tertiary();
+	void Q();
 
 private:
 	// Movement
@@ -60,5 +60,5 @@ private:
 	TObjectPtr<UInputAction> SecondaryAction;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
-	TObjectPtr<UInputAction> TertiaryAction;
+	TObjectPtr<UInputAction> QAction;
 };

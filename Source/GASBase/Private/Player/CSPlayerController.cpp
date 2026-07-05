@@ -40,7 +40,8 @@ void ACSPlayerController::SetupInputComponent()
 
 	EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Triggered, this, &ThisClass::Primary);
 	EnhancedInputComponent->BindAction(SecondaryAction, ETriggerEvent::Started, this, &ThisClass::Secondary);
-	EnhancedInputComponent->BindAction(TertiaryAction, ETriggerEvent::Started, this, &ThisClass::Tertiary);
+
+	EnhancedInputComponent->BindAction(QAction, ETriggerEvent::Started, this, &ThisClass::Q);
 }
 
 void ACSPlayerController::ActivateAbility(const FGameplayTag& AbilityTag) const
@@ -109,9 +110,9 @@ void ACSPlayerController::Secondary()
 
 }
 
-void ACSPlayerController::Tertiary()
+void ACSPlayerController::Q()
 {
-	ActivateAbility(CSGameplayTags::Abilities::Tertiary);
+	ActivateAbility(CSGameplayTags::Abilities::Q);
 
 }
 
