@@ -12,7 +12,7 @@ enum class EHitDirection : uint8
 {
     Left,
     Right,
-    Forward,
+    Front,      // Forward 였으나, 파라곤 애니메이션 명이 Front라서 Front로 바꿈
     Back
 };
 

@@ -24,7 +24,7 @@ EHitDirection UCSBlueprintFunctionLibrary::GetHitDirection(const FVector& Target
 	}
 
 	// 각도 0°~ 60° -> 공격자가 전방에 있음
-	return EHitDirection::Forward;
+	return EHitDirection::Front;
 }
 
 FName UCSBlueprintFunctionLibrary::GetHitDirectionName(const EHitDirection& HitDirection)
@@ -37,8 +37,8 @@ FName UCSBlueprintFunctionLibrary::GetHitDirectionName(const EHitDirection& HitD
 	case EHitDirection::Right: 
 		return FName("Right");
 
-	case EHitDirection::Forward: 
-		return FName("Forward");
+	case EHitDirection::Front: 
+		return FName("Front");
 
 	case EHitDirection::Back: 
 		return FName("Back");

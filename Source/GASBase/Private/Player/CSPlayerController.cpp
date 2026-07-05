@@ -11,6 +11,7 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayTags/CSGameplayTags.h"
+#include "Characters/CSBaseCharacter.h"
 
 
 void ACSPlayerController::SetupInputComponent()
@@ -46,6 +47,8 @@ void ACSPlayerController::SetupInputComponent()
 
 void ACSPlayerController::ActivateAbility(const FGameplayTag& AbilityTag) const
 {
+	if (!IsAlive()) return;
+
 	// Blueprint의 "Get Ability System Component" 노드와 동일한 함수
 	// 내부적으로 전달받은 액터가 IAbilitySystemInterface를 구현하는지 확인하고, 
 	// 구현한다면 GetAbilitySystemComponent()를 호출하여 반환
@@ -58,18 +61,24 @@ void ACSPlayerController::ActivateAbility(const FGameplayTag& AbilityTag) const
 
 void ACSPlayerController::Jump()
 {
+	if (!IsAlive()) return;
+
 	if (!IsValid(GetCharacter())) return;
 	GetCharacter()->Jump();
 }
 
 void ACSPlayerController::StopJumping()
 {
+	if (!IsAlive()) return;
+
 	if (!IsValid(GetCharacter())) return;
 	GetCharacter()->StopJumping();
 }
 
 void ACSPlayerController::Move(const FInputActionValue& Value)
 {
+	if (!IsAlive()) return;
+
 	if (!IsValid(GetPawn())) return;
 
 	// 입력 값을 2D 벡터로 가져옴 
@@ -116,3 +125,14 @@ void ACSPlayerController::Q()
 
 }
 
+bool ACSPlayerController::IsAlive() const
+{
+	// 빙의 중인 폰을 CC_BaseCharacter로 캐스팅
+	ACSBaseCharacter* BaseCharacter = Cast<ACSBaseCharacter>(GetPawn());
+
+	// 폰이 유효하지 않으면 사망으로 간주
+	if (!IsValid(BaseCharacter)) return false;
+
+	// 캐릭터의 생존 여부 반환
+	return BaseCharacter->IsAlive();
+}
