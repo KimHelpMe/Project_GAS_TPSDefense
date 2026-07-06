@@ -133,9 +133,9 @@ void ACSPlayerController::E()
 
 void ACSPlayerController::R()
 {
-	ActivateAbility(CSGameplayTags::Abilities::R);
-
+	ActivateAbility(CSGameplayTags::Abilities::Fireball);
 }
+
 bool ACSPlayerController::IsAlive() const
 {
 	// 빙의 중인 폰을 CC_BaseCharacter로 캐스팅

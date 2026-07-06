@@ -20,6 +20,9 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(Q, "CSGameplayTags.Abilities.Q");
 		UE_DEFINE_GAMEPLAY_TAG(E, "CSGameplayTags.Abilities.E");
 		UE_DEFINE_GAMEPLAY_TAG(R, "CSGameplayTags.Abilities.R");
+		UE_DEFINE_GAMEPLAY_TAG(G, "CSGameplayTags.Abilities.G");
+
+		UE_DEFINE_GAMEPLAY_TAG(Fireball, "CSGameplayTags.Abilities.Fireball");
 
 	}
 
@@ -27,6 +30,9 @@ namespace CSGameplayTags
 	{
 		UE_DEFINE_GAMEPLAY_TAG(HitReact, "CSGameplayTags.Events.HitReact");
 		UE_DEFINE_GAMEPLAY_TAG(Scored,"CSGameplayTags.Events.Scored");
+
+		UE_DEFINE_GAMEPLAY_TAG(SpawnProjectile, "CSGameplayTags.Events.SpawnProjectile");
+
 	}
 
 	namespace Cues
@@ -38,6 +44,8 @@ namespace CSGameplayTags
 	namespace Status
 	{
 		UE_DEFINE_GAMEPLAY_TAG(Dead, "CSGameplayTags.Status.Dead");
+		UE_DEFINE_GAMEPLAY_TAG(Casting, "CSGameplayTags.Status.Casting");
+
 
 	}
 }

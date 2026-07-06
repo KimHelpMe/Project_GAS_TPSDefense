@@ -50,6 +50,10 @@ public:
 	float Damage = 10.f;
 
 	// 충돌 시 실행할 GameplayCue 태그. BP마다 다른 Cue 사용 가능
-	UPROPERTY(EditDefaultsOnly, Category = "GAS|Projectile", meta = (Categories = "GameplayCue"))
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Cue", meta = (Categories = "GameplayCue"))
 	FGameplayTag ImpactCueTag;
+
+private:
+	// ImpactCueTag가 유효할 때 Instigator ASC를 통해 GameplayCue를 실행
+	void ExecuteImpactCue(const FVector& Location, const FVector& Normal);
 };

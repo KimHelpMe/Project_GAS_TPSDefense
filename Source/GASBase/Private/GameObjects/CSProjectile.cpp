@@ -56,16 +56,9 @@ void ACSProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
 	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 
-	// Cue 직접 실행 (이펙트) — GE와 분리
-	UAbilitySystemComponent* InstigatorASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetInstigator());
-	if (IsValid(InstigatorASC) && ImpactCueTag.IsValid())
-	{
-		FGameplayCueParameters CueParams;
-		CueParams.Location = GetActorLocation();
-		CueParams.Normal = -GetVelocity().GetSafeNormal();
-		InstigatorASC->ExecuteGameplayCue(ImpactCueTag, CueParams);
-	}
-
+	// Cue 직접 실행 (GE와 분리)
+	ExecuteImpactCue(GetActorLocation(), -GetVelocity().GetSafeNormal());
+	
 	// HitReact 이벤트 전송
 	UCSBlueprintFunctionLibrary::SendHitReactEventToActors({ OtherActor }, GetInstigator(), CSGameplayTags::Events::HitReact);
 
@@ -80,18 +73,24 @@ void ACSProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPri
 {
 	if (!HasAuthority()) return;
 
-	UAbilitySystemComponent* InstigatorASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetInstigator());
-	if (IsValid(InstigatorASC) && ImpactCueTag.IsValid())
-	{
-		FGameplayCueParameters CueParams;
-		CueParams.Location = Hit.ImpactPoint;
-		CueParams.Normal = Hit.ImpactNormal;
-		InstigatorASC->ExecuteGameplayCue(ImpactCueTag, CueParams);
-	}
+	ExecuteImpactCue(Hit.ImpactPoint, Hit.ImpactNormal);
 
 	// BP 후킹 포인트 — 폭발형 투사체에서 SphereOverlapAtImpact 연결
 	OnProjectileImpact(Hit.ImpactPoint);
 	Destroy();
+}
+
+void ACSProjectile::ExecuteImpactCue(const FVector& Location, const FVector& Normal)
+{
+	if (!ImpactCueTag.IsValid()) return;
+
+	UAbilitySystemComponent* InstigatorASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetInstigator());
+	if (!IsValid(InstigatorASC)) return;
+
+	FGameplayCueParameters CueParams;
+	CueParams.Location = Location;
+	CueParams.Normal = Normal;
+	InstigatorASC->ExecuteGameplayCue(ImpactCueTag, CueParams);
 }
 
 void ACSProjectile::SphereOverlapAtImpact(const FVector& ImpactLocation, float Radius)
