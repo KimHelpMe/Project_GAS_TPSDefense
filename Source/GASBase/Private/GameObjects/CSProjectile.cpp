@@ -6,6 +6,7 @@
 #include "GameplayEffect.h"
 #include "Characters/CSBaseCharacter.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Components/SphereComponent.h"
 #include "Engine/OverlapResult.h"
 #include "Utils/CSBlueprintFunctionLibrary.h"
@@ -48,33 +49,49 @@ void ACSProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 	UAbilitySystemComponent* ASC = BaseCharacter->GetAbilitySystemComponent();
 	if (!IsValid(ASC) || !HasAuthority()) return;
 
-	// GE 적용
+	// GE 적용 (데미지)
 	FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
 	ContextHandle.AddInstigator(GetInstigator(), this);
 
 	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
 	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 
+	// Cue 직접 실행 (이펙트) — GE와 분리
+	UAbilitySystemComponent* InstigatorASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetInstigator());
+	if (IsValid(InstigatorASC) && ImpactCueTag.IsValid())
+	{
+		FGameplayCueParameters CueParams;
+		CueParams.Location = GetActorLocation();
+		CueParams.Normal = -GetVelocity().GetSafeNormal();
+		InstigatorASC->ExecuteGameplayCue(ImpactCueTag, CueParams);
+	}
+
 	// HitReact 이벤트 전송
 	UCSBlueprintFunctionLibrary::SendHitReactEventToActors({ OtherActor }, GetInstigator(), CSGameplayTags::Events::HitReact);
 
-	Multicast_SpawnImpactEffects(GetActorLocation(), GetActorRotation());
-	SetLifeSpan(0.1f);
+	// BP 후킹 포인트 — 폭발형 투사체에서 SphereOverlapAtImpact 연결
+	OnProjectileImpact(GetActorLocation());
+
+	Destroy();
 }
 
-// 벽, 바닥 등
+// 벽, 바닥 등 — GE 적용 대상이 없으므로 Instigator ASC를 통해 Cue를 직접 실행
 void ACSProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	if (!HasAuthority()) return;
 
-	Multicast_SpawnImpactEffects(GetActorLocation(), GetActorRotation());
-	SetLifeSpan(0.1f);
-}
+	UAbilitySystemComponent* InstigatorASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetInstigator());
+	if (IsValid(InstigatorASC) && ImpactCueTag.IsValid())
+	{
+		FGameplayCueParameters CueParams;
+		CueParams.Location = Hit.ImpactPoint;
+		CueParams.Normal = Hit.ImpactNormal;
+		InstigatorASC->ExecuteGameplayCue(ImpactCueTag, CueParams);
+	}
 
-// Multicast 구현 - 서버 + 모든 클라이언트에서 실행됨
-void ACSProjectile::Multicast_SpawnImpactEffects_Implementation(FVector Location, FRotator Rotation)
-{
-	SpawnImpactEffects(); // 이제 모두에서 호출됨
+	// BP 후킹 포인트 — 폭발형 투사체에서 SphereOverlapAtImpact 연결
+	OnProjectileImpact(Hit.ImpactPoint);
+	Destroy();
 }
 
 void ACSProjectile::SphereOverlapAtImpact(const FVector& ImpactLocation, float Radius)

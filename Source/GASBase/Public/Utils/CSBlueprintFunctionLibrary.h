@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "GameplayTagContainer.h"
+#include "FXSystem.h"
 #include "CSBlueprintFunctionLibrary.generated.h"
 
 // 피격 방향을 나타내는 열거형 (블루프린트 노출을 위해 uint8 기반 필요)
@@ -37,4 +38,15 @@ public:
     // 서버에서만 호출할 것. Instigator는 공격을 유발한 액터(공격자).
     UFUNCTION(BlueprintCallable, Category = "GAS|Abilities")
     static void SendHitReactEventToActors(const TArray<AActor*>& ActorsHit, AActor* Instigator, const FGameplayTag& EventTag);
+
+    // Cascade/Niagara 자동 분기하여 지정 위치에 FX를 스폰한다.
+    // UFXSystemAsset은 UParticleSystem(Cascade)과 UNiagaraSystem의 공통 베이스라 둘 다 받을 수 있다.
+    UFUNCTION(BlueprintCallable, Category = "GAS|FX", meta = (WorldContext = "WorldContextObject", HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject"))
+    static void SpawnFXAtLocation(
+        const UObject* WorldContextObject,
+        UFXSystemAsset* FXAsset,
+        const FVector& Location,
+        const FRotator& Rotation,
+        const FVector& Scale
+    );
 };

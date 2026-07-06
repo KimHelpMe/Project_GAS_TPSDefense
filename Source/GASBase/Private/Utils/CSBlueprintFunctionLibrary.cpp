@@ -4,6 +4,9 @@
 #include "Utils/CSBlueprintFunctionLibrary.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayTags/CSGameplayTags.h"
+#include "Kismet/GameplayStatics.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraSystem.h"
 
 
 EHitDirection UCSBlueprintFunctionLibrary::GetHitDirection(const FVector& TargetForward, const FVector& ToInstigator)
@@ -64,5 +67,37 @@ void UCSBlueprintFunctionLibrary::SendHitReactEventToActors(const TArray<AActor*
 		Payload.Instigator = Instigator;
 
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(HitActor, EventTag, Payload);
+	}
+}
+
+void UCSBlueprintFunctionLibrary::SpawnFXAtLocation(
+	const UObject* WorldContextObject,
+	UFXSystemAsset* FXAsset,
+	const FVector& Location,
+	const FRotator& Rotation,
+	const FVector& Scale)
+{
+	if (!IsValid(FXAsset)) return;
+
+	// UNiagaraSystem으로 캬스트 성공하면 Niagara, 실패하면 Cascade
+	if (UNiagaraSystem* NiagaraSystem = Cast<UNiagaraSystem>(FXAsset))
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+			WorldContextObject,
+			NiagaraSystem,
+			Location,
+			Rotation,
+			Scale
+		);
+	}
+	else if (UParticleSystem* ParticleSystem = Cast<UParticleSystem>(FXAsset))
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
+			WorldContextObject,
+			ParticleSystem,
+			Location,
+			Rotation,
+			Scale
+		);
 	}
 }
