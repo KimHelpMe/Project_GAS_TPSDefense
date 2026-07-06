@@ -20,11 +20,11 @@ ACSPlayerCharacter::ACSPlayerCharacter()
 
 	// 컨트롤러 회전을 직접 적용하지 않음
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
 
 	// 이동 방향으로 캐릭터가 자동으로 회전
-	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->bOrientRotationToMovement = false;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 	GetCharacterMovement()->JumpZVelocity = 500.f;
 	GetCharacterMovement()->AirControl = 0.35f;
@@ -76,13 +76,8 @@ void ACSPlayerCharacter::PossessedBy(AController* NewController)
 	GiveStartupAbilities();
 	InitializeAttributes();
 
-	//  초기화 완료 시점을 알리는 델리게이트
-	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
-
-	const UCSAttributeSet* AttributeSet = Cast<UCSAttributeSet>(GetAttributeSet());
-	if (!IsValid(AttributeSet)) return;
-
-	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
+	// 어트리뷰트 변경 델리게이트를 바인딩
+	BindAttributeDelegates();
 }
 
 void ACSPlayerCharacter::OnRep_PlayerState()
@@ -94,6 +89,13 @@ void ACSPlayerCharacter::OnRep_PlayerState()
 	if (!IsValid(GetAbilitySystemComponent())) return;
 	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
 
+	// 어트리뷰트 변경 델리게이트를 바인딩
+	BindAttributeDelegates();
+
+}
+
+void ACSPlayerCharacter::BindAttributeDelegates()
+{
 	//  초기화 완료 시점을 알리는 델리게이트
 	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
 
@@ -101,5 +103,4 @@ void ACSPlayerCharacter::OnRep_PlayerState()
 	if (!IsValid(AttributeSet)) return;
 
 	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
-
 }

@@ -37,6 +37,11 @@ namespace CSGameplayTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Scored);
 	}
 
+	namespace Cues
+	{
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Projectile_Impact);
+	}
+
 	namespace Status
 	{
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Dead);

@@ -18,7 +18,8 @@ public class GASBase : ModuleRules
 			"GameplayAbilities",
 			"GameplayTasks",
 			"GameplayTags",
-            "UMG"
+            "UMG",
+            "Niagara"
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

@@ -55,13 +55,11 @@ void ACSEnemyCharacter::BeginPlay()
 	// HasAuthority() 블록 바깥에서 호출하는 이유 -> 로컬, 서버 동시에 초기화하기 위해 
 	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
 
-
 	// 서버가 아닐 때는 나감요
 	if (!HasAuthority()) return;
 
 	// 어빌리티 부여는 서버에서만
 	GiveStartupAbilities();
-
 
 
 	UCSAttributeSet* CC_AttributeSet = Cast<UCSAttributeSet>(GetAttributeSet());

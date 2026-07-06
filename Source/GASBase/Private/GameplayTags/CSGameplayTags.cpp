@@ -27,8 +27,12 @@ namespace CSGameplayTags
 	{
 		UE_DEFINE_GAMEPLAY_TAG(HitReact, "CSGameplayTags.Events.HitReact");
 		UE_DEFINE_GAMEPLAY_TAG(Scored,"CSGameplayTags.Events.Scored");
+	}
 
-
+	namespace Cues
+	{
+		// 주의: 반드시 GameplayCue.로 시작해야 GAS가 Cue로 인식
+		UE_DEFINE_GAMEPLAY_TAG(Projectile_Impact, "GameplayCue.Projectile.Impact");
 	}
 
 	namespace Status
