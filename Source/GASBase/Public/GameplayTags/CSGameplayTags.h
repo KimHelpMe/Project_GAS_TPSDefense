@@ -37,12 +37,14 @@ namespace CSGameplayTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(E);
 		// 스킬 슬롯 R
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(R);
+
 		// 스킬 슬롯 G
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(G);
 
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(T);
+
 		// 파이어볼 투사체 어빌리티
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Fireball);
-
 	}
 
 	namespace Events

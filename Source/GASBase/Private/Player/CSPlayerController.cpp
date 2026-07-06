@@ -46,6 +46,7 @@ void ACSPlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(QAction, ETriggerEvent::Started, this, &ThisClass::Q);
 	EnhancedInputComponent->BindAction(EAction, ETriggerEvent::Started, this, &ThisClass::E);
 	EnhancedInputComponent->BindAction(RAction, ETriggerEvent::Started, this, &ThisClass::R);
+	EnhancedInputComponent->BindAction(TAction, ETriggerEvent::Started, this, &ThisClass::T);
 }
 
 void ACSPlayerController::ActivateAbility(const FGameplayTag& AbilityTag) const
@@ -134,6 +135,12 @@ void ACSPlayerController::E()
 void ACSPlayerController::R()
 {
 	ActivateAbility(CSGameplayTags::Abilities::Fireball);
+}
+
+void ACSPlayerController::T()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Stone() called!"));
+	ActivateAbility(CSGameplayTags::Abilities::T);
 }
 
 bool ACSPlayerController::IsAlive() const
