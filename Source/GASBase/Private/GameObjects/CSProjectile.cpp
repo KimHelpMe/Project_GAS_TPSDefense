@@ -7,6 +7,9 @@
 #include "Characters/CSBaseCharacter.h"
 #include "AbilitySystemComponent.h"
 #include "Components/SphereComponent.h"
+#include "Engine/OverlapResult.h"
+#include "Utils/CSBlueprintFunctionLibrary.h"
+#include "GameplayTags/CSGameplayTags.h"
 
 ACSProjectile::ACSProjectile()
 {
@@ -52,6 +55,9 @@ void ACSProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
 	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 
+	// HitReact 이벤트 전송
+	UCSBlueprintFunctionLibrary::SendHitReactEventToActors({ OtherActor }, GetInstigator(), CSGameplayTags::Events::HitReact);
+
 	Multicast_SpawnImpactEffects(GetActorLocation(), GetActorRotation());
 	SetLifeSpan(0.1f);
 }
@@ -59,16 +65,55 @@ void ACSProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 // 벽, 바닥 등
 void ACSProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (HasAuthority())
-	{
-		Multicast_SpawnImpactEffects(GetActorLocation(), GetActorRotation());
-		SetLifeSpan(0.1f); // ← 동일하게
-	}
+	if (!HasAuthority()) return;
+
+	Multicast_SpawnImpactEffects(GetActorLocation(), GetActorRotation());
+	SetLifeSpan(0.1f);
 }
 
 // Multicast 구현 - 서버 + 모든 클라이언트에서 실행됨
 void ACSProjectile::Multicast_SpawnImpactEffects_Implementation(FVector Location, FRotator Rotation)
 {
 	SpawnImpactEffects(); // 이제 모두에서 호출됨
+}
+
+void ACSProjectile::SphereOverlapAtImpact(const FVector& ImpactLocation, float Radius)
+{
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionShape Sphere = FCollisionShape::MakeSphere(Radius);
+
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+	QueryParams.AddIgnoredActor(GetInstigator());
+
+	GetWorld()->OverlapMultiByChannel(
+		OverlapResults,
+		ImpactLocation,
+		FQuat::Identity,
+		ECC_Pawn,
+		Sphere,
+		QueryParams
+	);
+
+	TArray<AActor*> HitActors;
+	for (const FOverlapResult& Result : OverlapResults)
+	{
+		ACSBaseCharacter* BaseCharacter = Cast<ACSBaseCharacter>(Result.GetActor());
+		if (!IsValid(BaseCharacter) || !BaseCharacter->IsAlive()) continue;
+
+		UAbilitySystemComponent* ASC = BaseCharacter->GetAbilitySystemComponent();
+		if (!IsValid(ASC)) continue;
+
+		FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
+		ContextHandle.AddInstigator(GetInstigator(), this);
+
+		FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
+		ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+
+		HitActors.Add(BaseCharacter);
+	}
+
+	// HitReact 일괄 전송
+	UCSBlueprintFunctionLibrary::SendHitReactEventToActors(HitActors, GetInstigator(), CSGameplayTags::Events::HitReact);
 }
 

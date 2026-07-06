@@ -2,6 +2,8 @@
 
 
 #include "Utils/CSBlueprintFunctionLibrary.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "GameplayTags/CSGameplayTags.h"
 
 
 EHitDirection UCSBlueprintFunctionLibrary::GetHitDirection(const FVector& TargetForward, const FVector& ToInstigator)
@@ -44,5 +46,23 @@ FName UCSBlueprintFunctionLibrary::GetHitDirectionName(const EHitDirection& HitD
 		return FName("Back");
 
 	default: return FName("None");
+	}
+}
+
+void UCSBlueprintFunctionLibrary::SendHitReactEventToActors(const TArray<AActor*>& ActorsHit, AActor* Instigator, const FGameplayTag& EventTag)
+{
+	UE_LOG(LogTemp, Warning, TEXT("SendHitReact - Instigator: %s, HasAuthority: %d"),
+		*GetNameSafe(Instigator), IsValid(Instigator) ? (int)Instigator->HasAuthority() : -1);
+
+	if (!IsValid(Instigator) || !Instigator->HasAuthority()) return;
+
+	for (AActor* HitActor : ActorsHit)
+	{
+		if (!IsValid(HitActor)) continue;
+
+		FGameplayEventData Payload;
+		Payload.Instigator = Instigator;
+
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(HitActor, EventTag, Payload);
 	}
 }

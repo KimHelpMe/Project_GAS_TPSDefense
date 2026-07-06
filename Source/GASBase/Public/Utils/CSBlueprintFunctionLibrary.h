@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "GameplayTagContainer.h"
 #include "CSBlueprintFunctionLibrary.generated.h"
 
 // 피격 방향을 나타내는 열거형 (블루프린트 노출을 위해 uint8 기반 필요)
@@ -31,4 +32,9 @@ public:
     // 계산된 방향을 몽타주 섹션 이름(FName)으로 변환
     UFUNCTION(BlueprintPure)
     static FName GetHitDirectionName(const EHitDirection& HitDirection);
+
+    // 피격 대상 배열에 HitReact 게임플레이 이벤트를 전송한다.
+    // 서버에서만 호출할 것. Instigator는 공격을 유발한 액터(공격자).
+    UFUNCTION(BlueprintCallable, Category = "GAS|Abilities")
+    static void SendHitReactEventToActors(const TArray<AActor*>& ActorsHit, AActor* Instigator, const FGameplayTag& EventTag);
 };

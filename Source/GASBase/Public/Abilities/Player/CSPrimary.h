@@ -26,8 +26,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GAS|Abilities")
 	TArray<AActor*>  HitBoxOverlap();
 
-	UFUNCTION(BlueprintCallable, Category = "Crash|Abilities")
-	void SendHitReactEventToActors(const TArray<AActor*>& ActorsHit);
 
 protected:
 	void DrawHitBoxOverlapDebugs(const TArray<FOverlapResult>& OverlapResults, const FVector& HitBoxLocation) const;

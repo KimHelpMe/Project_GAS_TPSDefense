@@ -3,8 +3,6 @@
 
 #include "Abilities/Player/CSPrimary.h"
 #include "Engine/OverlapResult.h"
-#include "AbilitySystemBlueprintLibrary.h"
-#include "GameplayTags/CSGameplayTags.h"
 
 
 TArray<AActor*>  UCSPrimary::HitBoxOverlap()
@@ -66,18 +64,6 @@ TArray<AActor*>  UCSPrimary::HitBoxOverlap()
 	}
 
 	return ActorsHit;
-}
-
-void UCSPrimary::SendHitReactEventToActors(const TArray<AActor*>& ActorsHit)
-{
-	// ActorsHit은 이미 유효성 검사된 배열이므로 IsValid 재확인 불필요
-	for (AActor* HitActor : ActorsHit)
-	{
-		FGameplayEventData Payload;
-		Payload.Instigator = GetAvatarActorFromActorInfo(); // 공격을 유발한 주체(플레이어)를 페이로드에 담는다
-
-		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(HitActor, CSGameplayTags::Events::HitReact, Payload);
-	}
 }
 
 void UCSPrimary::DrawHitBoxOverlapDebugs(const TArray<FOverlapResult>& OverlapResults, const FVector& HitBoxLocation) const

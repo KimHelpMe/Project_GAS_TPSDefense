@@ -32,8 +32,11 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "GAS|Projectile")
 	void SpawnImpactEffects();
 
+	// 충돌 지점 기준으로 구형 오버랩을 수행하고 범위 내 유효한 캐릭터에게 DamageEffect를 적용한다.
+	// 서버에서만 호출할 것.
+	UFUNCTION(BlueprintCallable, Category = "GAS|Projectile")
+	void SphereOverlapAtImpact(const FVector& ImpactLocation, float Radius);
 
-protected:
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* CollisionComponent;
 
@@ -46,6 +49,4 @@ protected:
 	// ExposeOnSpawn은 블루프린트의 SpawnActorFromClass 노드에 이 변수를 핀으로 노출
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GAS|Damage", meta = (ExposeOnSpawn = true, ClampMin = 0.0))
 	float Damage = 10.f;
-
-
 };
