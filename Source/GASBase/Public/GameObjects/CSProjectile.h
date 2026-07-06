@@ -25,9 +25,13 @@ public:
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
+	UFUNCTION(NetMulticast, Unreliable)
+	void Multicast_SpawnImpactEffects(FVector Location, FRotator Rotation);
+
 	// GE 적용·Destroy 직전에 충돌 이펙트를 스폰하는 지점을 블루프린트 측에 위임
 	UFUNCTION(BlueprintImplementableEvent, Category = "GAS|Projectile")
 	void SpawnImpactEffects();
+
 
 protected:
 	UPROPERTY(VisibleAnywhere)
