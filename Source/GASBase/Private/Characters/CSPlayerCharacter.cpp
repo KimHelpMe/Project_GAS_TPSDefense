@@ -8,6 +8,7 @@
 #include "Camera/CameraComponent.h"
 #include "Player/CSPlayerState.h"
 #include "AbilitySystem/CSAbilitySystemComponent.h"
+#include "AbilitySystem/CSAttributeSet.h"
 
 
 
@@ -19,11 +20,11 @@ ACSPlayerCharacter::ACSPlayerCharacter()
 
 	// 컨트롤러 회전을 직접 적용하지 않음
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
 
 	// 이동 방향으로 캐릭터가 자동으로 회전
-	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->bOrientRotationToMovement = false;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 	GetCharacterMovement()->JumpZVelocity = 500.f;
 	GetCharacterMovement()->AirControl = 0.35f;
@@ -52,6 +53,14 @@ UAbilitySystemComponent* ACSPlayerCharacter::GetAbilitySystemComponent() const
 	return CSPlayerState->GetAbilitySystemComponent();
 }
 
+UAttributeSet* ACSPlayerCharacter::GetAttributeSet() const
+{
+	ACSPlayerState* CCPlayerState = Cast<ACSPlayerState>(GetPlayerState());
+	if (!IsValid(CCPlayerState)) return nullptr;
+
+	return CCPlayerState->GetAttributeSet();
+}
+
 void ACSPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -62,12 +71,13 @@ void ACSPlayerCharacter::PossessedBy(AController* NewController)
 	// 서버 전용: Owner = PlayerState, Avatar = 이 캐릭터
 	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
 
-
 	// 어빌리티 부여는 서버에서만 수행
 	// 서버에서 GiveAbility를 호출하면 클라이언트에는 자동으로 복제(replicate)
-	// 때문에 InitAbilityActorInfo와 달리
-	// 이 함수는 클라이언트와 서버 양쪽에서 호출할 필요가 없다.
 	GiveStartupAbilities();
+	InitializeAttributes();
+
+	// 어트리뷰트 변경 델리게이트를 바인딩
+	BindAttributeDelegates();
 }
 
 void ACSPlayerCharacter::OnRep_PlayerState()
@@ -78,4 +88,19 @@ void ACSPlayerCharacter::OnRep_PlayerState()
 
 	if (!IsValid(GetAbilitySystemComponent())) return;
 	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
+
+	// 어트리뷰트 변경 델리게이트를 바인딩
+	BindAttributeDelegates();
+
+}
+
+void ACSPlayerCharacter::BindAttributeDelegates()
+{
+	//  초기화 완료 시점을 알리는 델리게이트
+	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
+
+	const UCSAttributeSet* AttributeSet = Cast<UCSAttributeSet>(GetAttributeSet());
+	if (!IsValid(AttributeSet)) return;
+
+	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
 }

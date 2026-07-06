@@ -1,14 +1,22 @@
-// CSK
-
+﻿// CSK
+// aa
 
 #include "Abilities/CSGameplayAbility.h"
 #include "CSDebugHelper.h"
 
-void UCSGameplayAbility::DebugDrawString(const FString& Msg)
+void UCSGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+{
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
+	DebugDrawString(FString::Printf(TEXT("%s Activated"), *GetName()), 3.f);
+}
+
+
+void UCSGameplayAbility::DebugDrawString(const FString& Msg, float Duration, FLinearColor Color, int32 Inkey)
 {
 	if (bDrawDebugs)
 	{
-		Debug::Print(Msg);
+		Debug::Print(Msg, Duration, Color.ToFColor(true), Inkey);
 	}
 }
 

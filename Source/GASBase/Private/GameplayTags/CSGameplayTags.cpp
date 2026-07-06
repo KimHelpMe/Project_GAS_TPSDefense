@@ -12,12 +12,44 @@ namespace CSGameplayTags
 
 		UE_DEFINE_GAMEPLAY_TAG(Primary, "CSGameplayTags.Abilities.Primary");
 		UE_DEFINE_GAMEPLAY_TAG(Secondary, "CSGameplayTags.Abilities.Secondary");
-		UE_DEFINE_GAMEPLAY_TAG(Tertiary, "CSGameplayTags.Abilities.Tertiary");
+		UE_DEFINE_GAMEPLAY_TAG(Roll, "CSGameplayTags.Abilities.Roll");
+
+		UE_DEFINE_GAMEPLAY_TAG(Death, "CSGameplayTags.Abilities.Death");
+
+
+		UE_DEFINE_GAMEPLAY_TAG(Q, "CSGameplayTags.Abilities.Q");
+		UE_DEFINE_GAMEPLAY_TAG(E, "CSGameplayTags.Abilities.E");
+		UE_DEFINE_GAMEPLAY_TAG(R, "CSGameplayTags.Abilities.R");
+
+		UE_DEFINE_GAMEPLAY_TAG(G, "CSGameplayTags.Abilities.G");
+		UE_DEFINE_GAMEPLAY_TAG(T, "CSGameplayTags.Abilities.T");
+
+
+		UE_DEFINE_GAMEPLAY_TAG(Fireball, "CSGameplayTags.Abilities.Fireball");
+
+
 	}
 
 	namespace Events
 	{
 		UE_DEFINE_GAMEPLAY_TAG(HitReact, "CSGameplayTags.Events.HitReact");
+		UE_DEFINE_GAMEPLAY_TAG(Scored,"CSGameplayTags.Events.Scored");
+
+		UE_DEFINE_GAMEPLAY_TAG(SpawnProjectile, "CSGameplayTags.Events.SpawnProjectile");
+
+	}
+
+	namespace Cues
+	{
+		// 주의: 반드시 GameplayCue.로 시작해야 GAS가 Cue로 인식
+		UE_DEFINE_GAMEPLAY_TAG(Projectile_Impact, "GameplayCue.Projectile.Impact");
+	}
+
+	namespace Status
+	{
+		UE_DEFINE_GAMEPLAY_TAG(Dead, "CSGameplayTags.Status.Dead");
+		UE_DEFINE_GAMEPLAY_TAG(Casting, "CSGameplayTags.Status.Casting");
+
 
 	}
 }

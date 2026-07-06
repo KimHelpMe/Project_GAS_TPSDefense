@@ -2,11 +2,11 @@
 
 namespace Debug
 {
-	static void Print(const FString& Msg, const FColor& Color = FColor::MakeRandomColor(), int32 Inkey = -1)
+	static void Print(const FString& Msg, float TimeToDisplay = 6.f,  const FColor& Color = FColor::MakeRandomColor(), int32 Inkey = -1)
 	{
 		if (GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage(Inkey, 7.f, Color, Msg);
+			GEngine->AddOnScreenDebugMessage(Inkey, TimeToDisplay, Color, Msg);
 
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *Msg);
 		}
@@ -18,7 +18,7 @@ namespace Debug
 		const FString FinalMsg = FloatTitle + TEXT(": ") + FString::SanitizeFloat(FloatValueToPrint);
 
 
-		Print(FinalMsg, Color, InKey);
+		Print(FinalMsg,6.f, Color, InKey);
 	}
 
 	static void DrawSphere(const UObject* WorldContextObject, const FVector& Center, float Radius = 50.f, const FColor& Color = FColor::Red, float Duration = 3.f)

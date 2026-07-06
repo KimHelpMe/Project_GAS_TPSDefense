@@ -28,11 +28,19 @@ private:
 	void StopJumping();
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	void Roll();
 
 	// Callback Ability Func
-	void Primary();
-	void Secondary();
-	void Tertiary();
+	void LMB();
+	void RMB();
+
+	void Q();
+	void E();
+	void R();
+	void T();
+
+	// 현재 빙의된 폰의 생존 여부를 확인하는 헬퍼 함수
+	bool IsAlive() const;
 
 private:
 	// Movement
@@ -48,6 +56,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Movement")
 	TObjectPtr<UInputAction> LookAction;
 
+	UPROPERTY(EditDefaultsOnly, Category ="Input|Movement")
+	TObjectPtr<UInputAction> RollAction;
+
 	// Ability
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
 	TObjectPtr<UInputAction> PrimaryAction;
@@ -55,6 +66,19 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
 	TObjectPtr<UInputAction> SecondaryAction;
 
+	// Q
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
-	TObjectPtr<UInputAction> TertiaryAction;
+	TObjectPtr<UInputAction> QAction;
+
+	// E
+	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
+	TObjectPtr<UInputAction> EAction;
+
+	// R
+	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
+	TObjectPtr<UInputAction> RAction;
+
+	// T
+	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
+	TObjectPtr<UInputAction> TAction;
 };
