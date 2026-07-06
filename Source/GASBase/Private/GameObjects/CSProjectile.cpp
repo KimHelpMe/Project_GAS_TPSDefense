@@ -52,18 +52,23 @@ void ACSProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
 	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 
-	SpawnImpactEffects();
-	Destroy();
+	Multicast_SpawnImpactEffects(GetActorLocation(), GetActorRotation());
+	SetLifeSpan(0.1f);
 }
 
 // 벽, 바닥 등
 void ACSProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	SpawnImpactEffects();
-
 	if (HasAuthority())
 	{
-		Destroy();
+		Multicast_SpawnImpactEffects(GetActorLocation(), GetActorRotation());
+		SetLifeSpan(0.1f); // ← 동일하게
 	}
+}
+
+// Multicast 구현 - 서버 + 모든 클라이언트에서 실행됨
+void ACSProjectile::Multicast_SpawnImpactEffects_Implementation(FVector Location, FRotator Rotation)
+{
+	SpawnImpactEffects(); // 이제 모두에서 호출됨
 }
 
