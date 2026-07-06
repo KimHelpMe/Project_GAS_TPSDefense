@@ -37,6 +37,7 @@ private:
 	void Q();
 	void E();
 	void R();
+	void T();
 
 	// 현재 빙의된 폰의 생존 여부를 확인하는 헬퍼 함수
 	bool IsAlive() const;
@@ -76,4 +77,8 @@ private:
 	// R
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
 	TObjectPtr<UInputAction> RAction;
+
+	// T
+	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
+	TObjectPtr<UInputAction> TAction;
 };

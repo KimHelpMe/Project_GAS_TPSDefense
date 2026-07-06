@@ -20,6 +20,7 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(Q, "CSGameplayTags.Abilities.Q");
 		UE_DEFINE_GAMEPLAY_TAG(E, "CSGameplayTags.Abilities.E");
 		UE_DEFINE_GAMEPLAY_TAG(R, "CSGameplayTags.Abilities.R");
+		UE_DEFINE_GAMEPLAY_TAG(T, "CSGameplayTags.Abilities.T");
 
 	}
 
