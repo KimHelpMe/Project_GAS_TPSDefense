@@ -58,5 +58,7 @@ namespace CSGameplayTags
 	namespace Cooldown
 	{
 		UE_DEFINE_GAMEPLAY_TAG(Fireball, "CSGameplayTags.Cooldown.Fireball");
+		UE_DEFINE_GAMEPLAY_TAG(FireWall, "CSGameplayTags.Cooldown.FireWall");
+
 	}
 }

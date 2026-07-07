@@ -77,5 +77,6 @@ namespace CSGameplayTags
 	namespace Cooldown
 	{
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Fireball);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(FireWall);
 	}
 }
