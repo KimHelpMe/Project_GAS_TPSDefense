@@ -45,6 +45,9 @@ namespace CSGameplayTags
 
 		// 파이어볼 투사체 어빌리티
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Fireball);
+
+		// 원거리 기본 공격(GA_LMB) 내부 WaitGameplayEvent가 기다리는 트리거 태그
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Long_Primary);
 	}
 
 	namespace Events
