@@ -1,4 +1,4 @@
-// CSK
+﻿// CSK
 
 
 #include "Player/CSPlayerController.h"
@@ -9,6 +9,7 @@
 #include "GameFramework/Character.h"
 #include "GameplayTagContainer.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/CSAbilitySystemComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayTags/CSGameplayTags.h"
 #include "Characters/CSBaseCharacter.h"
@@ -49,18 +50,25 @@ void ACSPlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(TAction, ETriggerEvent::Started, this, &ThisClass::T);
 }
 
+
 void ACSPlayerController::ActivateAbility(const FGameplayTag& AbilityTag) const
-{
-	//if (!IsAlive()) return;
+{	//if (!IsAlive()) return;
 
 	// Blueprint의 "Get Ability System Component" 노드와 동일한 함수
 	// 내부적으로 전달받은 액터가 IAbilitySystemInterface를 구현하는지 확인하고, 
 	// 구현한다면 GetAbilitySystemComponent()를 호출하여 반환
 	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn());
-	if (!IsValid(ASC)) return;
+	UCSAbilitySystemComponent* CSASC = Cast<UCSAbilitySystemComponent>(ASC);
+	if (!IsValid(CSASC)) return;
 
-	ASC->TryActivateAbilitiesByTag(AbilityTag.GetSingleTagContainer());
+	// Q/E/R/T 등 "슬롯 스킬"은 슬롯 핸들로 활성화
+	if (!CSASC->TryActivateAbilityBySlot(AbilityTag))
+	{
+		// Primary/Secondary/Roll처럼 슬롯과 무관한 고정 어빌리티는 기존 방식 유지 (AssetTag 매칭)
+		CSASC->TryActivateAbilitiesByTag(AbilityTag.GetSingleTagContainer());
+	}
 }
+
 
 
 void ACSPlayerController::Jump()
@@ -123,24 +131,29 @@ void ACSPlayerController::RMB()
 void ACSPlayerController::Q()
 {
 	ActivateAbility(CSGameplayTags::Abilities::Q);
-
+	FGameplayEventData Payload;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::Q, Payload);
 }
 
 void ACSPlayerController::E()
 {
 	ActivateAbility(CSGameplayTags::Abilities::E);
-
+	FGameplayEventData Payload;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::E, Payload);
 }
 
 void ACSPlayerController::R()
 {
 	ActivateAbility(CSGameplayTags::Abilities::Fireball);
+	FGameplayEventData Payload;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::R, Payload);
 }
 
 void ACSPlayerController::T()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Stone() called!"));
 	ActivateAbility(CSGameplayTags::Abilities::T);
+	FGameplayEventData Payload;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::T, Payload);
 }
 
 bool ACSPlayerController::IsAlive() const

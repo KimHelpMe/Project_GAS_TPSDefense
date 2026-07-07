@@ -27,3 +27,16 @@ void UCSGameplayAbility::DebugDrawSphere(const FVector& Center, float Radius, FL
 		Debug::DrawSphere(this, Center, Radius, Color.ToFColor(true), Duration);
 	}
 }
+
+// 어빌리티가 자기 슬롯 태그를 물어봄.
+FGameplayTag UCSGameplayAbility::GetAssignedSlotTag() const
+{
+	if (const FGameplayAbilitySpec* Spec = GetCurrentAbilitySpec())
+	{
+		for (const FGameplayTag& Tag : Spec->GetDynamicSpecSourceTags())
+		{
+			return Tag;
+		}
+	}
+	return FGameplayTag::EmptyTag;
+}

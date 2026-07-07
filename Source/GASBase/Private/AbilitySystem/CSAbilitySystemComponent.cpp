@@ -1,7 +1,8 @@
-// CSK
+﻿// CSK
 
 
 #include "AbilitySystem/CSAbilitySystemComponent.h"
+#include "Abilities/CSAbilityData.h"
 #include "GameplayTags/CSGameplayTags.h"
 
 
@@ -87,4 +88,50 @@ void UCSAbilitySystemComponent::HandleAutoActivatedAbility(const FGameplayAbilit
 	}
 	
 
+}
+
+
+
+
+bool UCSAbilitySystemComponent::TryPickupAbility(UCSAbilityData* AbilityData)
+{
+	if (!IsValid(AbilityData) || !AbilityData->AbilityClass) return false;
+
+	// 이미 같은 스킬을 보유 중이면 → 업그레이드
+	for (auto& Pair : SlotToAbility)
+	{
+		if (Pair.Value.AbilityData && Pair.Value.AbilityData->AbilityClass == AbilityData->AbilityClass)
+		{
+			AddToAbilityLevel(AbilityData->AbilityClass, 1);
+			return true;
+		}
+	}
+
+	// 빈 슬롯 탐색
+	for (const FGameplayTag& SlotTag : SkillSlotTags)
+	{
+		if (!SlotToAbility.Contains(SlotTag))
+		{
+			FGameplayAbilitySpec NewSpec(AbilityData->AbilityClass, AbilityData->AbilityLevel);
+			NewSpec.GetDynamicSpecSourceTags().AddTag(SlotTag); // 슬롯 부여 시 슬롯 태그 기록.
+			const FGameplayAbilitySpecHandle NewHandle = GiveAbility(NewSpec);
+
+			SlotToAbility.Add(SlotTag, FCSSlotAbilityEntry{ NewHandle, AbilityData });
+			OnSlotAbilityChanged.Broadcast(SlotTag, AbilityData);
+			return true;
+		}
+	}
+
+
+	// 슬롯 꽉 참 + 미보유 스킬 → 습득 실패
+	return false;
+}
+
+bool UCSAbilitySystemComponent::TryActivateAbilityBySlot(FGameplayTag SlotTag)
+{
+	if (const FCSSlotAbilityEntry* Entry = SlotToAbility.Find(SlotTag))
+	{
+		return TryActivateAbility(Entry->Handle);
+	}
+	return false;
 }

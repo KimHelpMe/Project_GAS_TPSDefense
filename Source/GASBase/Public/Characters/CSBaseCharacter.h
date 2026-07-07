@@ -1,4 +1,4 @@
-// CSK
+﻿// CSK
 
 #pragma once
 
@@ -12,7 +12,7 @@ class UAbilitySystemComponent;
 class UAttributeSet;
 class UGameplayAbility;
 class UGameplayEffect;
-
+class UCSAbilityData;
 
 // 멀티플레이어에서는 ASC와 AttributeSet이 BeginPlay 시점에 아직 초기화되지 않았을 수 있다. 
 // 이를 해결하기 위해 초기화 완료 시점을 알리는 델리게이트가 필요하다.
@@ -73,8 +73,13 @@ public:
 
 
 private:
+	// 항상 고정으로 시작하는 어빌리티 (좌클릭 기본 공격, 우클릭 등) — 슬롯 시스템과 무관
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Abilities")
-	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+	TArray<TSubclassOf<UGameplayAbility>> FixedStartupAbilities;
+
+	// 드랍박스로 습득/업그레이드하는 Q/E/R/T 슬롯용 스킬
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Abilities")
+	TArray<TObjectPtr<UCSAbilityData>> StartupAbilityData;
 
 	// 어트리뷰트 초기화에 사용할 Gameplay Effect 클래스
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Effects")

@@ -1,4 +1,4 @@
-// CSK
+﻿// CSK
 
 #pragma once
 
@@ -32,5 +32,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Debug")
 	bool bDrawDebugs = false;
 
-
+	UFUNCTION(BlueprintPure, Category = "GAS|Abilities")
+	FGameplayTag GetAssignedSlotTag() const;
 };
