@@ -135,3 +135,17 @@ bool UCSAbilitySystemComponent::TryActivateAbilityBySlot(FGameplayTag SlotTag)
 	}
 	return false;
 }
+
+void UCSAbilitySystemComponent::GetSlotCooldown(FGameplayTag SlotTag, float& TimeRemaining, float& CooldownDuration)
+{
+	TimeRemaining = 0.f;
+	CooldownDuration = 0.f;
+
+	const FCSSlotAbilityEntry* Entry = SlotToAbility.Find(SlotTag);
+	if (!Entry) return;
+
+	const FGameplayAbilitySpec* Spec = FindAbilitySpecFromHandle(Entry->Handle);
+	if (!Spec || !Spec->Ability) return;
+
+	Spec->Ability->GetCooldownTimeRemainingAndDuration(Entry->Handle, AbilityActorInfo.Get(), TimeRemaining, CooldownDuration);
+}

@@ -120,6 +120,13 @@ void ACSPlayerController::Roll()
 void ACSPlayerController::LMB()
 {
 	ActivateAbility(CSGameplayTags::Abilities::Primary);
+
+	// GA_LMB 내부의 WaitGameplayEvent(Abilities.Long_Primary)가 이 이벤트를 받아야
+	// 실제 트레이스/데미지 분기가 실행된다 (몽타주 재생은 이벤트 없이도 동작하므로
+	// 애니메이션은 나가는데 데미지만 안 들어가는 증상의 원인이었음)
+	FGameplayEventData Payload;
+	Payload.Instigator = GetPawn();
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::Long_Primary, Payload);
 }
 
 void ACSPlayerController::RMB()

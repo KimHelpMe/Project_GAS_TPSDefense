@@ -59,11 +59,18 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Abilities")
 	TArray<FGameplayTag> SkillSlotTags;
 
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSlotAbilityChanged, FGameplayTag, UCSAbilityData*);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSlotAbilityChanged, FGameplayTag, SlotTag, UCSAbilityData*, AbilityData);
+
+	// 스킬 슬롯 UI가 아이콘 갱신을 위해 구독하는 델리게이트
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Abilities")
 	FOnSlotAbilityChanged OnSlotAbilityChanged;
 
 	UFUNCTION(BlueprintCallable, Category = "GAS|Abilities")
 	bool TryActivateAbilityBySlot(FGameplayTag SlotTag);
+
+	// 슬롯에 배정된 어빌리티의 남은 쿨다운/전체 쿨다운을 조회 (스킬 슬롯 UI용)
+	UFUNCTION(BlueprintCallable, Category = "GAS|Abilities")
+	void GetSlotCooldown(FGameplayTag SlotTag, float& TimeRemaining, float& CooldownDuration);
 
 private:
 	void HandleAutoActivatedAbility(const FGameplayAbilitySpec& AbilitySpec);

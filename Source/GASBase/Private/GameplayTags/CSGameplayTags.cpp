@@ -27,6 +27,7 @@ namespace CSGameplayTags
 
 		UE_DEFINE_GAMEPLAY_TAG(Fireball, "CSGameplayTags.Abilities.Fireball");
 
+		UE_DEFINE_GAMEPLAY_TAG(Long_Primary, "CSGameplayTags.Abilities.Long_Primary");
 
 	}
 
