@@ -70,12 +70,7 @@ void UCSBlueprintFunctionLibrary::SendHitReactEventToActors(const TArray<AActor*
 	}
 }
 
-void UCSBlueprintFunctionLibrary::SpawnFXAtLocation(
-	const UObject* WorldContextObject,
-	UFXSystemAsset* FXAsset,
-	const FVector& Location,
-	const FRotator& Rotation,
-	const FVector& Scale)
+void UCSBlueprintFunctionLibrary::SpawnFXAtLocation(const UObject* WorldContextObject,UFXSystemAsset* FXAsset,const FVector& Location, const FRotator& Rotation, const FVector& Scale)
 {
 	if (!IsValid(FXAsset)) return;
 
