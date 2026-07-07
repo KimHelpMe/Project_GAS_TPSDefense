@@ -49,4 +49,10 @@ public:
         const FRotator& Rotation,
         const FVector& Scale
     );
+
+    UFUNCTION(BlueprintPure, Category = "GAS|Aiming")
+    static FRotator GetAimRotation(const FVector& MuzzleLocation, const FVector& AimPoint);
+
+    UFUNCTION(BlueprintPure, Category = "GAS|Aiming")
+    static FTransform GetProjectileSpawnTransform(USceneComponent* MuzzleComponent, FName SocketName, const FVector& AimPoint);
 };

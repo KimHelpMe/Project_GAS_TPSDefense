@@ -61,7 +61,8 @@ namespace CSGameplayTags
 	namespace Cues
 	{
 		// 투사체 충돌 시 이펙트/사운드를 재생하는 GameplayCue
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Projectile_Impact);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impact_E);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impace_Fire);
 	}
 
 	namespace Status
@@ -71,5 +72,10 @@ namespace CSGameplayTags
 		// 캐스팅 중 — 스킬 시전 중 이동/공격 제한용 태그
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Casting);
 
+	}
+
+	namespace Cooldown
+	{
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Fireball);
 	}
 }

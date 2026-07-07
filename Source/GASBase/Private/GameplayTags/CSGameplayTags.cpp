@@ -42,7 +42,9 @@ namespace CSGameplayTags
 	namespace Cues
 	{
 		// 주의: 반드시 GameplayCue.로 시작해야 GAS가 Cue로 인식
-		UE_DEFINE_GAMEPLAY_TAG(Projectile_Impact, "GameplayCue.Projectile.Impact");
+		UE_DEFINE_GAMEPLAY_TAG(Impact_E, "GameplayCue.Impact.E");
+		UE_DEFINE_GAMEPLAY_TAG(Impace_Fire, "GameplayCue.Impact.Fireball");
+
 	}
 
 	namespace Status
@@ -51,5 +53,10 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(Casting, "CSGameplayTags.Status.Casting");
 
 
+	}
+
+	namespace Cooldown
+	{
+		UE_DEFINE_GAMEPLAY_TAG(Fireball, "CSGameplayTags.Cooldown.Fireball");
 	}
 }
