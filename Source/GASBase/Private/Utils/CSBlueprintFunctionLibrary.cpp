@@ -101,3 +101,22 @@ void UCSBlueprintFunctionLibrary::SpawnFXAtLocation(
 		);
 	}
 }
+
+FRotator UCSBlueprintFunctionLibrary::GetAimRotation(const FVector& MuzzleLocation, const FVector& AimPoint)
+{
+	const FVector Direction = (AimPoint - MuzzleLocation).GetSafeNormal();
+	return Direction.Rotation();
+}
+
+FTransform UCSBlueprintFunctionLibrary::GetProjectileSpawnTransform(USceneComponent* MuzzleComponent, FName SocketName, const FVector& AimPoint)
+{
+	if (!MuzzleComponent)
+	{
+		return FTransform::Identity;
+	}
+
+	const FVector MuzzleLocation = MuzzleComponent->GetSocketLocation(SocketName);
+	const FRotator AimRotation = GetAimRotation(MuzzleLocation, AimPoint);
+
+	return FTransform(AimRotation, MuzzleLocation);
+}
