@@ -23,6 +23,11 @@ struct FCSSlotAbilityEntry
 {
 	GENERATED_BODY()
 
+	// 어느 슬롯(Q/E/R/T)인지. TMap의 Key였던 걸 구조체 필드로 옮김
+	// -> TMap은 UPROPERTY로 리플리케이트가 안 되기 때문에, 리플리케이트 가능한 TArray로 바꾸면서 필요해짐
+	UPROPERTY()
+	FGameplayTag SlotTag;
+
 	UPROPERTY()
 	FGameplayAbilitySpecHandle Handle;
 
@@ -42,6 +47,9 @@ public:
 
 	// 클라이언트: 활성화 어빌리티 목록이 리플리케이션될 때 호출되는 RepNotify
 	virtual void OnRep_ActivateAbilities() override;
+
+	// SlotToAbility(리플리케이트 프로퍼티)를 등록하기 위해 오버라이드
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	// 특정 어빌리티의 레벨을 지정한 값으로 "절대" 세팅
 	UFUNCTION(BlueprintCallable, Category = "GAS|Abilities")
@@ -75,6 +83,15 @@ public:
 private:
 	void HandleAutoActivatedAbility(const FGameplayAbilitySpec& AbilitySpec);
 
-	UPROPERTY()
-	TMap<FGameplayTag, FCSSlotAbilityEntry> SlotToAbility;
+	// 클라이언트에서 SlotToAbility가 리플리케이트되어 도착했을 때 호출됨
+	// 서버는 TryPickupAbility에서 직접 Broadcast하지만, 클라이언트는 이 함수를 통해서만
+	// OnSlotAbilityChanged를 로컬로 발생시킬 수 있음 (Broadcast는 네트워크를 안 타므로)
+	UFUNCTION()
+	void OnRep_SlotToAbility();
+
+	// Q/E/R/T 슬롯에 어떤 스킬이 배정됐는지 관리하는 목록.
+	// 예전엔 TMap이었지만, TMap은 UPROPERTY(Replicated)로 클라이언트에 복제가 안 되기 때문에
+	// TArray + 구조체 안의 SlotTag 필드 조합으로 대체함 (클라이언트 스킬 슬롯 UI 갱신을 위해 필요)
+	UPROPERTY(ReplicatedUsing = OnRep_SlotToAbility)
+	TArray<FCSSlotAbilityEntry> SlotToAbility;
 };
