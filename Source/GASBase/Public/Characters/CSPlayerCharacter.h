@@ -8,6 +8,7 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class ACSAbilityPickup;
 
 UCLASS()
 class GASBASE_API ACSPlayerCharacter : public ACSBaseCharacter
@@ -17,7 +18,7 @@ class GASBASE_API ACSPlayerCharacter : public ACSBaseCharacter
 public:
 	ACSPlayerCharacter();
 
-	//~ Begin IAbilityInterface Interface 
+	//~ Begin IAbilityInterface Interface
 	// PlayerState로부터 ASC를 가져와 반환
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	//~ End IAbilityInterface Interface
@@ -34,10 +35,26 @@ public:
 	virtual void OnRep_PlayerState() override;
 	//~ End Pawn Interface
 
+protected:
+	//~ Begin Actor Interface
+	virtual void BeginPlay() override;
+	//~ End Actor Interface
+
 private:
 	// ASC 초기화 완료 후 어트리뷰트 변경 델리게이트를 바인딩한다.
 	// 서버: PossessedBy, 클라이언트: OnRep_PlayerState에서 각각 호출
 	void BindAttributeDelegates();
+
+	// 크로스헤어(화면 중앙) 라인트레이스로 AbilityPickup을 조준 중인지 주기적으로 확인.
+	// 로컬 컨트롤 캐릭터가 아니면 내부에서 조기 반환하므로, BeginPlay에서 무조건 타이머만 걸어둔다.
+	void UpdateCrosshairTrace();
+
+	// 현재 조준 중인 Pickup. 조준이 다른 곳으로 바뀌면 이전 것의 정보 위젯을 꺼야 하므로 기억해둠.
+	UPROPERTY()
+	TWeakObjectPtr<ACSAbilityPickup> HoveredPickup;
+
+	// UpdateCrosshairTrace를 0.1초 간격으로 반복 실행시키는 타이머 핸들 (BeginPlay에서 등록)
+	FTimerHandle CrosshairTraceTimerHandle;
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")

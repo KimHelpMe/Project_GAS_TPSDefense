@@ -9,6 +9,8 @@
 #include "Player/CSPlayerState.h"
 #include "AbilitySystem/CSAbilitySystemComponent.h"
 #include "AbilitySystem/CSAttributeSet.h"
+#include "Abilities/CSAbilityPickup.h"
+#include "GameFramework/PlayerController.h"
 
 
 
@@ -103,4 +105,51 @@ void ACSPlayerCharacter::BindAttributeDelegates()
 	if (!IsValid(AttributeSet)) return;
 
 	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
+}
+
+void ACSPlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// 로컬 컨트롤 여부는 UpdateCrosshairTrace 내부에서 매번 체크한다.
+	// BeginPlay 시점엔 클라이언트 쪽 Controller 빙의가 아직 안 끝났을 수 있어서,
+	// 여기서 IsLocallyControlled()로 미리 걸러버리면 타이머 자체가 안 걸릴 위험이 있음.
+	GetWorldTimerManager().SetTimer(CrosshairTraceTimerHandle, this, &ACSPlayerCharacter::UpdateCrosshairTrace, 0.1f, true);
+}
+
+void ACSPlayerCharacter::UpdateCrosshairTrace()
+{
+	// 남의 화면에 내 조준 UI가 뜰 필요는 없으므로, 내가 직접 조작하는 캐릭터에서만 처리
+	if (!IsLocallyControlled()) return;
+
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (!IsValid(PC)) return;
+
+	FVector CamLoc;
+	FRotator CamRot;
+	PC->GetPlayerViewPoint(CamLoc, CamRot);
+	const FVector TraceEnd = CamLoc + CamRot.Vector() * 500.f; // 조준 사거리 5m, 필요시 조정
+
+	FHitResult Hit;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	GetWorld()->LineTraceSingleByChannel(Hit, CamLoc, TraceEnd, ECC_Visibility, Params);
+
+	ACSAbilityPickup* NewHovered = Cast<ACSAbilityPickup>(Hit.GetActor());
+
+	// 조준 대상이 바뀌었을 때만 위젯 표시/숨김을 갱신 (매 틱마다 불필요하게 호출 안 하도록)
+	if (HoveredPickup.Get() != NewHovered)
+	{
+		if (HoveredPickup.IsValid())
+		{
+			HoveredPickup->SetInfoWidgetVisible(false);
+		}
+
+		HoveredPickup = NewHovered;
+
+		if (IsValid(NewHovered))
+		{
+			NewHovered->SetInfoWidgetVisible(true);
+		}
+	}
 }
