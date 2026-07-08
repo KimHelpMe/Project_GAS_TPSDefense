@@ -133,21 +133,33 @@ void UMenu::OnCreateSession(bool bWasSuccessful)
 	if (UWorld* World = GetWorld())
 	{
 		// 플러그인 맵 최적화 경로 주입
-		World->ServerTravel(TEXT("/MultiplayerSessions/Map/Lobby?listen"));
+		//World->ServerTravel(TEXT("/MultiplayerSessions/Map/Lobby?listen"));
+		World->ServerTravel(TEXT("/Game/SHT/Maps/SHTMap?listen"));
 	}
 }
 
 // 서브시스템이 방 검색 결과를 돌려주었을 때 실행되는 구역
 void UMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResults, bool bWasSuccessful)
 {
-	if (MultiplayerSessionsSubsystem == nullptr || !bWasSuccessful) return;
+	if (MultiplayerSessionsSubsystem == nullptr || !bWasSuccessful)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red,
+			FString::Printf(TEXT("Find Sessions Failed! bWasSuccessful: %d"), bWasSuccessful));
+		return;
+	}
 
-	// 1. 탐색된 방 목록을 순회하며 매치 타입 필터링 검사
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Yellow,
+		FString::Printf(TEXT("Found %d sessions"), SessionResults.Num()));
+
+	// 탐색된 방 목록을 순회하며 매치 타입 필터링 검사
 	for (const FOnlineSessionSearchResult& Result : SessionResults)
 	{
 		FString SettingsValue;
 		// SETTING_MATCHTYPE 커스텀 키를 통해 데이터 추출
 		Result.Session.SessionSettings.Get(FName("MatchType"), SettingsValue);
+
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Yellow,
+			FString::Printf(TEXT("Session MatchType: %s"), *SettingsValue));
 
 		// 내가 설정한 매치 타입(예: FreeForAll)과 일치하는 방을 찾았다면
 		if (SettingsValue == MatchType)
@@ -157,6 +169,10 @@ void UMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResu
 			return; // 방을 찾았으므로 루프 즉시 탈출
 		}
 	}
+
+	// 루프를 다 돌았는데 매칭되는 세션이 없었을 때
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red,
+		TEXT("No matching session found!"));
 }
 
 void UMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
