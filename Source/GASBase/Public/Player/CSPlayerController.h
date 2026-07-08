@@ -4,13 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "GameplayTagContainer.h"
 #include "CSPlayerController.generated.h"
 
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
-
-struct FGameplayTag;
 
 UCLASS()
 class GASBASE_API ACSPlayerController : public APlayerController
@@ -22,6 +21,12 @@ protected:
 
 private:
 	void ActivateAbility(const FGameplayTag& AbilityTag) const;
+
+	// 클라이언트에서 로컬로 SendGameplayEventToActor를 호출하면 서버까지 자동으로 전달되지 않는다.
+	// (Prediction Key 윈도우가 짧은 시간 안에 끝나는 경우에만 우연히 맞아떨어짐)
+	// 그래서 서버로 확실하게 이벤트를 전달하기 위한 RPC.
+	UFUNCTION(Server, Reliable)
+	void ServerSendGameplayEvent(FGameplayTag EventTag);
 
 	// Callback Movement Func
 	void Jump();

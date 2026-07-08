@@ -103,7 +103,7 @@ FRotator UCSBlueprintFunctionLibrary::GetAimRotation(const FVector& MuzzleLocati
 	return Direction.Rotation();
 }
 
-FTransform UCSBlueprintFunctionLibrary::GetProjectileSpawnTransform(USceneComponent* MuzzleComponent, FName SocketName, const FVector& AimPoint)
+FTransform UCSBlueprintFunctionLibrary::GetProjectileSpawnTransform(USceneComponent* MuzzleComponent, FName SocketName, const FVector& AimPoint, float ForwardOffset)
 {
 	if (!MuzzleComponent)
 	{
@@ -113,5 +113,8 @@ FTransform UCSBlueprintFunctionLibrary::GetProjectileSpawnTransform(USceneCompon
 	const FVector MuzzleLocation = MuzzleComponent->GetSocketLocation(SocketName);
 	const FRotator AimRotation = GetAimRotation(MuzzleLocation, AimPoint);
 
-	return FTransform(AimRotation, MuzzleLocation);
+	// AimRotation 방향으로 ForwardOffset만큼 밀어낸 위치. ForwardOffset이 0이면 기존 동작과 동일.
+	const FVector SpawnLocation = MuzzleLocation + (AimRotation.Vector() * ForwardOffset);
+
+	return FTransform(AimRotation, SpawnLocation);
 }
