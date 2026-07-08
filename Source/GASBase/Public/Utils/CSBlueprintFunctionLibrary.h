@@ -53,6 +53,7 @@ public:
     UFUNCTION(BlueprintPure, Category = "GAS|Aiming")
     static FRotator GetAimRotation(const FVector& MuzzleLocation, const FVector& AimPoint);
 
+    // ForwardOffset: AimRotation 방향(Rotation.Vector())으로 스폰 위치를 얼마나 밀어낼지. 기본값 0이면 기존과 동일하게 소켓 위치 그대로 반환.
     UFUNCTION(BlueprintPure, Category = "GAS|Aiming")
-    static FTransform GetProjectileSpawnTransform(USceneComponent* MuzzleComponent, FName SocketName, const FVector& AimPoint);
+    static FTransform GetProjectileSpawnTransform(USceneComponent* MuzzleComponent, FName SocketName, const FVector& AimPoint, float ForwardOffset = 0.f);
 };

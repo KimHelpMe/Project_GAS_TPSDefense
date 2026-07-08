@@ -127,6 +127,21 @@ void ACSPlayerController::LMB()
 	FGameplayEventData Payload;
 	Payload.Instigator = GetPawn();
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::Long_Primary, Payload);
+
+	// 위 SendGameplayEventToActor는 이 함수를 호출한 기기(로컬)에서만 이벤트가 발생한다.
+	// GA_LMB처럼 즉시 반응하는 경우엔 Prediction Key 윈도우 안에서 우연히 서버까지 맞아떨어지지만,
+	// GA_SpawnWeapon처럼 소환 후 플레이어가 시간을 두고 LMB를 누르는 경우엔 그 윈도우가 끝나서
+	// 서버 쪽 WaitGameplayEvent가 이벤트를 영영 못 받는 문제가 있었음.
+	// 그래서 서버로 명시적으로 릴레이해서 확실히 도달하도록 보장한다.
+	// 지만 해당 부분 수정 예정. 필요 없을 가능성 농후
+	ServerSendGameplayEvent(CSGameplayTags::Abilities::Long_Primary);
+}
+
+void ACSPlayerController::ServerSendGameplayEvent_Implementation(FGameplayTag EventTag)
+{
+	FGameplayEventData Payload;
+	Payload.Instigator = GetPawn();
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), EventTag, Payload);
 }
 
 void ACSPlayerController::RMB()
