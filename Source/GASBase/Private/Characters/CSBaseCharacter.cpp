@@ -113,7 +113,7 @@ void ACSBaseCharacter::HandleRespawn()
 	bAlive = true;
 }
 
-void ACSBaseCharacter::HandleDeath()
+void ACSBaseCharacter::HandleDeath_Implementation()
 {
 	bAlive = false;
 }
