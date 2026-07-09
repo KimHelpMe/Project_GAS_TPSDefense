@@ -76,4 +76,12 @@ private:
 
 	// 마지막 세션 검색 상태를 유지할 스마트 포인터 변수
 	TSharedPtr<FOnlineSessionSearch> LastSessionSearch;
+
+private:
+	// 세션 파괴 완료 후 자동으로 재개설을 진행할지 여부를 판별하는 플래그
+	bool bCreateSessionOnDestroy = false;
+
+	// 개설에 실패하여 대기하는 동안 임시 보관할 직전 세션 설정값들
+	int32 LastNumPublicConnections = 4;
+	FString LastMatchType = TEXT("FreeForAll");
 };

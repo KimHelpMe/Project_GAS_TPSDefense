@@ -6,7 +6,9 @@
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
 #include "GameplayEffectTypes.h"  
+#include "Delegates/DelegateCombinations.h"
 #include "CSBaseCharacter.generated.h"
+
 
 class UAbilitySystemComponent;
 class UAttributeSet;
@@ -54,9 +56,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GAS|Death")
 	virtual void HandleRespawn();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GAS|Death")
+	void HandleDeath();
+
 
 protected:
-	virtual void HandleDeath();
+	virtual void HandleDeath_Implementation();
 
 	// StartupAbilities 배열에 있는 어빌리티들을 ASC에 부여(Give)하는 함수
 	void GiveStartupAbilities();

@@ -27,11 +27,14 @@ bool UMenu::Initialize()
 	return true;
 }
 
-void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMatch)
+void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMatch, FString LobbyPath)
 {
 	// 블루프린트 인자 값을 내부 변수에 할당
 	NumPublicConnections = NumberOfPublicConnections;
 	MatchType = TypeOfMatch;
+
+	// 입력받은 레벨 경로 뒤에 '?listen' 옵션을 붙여 최종 이동 주소를 조립합니다.
+	PathToLobby = FString::Printf(TEXT("%s?listen"), *LobbyPath);
 
 	// 위젯을 화면에 추가하고 가시성 설정
 	AddToViewport();
@@ -79,6 +82,8 @@ void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMatch)
 		MultiplayerSessionsSubsystem->MultiplayerOnFindSessionsComplete.AddUObject(this, &ThisClass::OnFindSessions);
 		MultiplayerSessionsSubsystem->MultiplayerOnJoinSessionComplete.AddUObject(this, &ThisClass::OnJoinSession);
 	}
+
+
 }
 
 
@@ -117,16 +122,8 @@ void UMenu::OnCreateSession(bool bWasSuccessful)
 {
 	if (!bWasSuccessful)
 	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("Failed to create session!"));
-		}
+		if (HostButton) HostButton->SetIsEnabled(true);
 		return;
-	}
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Green, TEXT("Session created successfully!"));
 	}
 
 	// 세션이 완벽히 만들어진 것이 보장되었으므로, 안전하게 플러그인 맵 내부 로비 레벨로 이동
@@ -134,22 +131,21 @@ void UMenu::OnCreateSession(bool bWasSuccessful)
 	{
 		// 플러그인 맵 최적화 경로 주입
 		//World->ServerTravel(TEXT("/MultiplayerSessions/Map/Lobby?listen"));
-		World->ServerTravel(TEXT("/Game/SHT/Maps/SHTMap?listen"));
+		World->ServerTravel(PathToLobby);
 	}
 }
 
 // 서브시스템이 방 검색 결과를 돌려주었을 때 실행되는 구역
 void UMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResults, bool bWasSuccessful)
 {
-	if (MultiplayerSessionsSubsystem == nullptr || !bWasSuccessful)
+	if (MultiplayerSessionsSubsystem == nullptr) return;
+
+	// 성공했더라도 방 목록이 비어있으면 다시 누를 수 있게 열어주어야 합니다.
+	if (!bWasSuccessful || SessionResults.Num() == 0)
 	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red,
-			FString::Printf(TEXT("Find Sessions Failed! bWasSuccessful: %d"), bWasSuccessful));
+		if (JoinButton) JoinButton->SetIsEnabled(true);
 		return;
 	}
-
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Yellow,
-		FString::Printf(TEXT("Found %d sessions"), SessionResults.Num()));
 
 	// 탐색된 방 목록을 순회하며 매치 타입 필터링 검사
 	for (const FOnlineSessionSearchResult& Result : SessionResults)
@@ -181,6 +177,7 @@ void UMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
 	if (Result != EOnJoinSessionCompleteResult::Success)
 	{
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("Failed to join session."));
+		if (JoinButton) JoinButton->SetIsEnabled(true); // 버튼 복구
 		return;
 	}
 
@@ -217,14 +214,35 @@ void UMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
 
 void UMenu::OnDestroySession(bool bWasSuccessful)
 {
+	if (!bWasSuccessful)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("Failed to destroy session."));
+		return;
+	}
+
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Green, TEXT("Session destroyed successfully."));
+
+	// 버튼 다시 활성화하여 재호스팅/재검색 가능하게 복구
+	if (HostButton) HostButton->SetIsEnabled(true);
+	if (JoinButton) JoinButton->SetIsEnabled(true);
 }
 
 void UMenu::OnStartSession(bool bWasSuccessful)
 {
+	if (bWasSuccessful)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Green, TEXT("Session started successfully."));
+	}
+	else
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("Failed to start session."));
+	}
 }
 
 void UMenu::OnHostButtonClicked()
 {
+	if (HostButton) HostButton->SetIsEnabled(false); // 스팸 클릭 방지
+
 	// 캐싱된 서브시스템이 유효하다면 세션 생성 함수 작동 (아직 구현부는 비어있음)
 	if (MultiplayerSessionsSubsystem)
 	{
@@ -235,6 +253,8 @@ void UMenu::OnHostButtonClicked()
 
 void UMenu::OnJoinButtonClicked()
 {
+	if (JoinButton) JoinButton->SetIsEnabled(false); // 스팸 클릭 방지
+
 	if (MultiplayerSessionsSubsystem)
 	{
 		// 10000개의 방을 최대로 탐색 요청 (스팀 앱ID free-pass 방 노이즈 극복용 고역치 설정)
