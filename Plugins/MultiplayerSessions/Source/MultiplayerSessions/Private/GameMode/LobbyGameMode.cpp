@@ -1,56 +1,68 @@
-
-
+// CSK
 
 #include "GameMode/LobbyGameMode.h"
+#include "MultiplayerSessionsSubsystem.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerState.h"
 
 ALobbyGameMode::ALobbyGameMode()
 {
-	// 심리스 트래블 활성화 필수 설정
 	bUseSeamlessTravel = true;
+}
+
+void ALobbyGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// StartSession 완료 콜백 바인딩
+	if (UGameInstance* GI = GetGameInstance())
+	{
+		if (UMultiplayerSessionsSubsystem* Subsystem = GI->GetSubsystem<UMultiplayerSessionsSubsystem>())
+		{
+			Subsystem->MultiplayerOnStartSessionComplete.AddDynamic(this, &ThisClass::OnStartSessionComplete);
+		}
+	}
+}
+
+void ALobbyGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	// Subsystem은 GameInstance에 붙어서 맵 전환 후에도 살아있으므로
+	// GameMode 파괴 전에 델리게이트 바인딩을 명시적으로 해제
+	if (UGameInstance* GI = GetGameInstance())
+	{
+		if (UMultiplayerSessionsSubsystem* Subsystem = GI->GetSubsystem<UMultiplayerSessionsSubsystem>())
+		{
+			Subsystem->MultiplayerOnStartSessionComplete.RemoveDynamic(this, &ThisClass::OnStartSessionComplete);
+		}
+	}
+
+	Super::EndPlay(EndPlayReason);
 }
 
 void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 
-	// .Get()을 거쳐 오리지널 GameState 확보
-	AGameStateBase* MyGameState = GameState.Get();
-	if (MyGameState)
+	// 현재 인원 수 표시
+	if (AGameStateBase* GS = GameState.Get())
 	{
-		// GameState가 복제 중인 PlayerArray 배열 개수를 통해 현재 실시간 인원 수 파악
-		int32 NumberOfPlayers = MyGameState->PlayerArray.Num();
-
+		int32 NumberOfPlayers = GS->PlayerArray.Num();
 		if (GEngine)
 		{
-			// 고정 Key 값 '1'을 사용하여 화면 스팸을 막고 숫자만 실시간 업데이트 갱신 처리
-			GEngine->AddOnScreenDebugMessage(1, 60.f, FColor::Yellow, FString::Printf(TEXT("Players in game: %d"), NumberOfPlayers));
-		}
-
-		// 지정된 인원(예: 4명)이 모이면 본 게임 매치 맵으로 자동 서버 트래블 발동
-		if (NumberOfPlayers >= 4)
-		{
-			UWorld* World = GetWorld();
-			if (World)
-			{
-				// ?listen 옵션을 붙여 새 맵도 리슨 서버 상태로 오픈
-				World->ServerTravel(TEXT("/Game/SHT/Maps/SHTMap?listen"));
-			}
+			GEngine->AddOnScreenDebugMessage(1, 60.f, FColor::Yellow,
+				FString::Printf(TEXT("Players in game: %d"), NumberOfPlayers));
 		}
 	}
 
-	// 새로 접속한 유저의 PlayerState를 추적하여 이름 획득 및 공지
+	// 접속 공지
 	if (NewPlayer)
 	{
-		APlayerState* MyPlayerState = NewPlayer->GetPlayerState<APlayerState>();
-		if (MyPlayerState)
+		if (APlayerState* PS = NewPlayer->GetPlayerState<APlayerState>())
 		{
-			FString PlayerName = MyPlayerState->GetPlayerName();
 			if (GEngine)
 			{
-				// Key '-1'을 사용하여 유저가 들어올 때마다 누적 공지 출력
-				GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, FString::Printf(TEXT("%s has joined the game!"), *PlayerName));
+				GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,
+					FString::Printf(TEXT("%s has joined the game!"), *PS->GetPlayerName()));
 			}
 		}
 	}
@@ -60,29 +72,41 @@ void ALobbyGameMode::Logout(AController* Exiting)
 {
 	Super::Logout(Exiting);
 
-	AGameStateBase* MyGameState = GameState.Get();
-	if (MyGameState)
+	// Logout 시점에는 아직 PlayerArray에서 제거 전이므로 -1 보정
+	if (AGameStateBase* GS = GameState.Get())
 	{
-		// 로그아웃 시점에는 아직 PlayerArray에서 제거되기 직전일 수 있으므로 
-		// 실시간 인원 예측 보정을 위해 임시로 1을 빼서 화면에 출력합니다 (디버깅 편의용)
-		int32 NumberOfPlayers = MyGameState->PlayerArray.Num() - 1;
-
+		int32 NumberOfPlayers = GS->PlayerArray.Num() - 1;
 		if (GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage(1, 60.f, FColor::Yellow, FString::Printf(TEXT("Players in game: %d"), NumberOfPlayers));
+			GEngine->AddOnScreenDebugMessage(1, 60.f, FColor::Yellow,
+				FString::Printf(TEXT("Players in game: %d"), NumberOfPlayers));
 		}
 	}
 
 	if (Exiting)
 	{
-		APlayerState* MyPlayerState = Exiting->GetPlayerState<APlayerState>();
-		if (MyPlayerState)
+		if (APlayerState* PS = Exiting->GetPlayerState<APlayerState>())
 		{
-			FString PlayerName = MyPlayerState->GetPlayerName();
 			if (GEngine)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, FString::Printf(TEXT("%s has exited the game."), *PlayerName));
+				GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red,
+					FString::Printf(TEXT("%s has exited the game."), *PS->GetPlayerName()));
 			}
 		}
+	}
+}
+
+void ALobbyGameMode::OnStartSessionComplete(bool bWasSuccessful)
+{
+	if (!bWasSuccessful)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("Failed to start session."));
+		return;
+	}
+
+	// 세션 시작 성공 → 본 게임 맵으로 ServerTravel
+	if (UWorld* World = GetWorld())
+	{
+		World->ServerTravel(FString::Printf(TEXT("%s?listen"), *GameMapPath));
 	}
 }
