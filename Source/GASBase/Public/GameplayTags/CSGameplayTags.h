@@ -48,6 +48,9 @@ namespace CSGameplayTags
 
 		// 원거리 기본 공격(GA_LMB) 내부 WaitGameplayEvent가 기다리는 트리거 태그
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Long_Primary);
+
+		// GA_SpawnWeapon으로 소환된 무기를 발사시키는 전용 트리거 태그
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(FireSpawnedWeapons);
 	}
 
 	namespace Events
@@ -65,7 +68,8 @@ namespace CSGameplayTags
 	{
 		// 투사체 충돌 시 이펙트/사운드를 재생하는 GameplayCue
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impact_E);
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impace_Fire);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impact_Fire);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impact_Earthquake);
 	}
 
 	namespace Status
@@ -74,6 +78,8 @@ namespace CSGameplayTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Dead);
 		// 캐스팅 중 — 스킬 시전 중 이동/공격 제한용 태그
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Casting);
+		// 무기 소환~발사 대기 중임을 나타내는 상태 태그 (평타 차단용)
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(WeaponsSpawned);
 
 	}
 

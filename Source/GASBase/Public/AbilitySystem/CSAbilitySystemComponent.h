@@ -80,6 +80,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GAS|Abilities")
 	void GetSlotCooldown(FGameplayTag SlotTag, float& TimeRemaining, float& CooldownDuration);
 
+	// UAbilitySystemComponent::AddLooseGameplayTag/RemoveLooseGameplayTag는 BlueprintCallable이 아니라서 블루프린트에서 직접 못 씀. Super로 기능 가져오고 Callable 추가함.
+	UFUNCTION(BlueprintCallable, Category = "GAS|Tags")
+	void AddLooseGameplayTag(FGameplayTag TagToAdd);
+
+	UFUNCTION(BlueprintCallable, Category = "GAS|Tags")
+	void RemoveLooseGameplayTag(FGameplayTag TagToRemove);
+
 private:
 	void HandleAutoActivatedAbility(const FGameplayAbilitySpec& AbilitySpec);
 

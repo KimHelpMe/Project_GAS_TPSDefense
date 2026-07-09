@@ -167,6 +167,18 @@ void UCSAbilitySystemComponent::GetSlotCooldown(FGameplayTag SlotTag, float& Tim
 	Spec->Ability->GetCooldownTimeRemainingAndDuration(Entry->Handle, AbilityActorInfo.Get(), TimeRemaining, CooldownDuration);
 }
 
+void UCSAbilitySystemComponent::AddLooseGameplayTag(FGameplayTag TagToAdd)
+{
+	if (!TagToAdd.IsValid()) return;
+	Super::AddLooseGameplayTag(TagToAdd);
+}
+
+void UCSAbilitySystemComponent::RemoveLooseGameplayTag(FGameplayTag TagToRemove)
+{
+	if (!TagToRemove.IsValid()) return;
+	Super::RemoveLooseGameplayTag(TagToRemove);
+}
+
 void UCSAbilitySystemComponent::OnRep_SlotToAbility()
 {
 	// 클라이언트에 SlotToAbility 전체가 새로 도착했을 때 호출됨.

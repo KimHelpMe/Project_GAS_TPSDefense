@@ -32,7 +32,7 @@ FVector UCSGameplayPlayerAbility::GetAimpoint()
     }
 
     const FVector Start = PC->PlayerCameraManager->GetCameraLocation();
-    const FVector End = PC->PlayerCameraManager->GetCameraRotation().Vector() * TraceDistance;
+    const FVector End = Start + PC->PlayerCameraManager->GetCameraRotation().Vector() * TraceDistance;
 
     FCollisionQueryParams QueryParams;
     QueryParams.AddIgnoredActor(GetAvatarActorFromActorInfo());

@@ -135,6 +135,7 @@ void ACSPlayerController::LMB()
 	// 그래서 서버로 명시적으로 릴레이해서 확실히 도달하도록 보장한다.
 	// 지만 해당 부분 수정 예정. 필요 없을 가능성 농후
 	ServerSendGameplayEvent(CSGameplayTags::Abilities::Long_Primary);
+	ServerSendGameplayEvent(CSGameplayTags::Abilities::FireSpawnedWeapons);
 }
 
 void ACSPlayerController::ServerSendGameplayEvent_Implementation(FGameplayTag EventTag)

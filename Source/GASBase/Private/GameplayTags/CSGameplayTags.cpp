@@ -28,6 +28,7 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(Fireball, "CSGameplayTags.Abilities.Fireball");
 
 		UE_DEFINE_GAMEPLAY_TAG(Long_Primary, "CSGameplayTags.Abilities.Long_Primary");
+		UE_DEFINE_GAMEPLAY_TAG(FireSpawnedWeapons, "CSGameplayTags.Abilities.FireSpawnedWeapons");
 
 	}
 
@@ -44,7 +45,8 @@ namespace CSGameplayTags
 	{
 		// 주의: 반드시 GameplayCue.로 시작해야 GAS가 Cue로 인식
 		UE_DEFINE_GAMEPLAY_TAG(Impact_E, "GameplayCue.Impact.E");
-		UE_DEFINE_GAMEPLAY_TAG(Impace_Fire, "GameplayCue.Impact.Fireball");
+		UE_DEFINE_GAMEPLAY_TAG(Impact_Fire, "GameplayCue.Impact.Fireball");
+		UE_DEFINE_GAMEPLAY_TAG(Impact_Earthquake, "GameplayCue.Impact.Earthquake");
 
 	}
 
@@ -52,7 +54,7 @@ namespace CSGameplayTags
 	{
 		UE_DEFINE_GAMEPLAY_TAG(Dead, "CSGameplayTags.Status.Dead");
 		UE_DEFINE_GAMEPLAY_TAG(Casting, "CSGameplayTags.Status.Casting");
-
+		UE_DEFINE_GAMEPLAY_TAG(WeaponsSpawned, "CSGameplayTags.Status.WeaponsSpawned");
 
 	}
 
