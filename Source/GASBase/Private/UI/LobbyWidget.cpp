@@ -4,6 +4,7 @@
 #include "UI/ChatWidget.h"
 #include "UI/PlayerListWidget.h"
 #include "Lobby/LobbyInteractionComponent.h"
+#include "Player/CSLobbyPlayerController.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "GameFramework/PlayerController.h"
@@ -28,13 +29,11 @@ void ULobbyWidget::NativeConstruct()
 			StartButton->SetVisibility(ESlateVisibility::Collapsed);
 		}
 	}
-}
 
-void ULobbyWidget::FocusChatInput()
-{
-	if (ChatWidget)
+	// Leave 버튼 클릭 바인딩
+	if (LeaveButton)
 	{
-		ChatWidget->FocusChatInput();
+		LeaveButton->OnClicked.AddDynamic(this, &ThisClass::OnLeaveButtonClicked);
 	}
 }
 
@@ -49,6 +48,15 @@ void ULobbyWidget::UpdatePlayerCount(int32 Count)
 	if (PlayerListWidget)
 	{
 		PlayerListWidget->RefreshPlayerList();
+	}
+}
+
+void ULobbyWidget::OnLeaveButtonClicked()
+{
+	ACSLobbyPlayerController* LobbyPC = Cast<ACSLobbyPlayerController>(GetOwningPlayer());
+	if (LobbyPC)
+	{
+		LobbyPC->RequestLeaveLobby();
 	}
 }
 

@@ -7,17 +7,32 @@
 #include "AbilitySystem/CSAbilitySystemComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayTags/CSGameplayTags.h"
+#include "UI/ChatWidget.h"
 
 void ACSPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// 인게임: 커서 없음, 게임 전용 입력 모드
 	if (IsLocalController())
 	{
 		bShowMouseCursor = false;
 		SetInputMode(FInputModeGameOnly());
+
+		// 인게임 채팅 위젯 생성
+		if (ChatWidgetClass)
+		{
+			InGameChatWidget = CreateWidget<UChatWidget>(this, ChatWidgetClass);
+			if (InGameChatWidget)
+			{
+				InGameChatWidget->AddToViewport();
+			}
+		}
 	}
+}
+
+UChatWidget* ACSPlayerController::GetChatWidget() const
+{
+	return InGameChatWidget;
 }
 
 void ACSPlayerController::SetupInputComponent()

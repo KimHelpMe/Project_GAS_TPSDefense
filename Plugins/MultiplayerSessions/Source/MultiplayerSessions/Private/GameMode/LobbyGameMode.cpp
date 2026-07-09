@@ -100,11 +100,11 @@ void ALobbyGameMode::OnStartSessionComplete(bool bWasSuccessful)
 {
 	if (!bWasSuccessful)
 	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("Failed to start session."));
-		return;
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Yellow, TEXT("StartSession failed - proceeding with travel anyway."));
 	}
 
-	// 세션 시작 성공 → 본 게임 맵으로 ServerTravel
+	// StartSession 성공 여부와 무관하게 본 게임 맵으로 이동
+	// StartSession은 추가 접속 차단용이며 ServerTravel의 필수 조건이 아님
 	if (UWorld* World = GetWorld())
 	{
 		World->ServerTravel(FString::Printf(TEXT("%s?listen"), *GameMapPath));

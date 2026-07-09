@@ -8,6 +8,7 @@
 #include "CSPlayerController.generated.h"
 
 class UInputAction;
+class UChatWidget;
 struct FInputActionValue;
 
 UCLASS()
@@ -19,13 +20,15 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
+	// 베이스 오버라이드: 인게임 ChatWidget 반환
+	virtual UChatWidget* GetChatWidget() const override;
+
 private:
 	void ActivateAbility(const FGameplayTag& AbilityTag) const;
 
 	UFUNCTION(Server, Reliable)
 	void ServerSendGameplayEvent(FGameplayTag EventTag);
 
-	// 어빌리티 콜백
 	void Roll();
 	void LMB();
 	void RMB();
@@ -35,6 +38,14 @@ private:
 	void T();
 
 private:
+	// 인게임 채팅 위젯 클래스 (에디터에서 할당)
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UChatWidget> ChatWidgetClass;
+
+	// 생성된 인게임 채팅 위젯
+	UPROPERTY()
+	TObjectPtr<UChatWidget> InGameChatWidget;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Movement")
 	TObjectPtr<UInputAction> RollAction;
 

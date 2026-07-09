@@ -20,8 +20,8 @@ public:
 	// 외부에서 호출: 인원 수 갱신
 	void UpdatePlayerCount(int32 Count);
 
-	// 외부에서 호출: 채팅 입력창 포커스
-	void FocusChatInput();
+	// ChatWidget 접근자
+	UChatWidget* GetChatWidget() const { return ChatWidget; }
 
 protected:
 	virtual void NativeConstruct() override;
@@ -29,10 +29,17 @@ protected:
 	UFUNCTION()
 	void OnStartButtonClicked();
 
+	UFUNCTION()
+	void OnLeaveButtonClicked();
+
 private:
 	// Start 버튼 (호스트만 Visible로 설정)
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> StartButton;
+
+	// 타이틀로 돌아가기 버튼
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> LeaveButton;
 
 	// 현재 인원 수 표시
 	UPROPERTY(meta = (BindWidget))

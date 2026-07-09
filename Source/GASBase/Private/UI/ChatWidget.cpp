@@ -7,33 +7,26 @@
 #include "Components/EditableTextBox.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "Components/Border.h"
 #include "GameFramework/PlayerController.h"
+#include "TimerManager.h"
 
-void UChatWidget::FocusChatInput()
-{
-	if (ChatInputBox)
-	{
-		ChatInputBox->SetKeyboardFocus();
-	}
-}
 
 void UChatWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	// 버튼 클릭 바인딩
 	if (SendButton)
 	{
 		SendButton->OnClicked.AddDynamic(this, &ThisClass::OnSendClicked);
 	}
 
-	// 입력창 Enter 키 바인딩
 	if (ChatInputBox)
 	{
 		ChatInputBox->OnTextCommitted.AddDynamic(this, &ThisClass::OnInputCommitted);
 	}
 
-	// Subsystem 캐싱 및 델리게이트 바인딩
+	// 서브시스템 바인딩 + 기존 히스토리 로드
 	if (UGameInstance* GI = GetGameInstance())
 	{
 		ChatSubsystem = GI->GetSubsystem<UChatSubsystem>();
@@ -41,18 +34,35 @@ void UChatWidget::NativeConstruct()
 		{
 			ChatSubsystem->OnChatMessageReceived.AddDynamic(this, &ThisClass::OnChatMessageReceived);
 
-			// 기존 채팅 기록 복원 (맵 전환 후 재접속 시)
 			for (const FChatMessage& Msg : ChatSubsystem->GetHistory())
 			{
 				AddMessageToDisplay(Msg);
 			}
 		}
 	}
+
+	// 초기 상태: Idle (입력창 숨김, 메시지 영역 투명)
+	SetInputAreaVisible(false);
+	CurrentOpacity = 0.f;
+	if (MessageScrollBox)
+	{
+		MessageScrollBox->SetRenderOpacity(CurrentOpacity);
+	}
+	if (MessageBackground)
+	{
+		MessageBackground->SetRenderOpacity(CurrentOpacity);
+	}
 }
 
 void UChatWidget::NativeDestruct()
 {
-	// 델리게이트 해제
+	// 타이머 정리
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(FadeTimerHandle);
+		World->GetTimerManager().ClearTimer(FadeTickHandle);
+	}
+
 	if (ChatSubsystem)
 	{
 		ChatSubsystem->OnChatMessageReceived.RemoveDynamic(this, &ThisClass::OnChatMessageReceived);
@@ -61,22 +71,65 @@ void UChatWidget::NativeDestruct()
 	Super::NativeDestruct();
 }
 
-void UChatWidget::OnChatMessageReceived(const FChatMessage& Message)
+
+void UChatWidget::ActivateChat()
 {
-	AddMessageToDisplay(Message);
+	bChatActive = true;
+
+	// 페이드 타이머 전부 중단
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(FadeTimerHandle);
+		World->GetTimerManager().ClearTimer(FadeTickHandle);
+	}
+
+	// 메시지 영역 완전 불투명
+	ShowMessages();
+
+	// 입력 영역 표시 + 포커스
+	SetInputAreaVisible(true);
+	if (ChatInputBox)
+	{
+		ChatInputBox->SetKeyboardFocus();
+	}
 }
+
+void UChatWidget::DeactivateChat()
+{
+	bChatActive = false;
+
+	// 입력창 초기화 및 숨김
+	if (ChatInputBox)
+	{
+		ChatInputBox->SetText(FText::GetEmpty());
+	}
+	SetInputAreaVisible(false);
+
+	// 페이드아웃 타이머 시작
+	ResetFadeTimer();
+
+	// PC에 비활성 요청
+	OnChatDeactivateRequested.Broadcast();
+}
+
 
 void UChatWidget::OnSendClicked()
 {
 	SendCurrentInput();
+	DeactivateChat();
 }
 
 void UChatWidget::OnInputCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	// Enter 키로 전송
 	if (CommitMethod == ETextCommit::OnEnter)
 	{
 		SendCurrentInput();
+		DeactivateChat();
+	}
+	else if (CommitMethod == ETextCommit::OnCleared)
+	{
+		// Escape: 전송 없이 비활성
+		DeactivateChat();
 	}
 }
 
@@ -87,7 +140,6 @@ void UChatWidget::SendCurrentInput()
 	FString InputText = ChatInputBox->GetText().ToString().TrimStartAndEnd();
 	if (InputText.IsEmpty()) return;
 
-	// PC에 부착된 ChatComponent를 찾아서 전송
 	APlayerController* PC = GetOwningPlayer();
 	if (PC)
 	{
@@ -97,24 +149,120 @@ void UChatWidget::SendCurrentInput()
 		}
 	}
 
-	// 입력창 초기화 및 포커스 복귀
 	ChatInputBox->SetText(FText::GetEmpty());
-	ChatInputBox->SetKeyboardFocus();
+}
+
+
+void UChatWidget::OnChatMessageReceived(const FChatMessage& Message)
+{
+	AddMessageToDisplay(Message);
+
+	// 비활성 상태에서도 새 메시지가 오면 잠깐 보여줌
+	ShowMessages();
+	ResetFadeTimer();
 }
 
 void UChatWidget::AddMessageToDisplay(const FChatMessage& Message)
 {
 	if (!MessageScrollBox) return;
 
-	// 메시지 텍스트 블록 동적 생성
 	UTextBlock* MessageText = NewObject<UTextBlock>(this);
 	if (!MessageText) return;
 
-	// "[발신자] 내용" 포맷
 	FString DisplayText = FString::Printf(TEXT("[%s] %s"), *Message.SenderName, *Message.Content);
 	MessageText->SetText(FText::FromString(DisplayText));
 
-	// 스크롤박스에 추가 후 맨 아래로 스크롤
 	MessageScrollBox->AddChild(MessageText);
 	MessageScrollBox->ScrollToEnd();
+}
+
+
+void UChatWidget::ShowMessages()
+{
+	// 페이드 보간 타이머 중단
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(FadeTickHandle);
+	}
+
+	CurrentOpacity = 1.f;
+
+	if (MessageScrollBox)
+	{
+		MessageScrollBox->SetRenderOpacity(1.f);
+	}
+	if (MessageBackground)
+	{
+		MessageBackground->SetRenderOpacity(1.f);
+	}
+}
+
+void UChatWidget::ResetFadeTimer()
+{
+	if (bChatActive) return;
+
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(FadeTimerHandle);
+		World->GetTimerManager().ClearTimer(FadeTickHandle);
+		World->GetTimerManager().SetTimer(
+			FadeTimerHandle,
+			this,
+			&ThisClass::StartFadeOut,
+			FadeDelay,
+			false
+		);
+	}
+}
+
+void UChatWidget::StartFadeOut()
+{
+	if (bChatActive) return;
+
+	static constexpr float TickInterval = 1.f / 60.f;
+
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().SetTimer(
+			FadeTickHandle,
+			this,
+			&ThisClass::FadeOutTick,
+			TickInterval,
+			true
+		);
+	}
+}
+
+void UChatWidget::FadeOutTick()
+{
+	static constexpr float TickInterval = 1.f / 60.f;
+
+	CurrentOpacity -= TickInterval / FadeDuration;
+
+	if (CurrentOpacity <= 0.f)
+	{
+		CurrentOpacity = 0.f;
+
+		if (UWorld* World = GetWorld())
+		{
+			World->GetTimerManager().ClearTimer(FadeTickHandle);
+		}
+	}
+
+	if (MessageScrollBox)
+	{
+		MessageScrollBox->SetRenderOpacity(CurrentOpacity);
+	}
+	if (MessageBackground)
+	{
+		MessageBackground->SetRenderOpacity(CurrentOpacity);
+	}
+}
+
+void UChatWidget::SetInputAreaVisible(bool bVisible)
+{
+	ESlateVisibility NewVisibility = bVisible ? ESlateVisibility::Visible : ESlateVisibility::Collapsed;
+
+	if (ChatInputBox) ChatInputBox->SetVisibility(NewVisibility);
+	if (SendButton) SendButton->SetVisibility(NewVisibility);
 }
