@@ -7,6 +7,8 @@
 #include "Components/WidgetComponent.h"
 #include "UI/CSSkillInfoWidget.h"
 #include "Net/UnrealNetwork.h"
+#include "Data/CSAbilityDropSubsystem.h"
+
 
 ACSAbilityPickup::ACSAbilityPickup()
 {
@@ -57,10 +59,22 @@ void ACSAbilityPickup::BeginPlay()
 	OverlapSphere->OnComponentBeginOverlap.AddDynamic(this, &ACSAbilityPickup::OnOverlapBegin);
 
 	// 스폰 시점에 딱 한 번 랜덤 결정 (서버 권위). 습득 시엔 이 값을 재추첨하지 않고 그대로 사용.
-	if (HasAuthority() && !PossibleAbilities.IsEmpty())
+	if (HasAuthority())
 	{
-		const int32 RandomIndex = FMath::RandRange(0, PossibleAbilities.Num() - 1);
-		AssignedAbility = PossibleAbilities[RandomIndex];
+		if (bUseDropTable)
+		{
+			// 드랍 테이블에서 가중치 랜덤
+			if (UCSAbilityDropSubsystem* DropSub = GetGameInstance()->GetSubsystem<UCSAbilityDropSubsystem>())
+			{
+				AssignedAbility = DropSub->RollRandomAbility(SpawnWave);
+			}
+		}
+		else if (!PossibleAbilities.IsEmpty())
+		{
+			// 기존 방식 유지
+			const int32 RandomIndex = FMath::RandRange(0, PossibleAbilities.Num() - 1);
+			AssignedAbility = PossibleAbilities[RandomIndex];
+		}
 	}
 
 	// 서버(리슨 서버의 로컬 클라이언트 포함)는 OnRep이 호출되지 않으므로 직접 갱신

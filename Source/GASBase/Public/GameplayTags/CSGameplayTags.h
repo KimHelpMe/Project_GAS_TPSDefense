@@ -16,6 +16,11 @@
 
 namespace CSGameplayTags
 {
+	namespace Input
+	{
+
+	}
+
 	namespace Abilities
 	{
 		// ASC에 부여(Give)되는 즉시 자동 활성화할 어빌리티에 붙이는 메타 태그
@@ -57,8 +62,11 @@ namespace CSGameplayTags
 	{
 		// 피격 반응 이벤트 — 공격자 정보를 담아 적에게 전송
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(HitReact);
+
 		// 투사체 스폰 이벤트 — 몽타주 AnimNotify에서 발화
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnProjectile);
+
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnAbilityBox);
 
 		// 점수 획득 이벤트
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Scored);

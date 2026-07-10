@@ -8,6 +8,7 @@
 
 class UGameplayAbility;
 class UTexture2D;
+class UCurveTable;;
 
 // Skill Data Asset.
 
@@ -33,4 +34,18 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|UI")
 	FText Description;
+
+#pragma region CSK/ CurveTable
+
+	// 이 스킬 전용 CurveTable (CT_Fireball - Row 이름: Damage, Cooldown, Cost 등
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Data")
+	TObjectPtr<UCurveTable> AbilityCurveTable;
+
+	// 레벨별 수치 조회 (UI 표시용)
+	// StatName: "Damage", "Cooldown", "Cost" 등
+	UFUNCTION(BlueprintCallable, Category = "Ability|Data")
+	float GetValueAtLevel(FName StatName, int32 Level) const;
+
+#pragma endregion
+
 };

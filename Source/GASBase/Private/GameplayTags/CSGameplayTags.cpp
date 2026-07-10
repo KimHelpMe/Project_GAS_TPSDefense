@@ -6,6 +6,11 @@
 
 namespace CSGameplayTags
 {
+	namespace Input
+	{
+
+	}
+
 	namespace Abilities
 	{
 		UE_DEFINE_GAMEPLAY_TAG(ActivateOnGiven, "CSGameplayTags.Abilities.ActivateOnGiven");
@@ -38,6 +43,8 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(Scored,"CSGameplayTags.Events.Scored");
 
 		UE_DEFINE_GAMEPLAY_TAG(SpawnProjectile, "CSGameplayTags.Events.SpawnProjectile");
+		UE_DEFINE_GAMEPLAY_TAG(SpawnAbilityBox, "CSGameplayTags.Events.SpawnAbilityBox");
+
 
 	}
 
