@@ -35,7 +35,7 @@ private:
 	void Q();
 	void E();
 	void R();
-	void T();
+	void TestAbility();
 
 private:
 	// 인게임 채팅 위젯 클래스 (에디터에서 할당)

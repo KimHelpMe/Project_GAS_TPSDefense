@@ -27,7 +27,17 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(R, "CSGameplayTags.Abilities.R");
 
 		UE_DEFINE_GAMEPLAY_TAG(G, "CSGameplayTags.Abilities.G");
-		UE_DEFINE_GAMEPLAY_TAG(T, "CSGameplayTags.Abilities.T");
+
+		UE_DEFINE_GAMEPLAY_TAG(BulletParty, "CSGameplayTags.Abilities.BulletParty");
+		UE_DEFINE_GAMEPLAY_TAG(FireWall, "CSGameplayTags.Abilities.FireWall");
+		UE_DEFINE_GAMEPLAY_TAG(SpawnSword, "CSGameplayTags.Abilities.SpawnSword");
+		UE_DEFINE_GAMEPLAY_TAG(SpawnAxe, "CSGameplayTags.Abilities.SpawnAxe");
+		UE_DEFINE_GAMEPLAY_TAG(FireSpawnSword, "CSGameplayTags.Abilities.FireSpawnSword");
+		UE_DEFINE_GAMEPLAY_TAG(FireSpawnAxe, "CSGameplayTags.Abilities.FireSpawnAxe");
+		UE_DEFINE_GAMEPLAY_TAG(Teleport, "CSGameplayTags.Abilities.Teleport");
+
+
+		UE_DEFINE_GAMEPLAY_TAG(TestAbility, "CSGameplayTags.Abilities.TestAbility");
 
 
 		UE_DEFINE_GAMEPLAY_TAG(Fireball, "CSGameplayTags.Abilities.Fireball");
@@ -43,9 +53,13 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(Scored,"CSGameplayTags.Events.Scored");
 
 		UE_DEFINE_GAMEPLAY_TAG(SpawnProjectile, "CSGameplayTags.Events.SpawnProjectile");
+
+		UE_DEFINE_GAMEPLAY_TAG(SpawnWeapon, "CSGameplayTags.Events.SpawnWeapon");
+		UE_DEFINE_GAMEPLAY_TAG(SpawnFireWall, "CSGameplayTags.Events.SpawnFireWall");
 		UE_DEFINE_GAMEPLAY_TAG(SpawnAbilityBox, "CSGameplayTags.Events.SpawnAbilityBox");
 
 		
+
 
 	}
 
@@ -72,6 +86,8 @@ namespace CSGameplayTags
 	{
 		UE_DEFINE_GAMEPLAY_TAG(Fireball, "CSGameplayTags.Cooldown.Fireball");
 		UE_DEFINE_GAMEPLAY_TAG(FireWall, "CSGameplayTags.Cooldown.FireWall");
-
+		UE_DEFINE_GAMEPLAY_TAG(SpawnWeapon, "CSGameplayTags.Cooldown.SpawnWeapon");
+		UE_DEFINE_GAMEPLAY_TAG(BulletParty, "CSGameplayTags.Cooldown.BulletParty");
+		UE_DEFINE_GAMEPLAY_TAG(Teleport, "CSGameplayTags.Cooldown.Teleport");
 	}
 }
