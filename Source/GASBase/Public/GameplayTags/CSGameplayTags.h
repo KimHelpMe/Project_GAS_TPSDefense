@@ -16,6 +16,11 @@
 
 namespace CSGameplayTags
 {
+	namespace Input
+	{
+
+	}
+
 	namespace Abilities
 	{
 		// ASC에 부여(Give)되는 즉시 자동 활성화할 어빌리티에 붙이는 메타 태그
@@ -41,21 +46,44 @@ namespace CSGameplayTags
 		// 스킬 슬롯 G
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(G);
 
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(T);
+		// BulletParty(난사) 어빌리티
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(BulletParty);
+		// FireWall 구현 어빌리티
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(FireWall);
+		// SpawnWeapon 어빌리티
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnSword);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnAxe);
+		// FireSpawnWeapon 어빌리티
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(FireSpawnSword);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(FireSpawnAxe);
+		// Teleport 어빌리티
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Teleport);
+
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(TestAbility);
 
 		// 파이어볼 투사체 어빌리티
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Fireball);
 
 		// 원거리 기본 공격(GA_LMB) 내부 WaitGameplayEvent가 기다리는 트리거 태그
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Long_Primary);
+
+		// GA_SpawnWeapon으로 소환된 무기를 발사시키는 전용 트리거 태그
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(FireSpawnedWeapons);
 	}
 
 	namespace Events
 	{
 		// 피격 반응 이벤트 — 공격자 정보를 담아 적에게 전송
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(HitReact);
+
 		// 투사체 스폰 이벤트 — 몽타주 AnimNotify에서 발화
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnProjectile);
+		// 무기 소환 이벤트
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnWeapon);
+		// 장벽 소환 이벤트
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnFireWall);
+
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnAbilityBox);
 
 		// 점수 획득 이벤트
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Scored);
@@ -65,7 +93,8 @@ namespace CSGameplayTags
 	{
 		// 투사체 충돌 시 이펙트/사운드를 재생하는 GameplayCue
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impact_E);
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impace_Fire);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impact_Fire);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impact_Earthquake);
 	}
 
 	namespace Status
@@ -74,6 +103,10 @@ namespace CSGameplayTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Dead);
 		// 캐스팅 중 — 스킬 시전 중 이동/공격 제한용 태그
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Casting);
+		// 무기 소환~발사 대기 중임을 나타내는 상태 태그 (평타 차단용)
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(WeaponsSpawned);
+
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(UsingStamina);
 
 	}
 
@@ -81,5 +114,8 @@ namespace CSGameplayTags
 	{
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Fireball);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(FireWall);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnWeapon);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(BulletParty);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Teleport);
 	}
 }

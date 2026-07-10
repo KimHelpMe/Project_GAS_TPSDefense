@@ -70,4 +70,6 @@ public:
 	ATTRIBUTE_ACCESSORS(ThisClass, MaxStamina);
 
 
+
+
 };

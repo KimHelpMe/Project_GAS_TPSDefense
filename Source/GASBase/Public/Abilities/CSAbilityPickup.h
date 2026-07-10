@@ -41,6 +41,21 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Pickup")
 	TArray<TObjectPtr<UCSAbilityData>> PossibleAbilities;
 
+
+	// Table을 사용하는 방식
+#pragma region CSK/ DropSubsystem
+	
+	// true면 PossibleAbilities 대신 DropSubsystem에서 뽑기
+	UPROPERTY(EditAnywhere, Category = "Pickup")
+	bool bUseDropTable = false;
+
+	// 현재 웨이브 (스폰 시 외부에서 세팅)
+	UPROPERTY(BlueprintReadWrite, Category = "Pickup")
+	int32 SpawnWave = 0;
+
+#pragma endregion
+
+
 private:
 	// 스폰 시점에 랜덤으로 정해져 고정되는 실제 스킬. 습득 시 재추첨하지 않고 이 값을 그대로 사용.
 	// 클라이언트가 크로스헤어 호버 UI에 내용을 표시하려면 이 값을 알아야 하므로 리플리케이트함.

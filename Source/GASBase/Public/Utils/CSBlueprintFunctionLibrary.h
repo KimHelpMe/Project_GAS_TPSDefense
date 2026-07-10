@@ -19,6 +19,7 @@ enum class EHitDirection : uint8
 };
 
 
+class ACSAbilityPickup;
 
 UCLASS()
 class GASBASE_API UCSBlueprintFunctionLibrary : public UBlueprintFunctionLibrary
@@ -42,13 +43,7 @@ public:
     // Cascade/Niagara 자동 분기하여 지정 위치에 FX를 스폰한다.
     // UFXSystemAsset은 UParticleSystem(Cascade)과 UNiagaraSystem의 공통 베이스라 둘 다 받을 수 있다.
     UFUNCTION(BlueprintCallable, Category = "GAS|FX", meta = (WorldContext = "WorldContextObject", HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject"))
-    static void SpawnFXAtLocation(
-        const UObject* WorldContextObject,
-        UFXSystemAsset* FXAsset,
-        const FVector& Location,
-        const FRotator& Rotation,
-        const FVector& Scale
-    );
+    static void SpawnFXAtLocation(const UObject* WorldContextObject, UFXSystemAsset* FXAsset, const FVector& Location, const FRotator& Rotation, const FVector& Scale);
 
     UFUNCTION(BlueprintPure, Category = "GAS|Aiming")
     static FRotator GetAimRotation(const FVector& MuzzleLocation, const FVector& AimPoint);
@@ -56,4 +51,8 @@ public:
     // ForwardOffset: AimRotation 방향(Rotation.Vector())으로 스폰 위치를 얼마나 밀어낼지. 기본값 0이면 기존과 동일하게 소켓 위치 그대로 반환.
     UFUNCTION(BlueprintPure, Category = "GAS|Aiming")
     static FTransform GetProjectileSpawnTransform(USceneComponent* MuzzleComponent, FName SocketName, const FVector& AimPoint, float ForwardOffset = 0.f);
+
+    // 드랍 테이블에서 랜덤 스킬 픽업 스폰 (GA_Death BP에서 호출)
+    UFUNCTION(BlueprintCallable, Category = "GAS|Drop", meta = (WorldContext = "WorldContextObject"))
+    static ACSAbilityPickup* SpawnRandomSkillPickup(const UObject* WorldContextObject, TSubclassOf<ACSAbilityPickup> PickupClass, FVector SpawnLocation, int32 CurrentWave = 0);
 };

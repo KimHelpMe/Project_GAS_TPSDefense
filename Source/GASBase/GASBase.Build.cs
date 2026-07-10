@@ -19,10 +19,13 @@ public class GASBase : ModuleRules
             "GameplayTasks",
             "GameplayTags",
             "UMG",
+            "Slate",      
+            "SlateCore",
             "Niagara",
             "OnlineSubsystem",
             "OnlineSubsystemSteam",
-            "SteamSockets"
+            "SteamSockets",
+            "MultiplayerSessions"
         });
 
         PrivateDependencyModuleNames.AddRange(new string[] { });

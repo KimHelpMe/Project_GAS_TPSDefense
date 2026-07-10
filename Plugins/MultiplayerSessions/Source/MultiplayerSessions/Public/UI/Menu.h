@@ -20,7 +20,11 @@ public:
 	// 이 위젯을 생성한 후 호출할 초기화 함수
 	// UE 5.7 스타일: 매개변수 기본값을 선언부에 기술하여 블루프린트 노드를 깔끔하게 유지
 	UFUNCTION(BlueprintCallable, Category = "Multiplayer Sessions")
-	void MenuSetup(int32 NumberOfPublicConnections = 4, FString TypeOfMatch = FString(TEXT("FreeForAll")));
+	void MenuSetup(
+		int32 NumberOfPublicConnections = 4,
+		FString TypeOfMatch = TEXT("FreeForAll"),
+		FString LobbyPath = TEXT("/MultiplayerSessions/Maps/Lobby")
+	);
 
 protected:
 	// 위젯이 생성 및 초기화될 때 호출되는 엔진 라이프사이클 함수 오버라이드
@@ -71,4 +75,7 @@ private:
 	// 유저가 설정한 세션 변수를 기억해 둘 내부 캐싱 변수
 	int32 NumPublicConnections{ 4 };
 	FString MatchType{ TEXT("FreeForAll") };
+
+	// 포맷팅 완료된 최종 이동 경로 (?listen 옵션이 포함된 문자열)
+	FString PathToLobby;
 };

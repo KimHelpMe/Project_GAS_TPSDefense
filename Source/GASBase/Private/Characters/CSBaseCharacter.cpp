@@ -83,6 +83,20 @@ void ACSBaseCharacter::InitializeAttributes() const
 	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 }
 
+void ACSBaseCharacter::ApplyStartupEffects() const
+{
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	if (!IsValid(ASC)) return;
+
+	for (const TSubclassOf<UGameplayEffect>& Effect : StartupEffects)
+	{
+		if (!Effect) continue;
+		FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
+		FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(Effect, 1.f, ContextHandle);
+		ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+	}
+}
+
 void ACSBaseCharacter::ResetAttributes()
 {
 	if (!IsValid(ResetAttributesEffect)) return;
@@ -113,7 +127,7 @@ void ACSBaseCharacter::HandleRespawn()
 	bAlive = true;
 }
 
-void ACSBaseCharacter::HandleDeath()
+void ACSBaseCharacter::HandleDeath_Implementation()
 {
 	bAlive = false;
 }

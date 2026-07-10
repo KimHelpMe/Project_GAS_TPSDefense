@@ -7,6 +7,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraSystem.h"
+#include "Data/CSAbilityDropSubsystem.h"
+#include "Abilities/CSAbilityPickup.h"
+#include "Abilities/CSAbilityData.h"
 
 
 EHitDirection UCSBlueprintFunctionLibrary::GetHitDirection(const FVector& TargetForward, const FVector& ToInstigator)
@@ -77,23 +80,11 @@ void UCSBlueprintFunctionLibrary::SpawnFXAtLocation(const UObject* WorldContextO
 	// UNiagaraSystem으로 캬스트 성공하면 Niagara, 실패하면 Cascade
 	if (UNiagaraSystem* NiagaraSystem = Cast<UNiagaraSystem>(FXAsset))
 	{
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-			WorldContextObject,
-			NiagaraSystem,
-			Location,
-			Rotation,
-			Scale
-		);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(WorldContextObject, NiagaraSystem, Location, Rotation, Scale);
 	}
 	else if (UParticleSystem* ParticleSystem = Cast<UParticleSystem>(FXAsset))
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(
-			WorldContextObject,
-			ParticleSystem,
-			Location,
-			Rotation,
-			Scale
-		);
+		UGameplayStatics::SpawnEmitterAtLocation(WorldContextObject, ParticleSystem, Location, Rotation, Scale);
 	}
 }
 
@@ -117,4 +108,34 @@ FTransform UCSBlueprintFunctionLibrary::GetProjectileSpawnTransform(USceneCompon
 	const FVector SpawnLocation = MuzzleLocation + (AimRotation.Vector() * ForwardOffset);
 
 	return FTransform(AimRotation, SpawnLocation);
+}
+
+ACSAbilityPickup* UCSBlueprintFunctionLibrary::SpawnRandomSkillPickup(const UObject* WorldContextObject, TSubclassOf<ACSAbilityPickup> PickupClass, FVector SpawnLocation, int32 CurrentWave)
+{
+	if (!IsValid(WorldContextObject) || !IsValid(PickupClass)) return nullptr;
+
+	UWorld* World = WorldContextObject->GetWorld();
+	if (!IsValid(World)) return nullptr;
+
+	UGameInstance* GI = World->GetGameInstance();
+	if (!IsValid(GI)) return nullptr;
+
+	UCSAbilityDropSubsystem* DropSub = GI->GetSubsystem<UCSAbilityDropSubsystem>();
+	if (!IsValid(DropSub)) return nullptr;
+
+	UCSAbilityData* Rolled = DropSub->RollRandomAbility(CurrentWave);
+	if (!IsValid(Rolled)) return nullptr;
+
+	FActorSpawnParameters Params;
+	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+	ACSAbilityPickup* Pickup = World->SpawnActor<ACSAbilityPickup>(PickupClass, SpawnLocation, FRotator::ZeroRotator, Params);
+
+	if (IsValid(Pickup))
+	{
+		Pickup->bUseDropTable = true;
+		Pickup->SpawnWave = CurrentWave;
+	}
+
+	return Pickup;
 }

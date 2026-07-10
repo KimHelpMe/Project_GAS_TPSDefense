@@ -49,7 +49,13 @@ void UMultiplayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FS
 	auto ExistingSession = SessionInterface->GetNamedSession(NAME_GameSession);
 	if (ExistingSession != nullptr)
 	{
-		SessionInterface->DestroySession(NAME_GameSession);
+		// 기존 세션이 있다면 플래그를 키고 설정을 캐싱
+		bCreateSessionOnDestroy = true;
+		LastNumPublicConnections = NumPublicConnections;
+		LastMatchType = MatchType;
+
+		DestroySession();
+		return;
 	}
 
 	// 델리게이트를 인터페이스 리스트에 등록하고, 추후 해제를 위한 핸들 저장
@@ -73,9 +79,11 @@ void UMultiplayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FS
 	LastSessionSettings->bShouldAdvertise = true;
 	LastSessionSettings->bUsesPresence = true;
 
-	
 	// UE 5.x / 5.7 스팀 세션 연결 핵심 필수 설정 추가
 	LastSessionSettings->bUseLobbiesIfAvailable = true;
+
+	// 🛠️ 다른 개발자 빌드의 세션 무차별 혼선을 방지하기 위해 우리만의 고유 ID 설정 주입
+	LastSessionSettings->BuildUniqueId = 1;
 
 	// 매치 타입 키-값 쌍 추가 (예: FreeForAll 등)
 	LastSessionSettings->Set(FName("MatchType"), MatchType, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
@@ -140,10 +148,36 @@ void UMultiplayerSessionsSubsystem::JoinSession(const FOnlineSessionSearchResult
 
 void UMultiplayerSessionsSubsystem::DestroySession()
 {
+	if (!SessionInterface.IsValid())
+	{
+		MultiplayerOnDestroySessionComplete.Broadcast(false);
+		return;
+	}
+
+	DestroySessionCompleteDelegateHandle = SessionInterface->AddOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteDelegate);
+
+	if (!SessionInterface->DestroySession(NAME_GameSession))
+	{
+		SessionInterface->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteDelegateHandle);
+		MultiplayerOnDestroySessionComplete.Broadcast(false);
+	}
 }
 
 void UMultiplayerSessionsSubsystem::StartSession()
 {
+	if (!SessionInterface.IsValid())
+	{
+		MultiplayerOnStartSessionComplete.Broadcast(false);
+		return;
+	}
+
+	StartSessionCompleteDelegateHandle = SessionInterface->AddOnStartSessionCompleteDelegate_Handle(StartSessionCompleteDelegate);
+
+	if (!SessionInterface->StartSession(NAME_GameSession))
+	{
+		SessionInterface->ClearOnStartSessionCompleteDelegate_Handle(StartSessionCompleteDelegateHandle);
+		MultiplayerOnStartSessionComplete.Broadcast(false);
+	}
 }
 
 
@@ -193,8 +227,28 @@ void UMultiplayerSessionsSubsystem::OnJoinSessionComplete(FName SessionName, EOn
 
 void UMultiplayerSessionsSubsystem::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
 {
+	if (SessionInterface.IsValid())
+	{
+		SessionInterface->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteDelegateHandle);
+	}
+
+	// 세션 파괴가 정상 성공했고, 재개설 플래그가 켜져있다면 저장해둔 옵션으로 안전하게 다시 개설 프로세스 진입
+	if (bWasSuccessful && bCreateSessionOnDestroy)
+	{
+		bCreateSessionOnDestroy = false; // 플래그 초기화
+		CreateSession(LastNumPublicConnections, LastMatchType);
+	}
+
+	// 외부 UI에도 파괴 완료 브로드캐스트
+	MultiplayerOnDestroySessionComplete.Broadcast(bWasSuccessful);
 }
 
 void UMultiplayerSessionsSubsystem::OnStartSessionComplete(FName SessionName, bool bWasSuccessful)
 {
+	if (SessionInterface.IsValid())
+	{
+		SessionInterface->ClearOnStartSessionCompleteDelegate_Handle(StartSessionCompleteDelegateHandle);
+	}
+
+	MultiplayerOnStartSessionComplete.Broadcast(bWasSuccessful);
 }
