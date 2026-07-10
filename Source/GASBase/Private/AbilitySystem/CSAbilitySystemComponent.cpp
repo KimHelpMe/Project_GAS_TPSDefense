@@ -170,13 +170,18 @@ void UCSAbilitySystemComponent::GetSlotCooldown(FGameplayTag SlotTag, float& Tim
 void UCSAbilitySystemComponent::AddLooseGameplayTag(FGameplayTag TagToAdd)
 {
 	if (!TagToAdd.IsValid()) return;
-	Super::AddLooseGameplayTag(TagToAdd);
+
+	// AddLooseGameplayTag는 서버 자신에게만 적용되고 클라이언트에는 복제되지 않는다.
+	// 그래서 클라이언트 예측(Local Predicted) 어빌리티가 이 태그 상태를 보지 못해
+	// 잘못 예측 실행되는 문제가 있었음 -> MinimalReplicationTags를 사용하는,
+	// 실제로 클라이언트에 복제되는 버전으로 교체
+	Super::AddMinimalReplicationGameplayTag(TagToAdd);
 }
 
 void UCSAbilitySystemComponent::RemoveLooseGameplayTag(FGameplayTag TagToRemove)
 {
 	if (!TagToRemove.IsValid()) return;
-	Super::RemoveLooseGameplayTag(TagToRemove);
+	Super::RemoveMinimalReplicationGameplayTag(TagToRemove);
 }
 
 void UCSAbilitySystemComponent::OnRep_SlotToAbility()

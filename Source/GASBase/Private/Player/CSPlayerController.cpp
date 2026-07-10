@@ -50,7 +50,7 @@ void ACSPlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(QAction, ETriggerEvent::Started, this, &ThisClass::Q);
 	EnhancedInputComponent->BindAction(EAction, ETriggerEvent::Started, this, &ThisClass::E);
 	EnhancedInputComponent->BindAction(RAction, ETriggerEvent::Started, this, &ThisClass::R);
-	EnhancedInputComponent->BindAction(TAction, ETriggerEvent::Started, this, &ThisClass::T);
+	EnhancedInputComponent->BindAction(TAction, ETriggerEvent::Started, this, &ThisClass::TestAbility);
 }
 
 void ACSPlayerController::ActivateAbility(const FGameplayTag& AbilityTag) const
@@ -78,7 +78,15 @@ void ACSPlayerController::LMB()
 	Payload.Instigator = GetPawn();
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::Long_Primary, Payload);
 	ServerSendGameplayEvent(CSGameplayTags::Abilities::Long_Primary);
-	ServerSendGameplayEvent(CSGameplayTags::Abilities::FireSpawnedWeapons);
+
+	// 무기를 소환한 상태일 때만 FireSpawnedWeapons 이벤트를 보낸다.
+	// 그렇지 않으면 GA_FireSpawnWeapon이 매 LMB마다 불필요하게 트리거되어
+	// 빈 배열 bailout 분기에서 없는 태그를 지우려다 로그 에러가 발생한다.
+	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn());
+	if (IsValid(ASC) && ASC->HasMatchingGameplayTag(CSGameplayTags::Status::WeaponsSpawned))
+	{
+		ServerSendGameplayEvent(CSGameplayTags::Abilities::FireSpawnedWeapons);
+	}
 }
 
 void ACSPlayerController::ServerSendGameplayEvent_Implementation(FGameplayTag EventTag)
@@ -114,9 +122,10 @@ void ACSPlayerController::R()
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::R, Payload);
 }
 
-void ACSPlayerController::T()
+void ACSPlayerController::TestAbility()
 {
-	ActivateAbility(CSGameplayTags::Abilities::T);
+	ActivateAbility(CSGameplayTags::Abilities::TestAbility);
 	FGameplayEventData Payload;
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::T, Payload);
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::TestAbility, Payload);
+	ServerSendGameplayEvent(CSGameplayTags::Abilities::TestAbility);
 }

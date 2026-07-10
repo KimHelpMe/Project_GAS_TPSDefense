@@ -41,7 +41,20 @@ namespace CSGameplayTags
 		// 스킬 슬롯 G
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(G);
 
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(T);
+		// BulletParty(난사) 어빌리티
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(BulletParty);
+		// FireWall 구현 어빌리티
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(FireWall);
+		// SpawnWeapon 어빌리티
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnSword);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnAxe);
+		// FireSpawnWeapon 어빌리티
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(FireSpawnSword);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(FireSpawnAxe);
+		// Teleport 어빌리티
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Teleport);
+
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(TestAbility);
 
 		// 파이어볼 투사체 어빌리티
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Fireball);
@@ -59,6 +72,10 @@ namespace CSGameplayTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(HitReact);
 		// 투사체 스폰 이벤트 — 몽타주 AnimNotify에서 발화
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnProjectile);
+		// 무기 소환 이벤트
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnWeapon);
+		// 장벽 소환 이벤트
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnFireWall);
 
 		// 점수 획득 이벤트
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Scored);

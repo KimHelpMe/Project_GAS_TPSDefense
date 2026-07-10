@@ -17,7 +17,7 @@ class GASBASE_API UCSGameplayPlayerAbility : public UCSGameplayAbility
 	GENERATED_BODY()
 	
 public:
-	//Player дЁ╦╞ем╦╕ ╨Э╦ё╟т ╦╝ео
+	//Player дЁО©╫О©╫О©╫м╦О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
 	UFUNCTION(BlueprintPure, Category = "Ability")
 	ACSPlayerCharacter* GetCharacterFromActorInfo();
 
@@ -27,15 +27,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GAS|Aiming")
 	FVector GetAimpoint();
 
+	// GetAimpoint()Л≥─ К▐≥Л²╪М∙° М┼╦К═┬Л²╢Л┼╓К╔╪ Л┬≤М√┴М∙≤К░≤, ImpactNormal/bBlockingHit К⌠╠ Л═└Л╡╢ Й╡╟ЙЁ╪К╔╪ К╟≤М≥≤М∙°К▀╓.
+	// (Й╦╟Л║╢ GetAimpoint() М≤╦Л╤°К╤─К┼■ Й╥╦К▄─К║° К▒░ЙЁ═, NormalЛ²╢ М∙└Л ■М∙° ЙЁЁЛ≈░Л└°К╖▄ Л²╢ М∙╗Л┬≤К╔╪ Л⌠╟К╘╢ К░╗)
+	UFUNCTION(BlueprintCallable, Category = "GAS|Aiming")
+	FHitResult GetAimpointHitResult();
+
 	UPROPERTY(BlueprintReadOnly, Category = "GAS|Aiming")
 	float TraceDistance = 100000.f;
 
 
 
 private:
-	//╬хюЭго╟т Playerюг аж╪р╦╕ ╨╦╟Э(дЁ╫л)гь╣я ╬П╦╝╬С ╫╨╦╤ф╝ фВюнем ╪╜╤Ь
+	//О©╫О©╫О©╫О©╫О©╫о╟О©╫ PlayerО©╫О©╫ О©╫ж╪р╦О©╫ О©╫О©╫О©╫О©╫(дЁО©╫О©╫)О©╫ь╣О©╫ О©╫П╦╝╬О©╫ О©╫О©╫О©╫О©╫ф╝ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
 	TWeakObjectPtr<ACSPlayerCharacter> CachedCharacter;
 
-	//╬хюЭго╟т Player даф╝╥я╥╞юг аж╪р╦╕ ╨╦╟Э(дЁ╫л)гь╣я ╬П╦╝╬С ╫╨╦╤ф╝ фВюнем ╪╜╤Ь 
+	//О©╫О©╫О©╫О©╫О©╫о╟О©╫ Player О©╫О©╫ф╝О©╫я╥О©╫О©╫О©╫ О©╫ж╪р╦О©╫ О©╫О©╫О©╫О©╫(дЁО©╫О©╫)О©╫ь╣О©╫ О©╫П╦╝╬О©╫ О©╫О©╫О©╫О©╫ф╝ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ 
 	TWeakObjectPtr<ACSPlayerController> CachedController;
 };
