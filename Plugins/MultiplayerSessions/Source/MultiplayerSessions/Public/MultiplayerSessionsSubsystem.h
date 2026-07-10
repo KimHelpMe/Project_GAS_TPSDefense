@@ -27,6 +27,8 @@ class MULTIPLAYERSESSIONS_API UMultiplayerSessionsSubsystem : public UGameInstan
 
 public:
 	UMultiplayerSessionsSubsystem();
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void Deinitialize() override;
 
 	// 외부(Menu Widget 등)에서 세션 제어를 위해 호출할 공용 API 함수
 	void CreateSession(int32 NumPublicConnections, FString MatchType);

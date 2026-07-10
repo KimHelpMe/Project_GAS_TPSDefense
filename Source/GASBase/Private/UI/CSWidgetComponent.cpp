@@ -98,12 +98,15 @@ void UCSWidgetComponent::BindWidgetToAttributeChanges(UWidget* WidgetObject, con
 	AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get(), 0.f);
 
 	// 런타임 변경 구독 — ASC 델리게이트에 람다 바인딩
+	TWeakObjectPtr<UCSAttributeWidget> WeakWidget(AttributeWidget);
+	TTuple<FGameplayAttribute, FGameplayAttribute> CapturedPair = Pair;
+
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Key)
-		.AddLambda([this, AttributeWidget, &Pair]
+		.AddLambda([this, WeakWidget, CapturedPair]
 		(const FOnAttributeChangeData& AttributeChangeData)
 			{
-				// 어트리뷰트 변경 시마다 위젯 업데이트
-				AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get(), AttributeChangeData.OldValue);
+				if (!WeakWidget.IsValid() || !AttributeSet.IsValid()) return;
+				WeakWidget->OnAttributeChange(CapturedPair, AttributeSet.Get(), AttributeChangeData.OldValue);
 			});
 }
 

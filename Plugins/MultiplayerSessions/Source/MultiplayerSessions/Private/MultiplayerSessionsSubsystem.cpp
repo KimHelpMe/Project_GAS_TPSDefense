@@ -34,6 +34,36 @@ UMultiplayerSessionsSubsystem::UMultiplayerSessionsSubsystem() :
 	}
 }
 
+void UMultiplayerSessionsSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+
+	// 강제 종료 등으로 남아있는 좀비 세션을 정리
+	if (SessionInterface.IsValid())
+	{
+		FNamedOnlineSession* ExistingSession = SessionInterface->GetNamedSession(NAME_GameSession);
+		if (ExistingSession)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Found leftover session on startup, destroying it."));
+			SessionInterface->DestroySession(NAME_GameSession);
+		}
+	}
+}
+
+void UMultiplayerSessionsSubsystem::Deinitialize()
+{
+	// 종료 시 세션 정리
+	if (SessionInterface.IsValid())
+	{
+		FNamedOnlineSession* ExistingSession = SessionInterface->GetNamedSession(NAME_GameSession);
+		if (ExistingSession)
+		{
+			SessionInterface->DestroySession(NAME_GameSession);
+		}
+	}
+	SessionInterface.Reset();
+	Super::Deinitialize();
+}
 
 // 세션 생성
 void UMultiplayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FString MatchType)
