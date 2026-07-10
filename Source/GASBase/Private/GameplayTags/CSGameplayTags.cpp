@@ -45,6 +45,7 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(SpawnProjectile, "CSGameplayTags.Events.SpawnProjectile");
 		UE_DEFINE_GAMEPLAY_TAG(SpawnAbilityBox, "CSGameplayTags.Events.SpawnAbilityBox");
 
+		
 
 	}
 
@@ -62,6 +63,8 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(Dead, "CSGameplayTags.Status.Dead");
 		UE_DEFINE_GAMEPLAY_TAG(Casting, "CSGameplayTags.Status.Casting");
 		UE_DEFINE_GAMEPLAY_TAG(WeaponsSpawned, "CSGameplayTags.Status.WeaponsSpawned");
+
+		UE_DEFINE_GAMEPLAY_TAG(UsingStamina, "CSGameplayTags.Status.UsingStamina");
 
 	}
 

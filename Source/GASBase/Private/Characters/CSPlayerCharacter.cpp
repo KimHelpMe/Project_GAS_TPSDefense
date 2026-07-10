@@ -77,6 +77,7 @@ void ACSPlayerCharacter::PossessedBy(AController* NewController)
 	// 서버에서 GiveAbility를 호출하면 클라이언트에는 자동으로 복제(replicate)
 	GiveStartupAbilities();
 	InitializeAttributes();
+	ApplyStartupEffects();
 
 	// 어트리뷰트 변경 델리게이트를 바인딩
 	BindAttributeDelegates();

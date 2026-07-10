@@ -69,6 +69,9 @@ protected:
 	// 어트리뷰트를 초기화하는 함수 - GE를 적용해서 Health/Mana 등 초기값 세팅
 	void InitializeAttributes() const;
 
+	// StartupEffects 배열의 GE들을 ASC에 적용
+	void ApplyStartupEffects() const;
+
 	void OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData);
 
 
@@ -92,6 +95,10 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Effects")
 	TSubclassOf<UGameplayEffect> ResetAttributesEffect;
+
+	// 스폰 시 자동 적용할 GE 목록 (스태미나 리젠 등 Infinite GE)
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Effects")
+	TArray<TSubclassOf<UGameplayEffect>> StartupEffects;
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Replicated)
 	bool bAlive = true;

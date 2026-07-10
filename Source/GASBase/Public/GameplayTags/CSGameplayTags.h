@@ -89,6 +89,8 @@ namespace CSGameplayTags
 		// 무기 소환~발사 대기 중임을 나타내는 상태 태그 (평타 차단용)
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(WeaponsSpawned);
 
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(UsingStamina);
+
 	}
 
 	namespace Cooldown
