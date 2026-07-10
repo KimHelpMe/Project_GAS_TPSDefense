@@ -3,82 +3,67 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/PlayerController.h"
+#include "Player/CSBasePlayerController.h"
+#include "GameplayTagContainer.h"
 #include "CSPlayerController.generated.h"
 
-class UInputMappingContext;
 class UInputAction;
+class UChatWidget;
 struct FInputActionValue;
 
-struct FGameplayTag;
-
 UCLASS()
-class GASBASE_API ACSPlayerController : public APlayerController
+class GASBASE_API ACSPlayerController : public ACSBasePlayerController
 {
 	GENERATED_BODY()
-	
+
 protected:
+	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
+
+	// 베이스 오버라이드: 인게임 ChatWidget 반환
+	virtual UChatWidget* GetChatWidget() const override;
 
 private:
 	void ActivateAbility(const FGameplayTag& AbilityTag) const;
 
-	// Callback Movement Func
-	void Jump();
-	void StopJumping();
-	void Move(const FInputActionValue& Value);
-	void Look(const FInputActionValue& Value);
-	void Roll();
+	UFUNCTION(Server, Reliable)
+	void ServerSendGameplayEvent(FGameplayTag EventTag);
 
-	// Callback Ability Func
+	void Roll();
 	void LMB();
 	void RMB();
-
 	void Q();
 	void E();
 	void R();
-	void T();
-
-	// 현재 빙의된 폰의 생존 여부를 확인하는 헬퍼 함수
-	bool IsAlive() const;
+	void TestAbility();
 
 private:
-	// Movement
-	UPROPERTY(EditDefaultsOnly, Category = "Input|MappingContext")
-	TArray<TObjectPtr<UInputMappingContext>> InputMappingContexts;
+	// 인게임 채팅 위젯 클래스 (에디터에서 할당)
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UChatWidget> ChatWidgetClass;
+
+	// 생성된 인게임 채팅 위젯
+	UPROPERTY()
+	TObjectPtr<UChatWidget> InGameChatWidget;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Movement")
-	TObjectPtr<UInputAction> JumpAction;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input|Movement")
-	TObjectPtr<UInputAction> MoveAction;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input|Movement")
-	TObjectPtr<UInputAction> LookAction;
-
-	UPROPERTY(EditDefaultsOnly, Category ="Input|Movement")
 	TObjectPtr<UInputAction> RollAction;
 
-	// Ability
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
 	TObjectPtr<UInputAction> PrimaryAction;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
 	TObjectPtr<UInputAction> SecondaryAction;
 
-	// Q
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
 	TObjectPtr<UInputAction> QAction;
 
-	// E
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
 	TObjectPtr<UInputAction> EAction;
 
-	// R
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
 	TObjectPtr<UInputAction> RAction;
 
-	// T
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
 	TObjectPtr<UInputAction> TAction;
 };

@@ -1,4 +1,4 @@
-// CSK
+﻿// CSK
 
 #pragma once
 
@@ -6,13 +6,15 @@
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
 #include "GameplayEffectTypes.h"  
+#include "Delegates/DelegateCombinations.h"
 #include "CSBaseCharacter.generated.h"
+
 
 class UAbilitySystemComponent;
 class UAttributeSet;
 class UGameplayAbility;
 class UGameplayEffect;
-
+class UCSAbilityData;
 
 // 멀티플레이어에서는 ASC와 AttributeSet이 BeginPlay 시점에 아직 초기화되지 않았을 수 있다. 
 // 이를 해결하기 위해 초기화 완료 시점을 알리는 델리게이트가 필요하다.
@@ -54,15 +56,21 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GAS|Death")
 	virtual void HandleRespawn();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GAS|Death")
+	void HandleDeath();
+
 
 protected:
-	virtual void HandleDeath();
+	virtual void HandleDeath_Implementation();
 
 	// StartupAbilities 배열에 있는 어빌리티들을 ASC에 부여(Give)하는 함수
 	void GiveStartupAbilities();
 
 	// 어트리뷰트를 초기화하는 함수 - GE를 적용해서 Health/Mana 등 초기값 세팅
 	void InitializeAttributes() const;
+
+	// StartupEffects 배열의 GE들을 ASC에 적용
+	void ApplyStartupEffects() const;
 
 	void OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData);
 
@@ -73,8 +81,13 @@ public:
 
 
 private:
+	// 항상 고정으로 시작하는 어빌리티 (좌클릭 기본 공격, 우클릭 등) — 슬롯 시스템과 무관
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Abilities")
-	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+	TArray<TSubclassOf<UGameplayAbility>> FixedStartupAbilities;
+
+	// 드랍박스로 습득/업그레이드하는 Q/E/R/T 슬롯용 스킬
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Abilities")
+	TArray<TObjectPtr<UCSAbilityData>> StartupAbilityData;
 
 	// 어트리뷰트 초기화에 사용할 Gameplay Effect 클래스
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Effects")
@@ -82,6 +95,10 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Effects")
 	TSubclassOf<UGameplayEffect> ResetAttributesEffect;
+
+	// 스폰 시 자동 적용할 GE 목록 (스태미나 리젠 등 Infinite GE)
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Effects")
+	TArray<TSubclassOf<UGameplayEffect>> StartupEffects;
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Replicated)
 	bool bAlive = true;

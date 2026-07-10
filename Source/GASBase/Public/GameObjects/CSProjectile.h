@@ -36,10 +36,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "GAS|Projectile")
 	void OnProjectileImpact(const FVector& ImpactLocation);
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USphereComponent* CollisionComponent;
 
-	UPROPERTY(VisibleAnywhere, Category = "GAS|Projectile")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "GAS|Projectile")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Damage")

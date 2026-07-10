@@ -1,7 +1,8 @@
-// CSK
+﻿// CSK
 
 #include "Characters/CSBaseCharacter.h"
 #include "AbilitySystem/CSAbilitySystemComponent.h"
+#include "Abilities/CSAbilityData.h"  
 #include "Abilities/GameplayAbility.h"
 #include "Net/UnrealNetwork.h"
 
@@ -36,15 +37,23 @@ void ACSBaseCharacter::GiveStartupAbilities()
 	// - 레벨을 따로 지정하지 않으면 기본값인 1로 설정된다.
 	// - 이 타입의 헤더를 가져오기 위해 AbilitySystemComponent.h를 인클루드한다. (해당 헤더가 FGameplayAbilitySpec 헤더를 포함)
 
-	if (!IsValid(GetAbilitySystemComponent())) return;
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	if (!IsValid(ASC)) return;
 
-	for (const TSubclassOf<UGameplayAbility>& Ability : StartupAbilities)
+	// 1) 고정 어빌리티(기본 공격 등)는 슬롯 시스템 없이 바로 부여
+	for (const TSubclassOf<UGameplayAbility>& Ability : FixedStartupAbilities)
 	{
-		// 어빌리티 클래스로 스펙 생성 (레벨 기본값 = 1)
-		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Ability);
+		FGameplayAbilitySpec AbilitySpec(Ability);
+		ASC->GiveAbility(AbilitySpec);
+	}
 
-		// ASC에 어빌리티 부여
-		GetAbilitySystemComponent()->GiveAbility(AbilitySpec);
+	// 2) Q/E/R/T 슬롯용 스킬만 TryPickupAbility로 부여 (슬롯 등록 필요)
+	UCSAbilitySystemComponent* CSASC = Cast<UCSAbilitySystemComponent>(ASC);
+	if (!IsValid(CSASC)) return;
+
+	for (const TObjectPtr<UCSAbilityData>& AbilityData : StartupAbilityData)
+	{
+		CSASC->TryPickupAbility(AbilityData);
 	}
 }
 
@@ -72,6 +81,20 @@ void ACSBaseCharacter::InitializeAttributes() const
 	// 3. 자신에게 GE 적용
 	// 생성된 Spec을 자기 자신(이 캐릭터의 ASC)에게 즉시 적용
 	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+}
+
+void ACSBaseCharacter::ApplyStartupEffects() const
+{
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	if (!IsValid(ASC)) return;
+
+	for (const TSubclassOf<UGameplayEffect>& Effect : StartupEffects)
+	{
+		if (!Effect) continue;
+		FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
+		FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(Effect, 1.f, ContextHandle);
+		ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+	}
 }
 
 void ACSBaseCharacter::ResetAttributes()
@@ -104,7 +127,7 @@ void ACSBaseCharacter::HandleRespawn()
 	bAlive = true;
 }
 
-void ACSBaseCharacter::HandleDeath()
+void ACSBaseCharacter::HandleDeath_Implementation()
 {
 	bAlive = false;
 }

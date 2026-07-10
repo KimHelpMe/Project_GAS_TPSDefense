@@ -7,6 +7,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraSystem.h"
+#include "Data/CSAbilityDropSubsystem.h"
+#include "Abilities/CSAbilityPickup.h"
+#include "Abilities/CSAbilityData.h"
 
 
 EHitDirection UCSBlueprintFunctionLibrary::GetHitDirection(const FVector& TargetForward, const FVector& ToInstigator)
@@ -70,34 +73,69 @@ void UCSBlueprintFunctionLibrary::SendHitReactEventToActors(const TArray<AActor*
 	}
 }
 
-void UCSBlueprintFunctionLibrary::SpawnFXAtLocation(
-	const UObject* WorldContextObject,
-	UFXSystemAsset* FXAsset,
-	const FVector& Location,
-	const FRotator& Rotation,
-	const FVector& Scale)
+void UCSBlueprintFunctionLibrary::SpawnFXAtLocation(const UObject* WorldContextObject,UFXSystemAsset* FXAsset,const FVector& Location, const FRotator& Rotation, const FVector& Scale)
 {
 	if (!IsValid(FXAsset)) return;
 
 	// UNiagaraSystem으로 캬스트 성공하면 Niagara, 실패하면 Cascade
 	if (UNiagaraSystem* NiagaraSystem = Cast<UNiagaraSystem>(FXAsset))
 	{
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-			WorldContextObject,
-			NiagaraSystem,
-			Location,
-			Rotation,
-			Scale
-		);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(WorldContextObject, NiagaraSystem, Location, Rotation, Scale);
 	}
 	else if (UParticleSystem* ParticleSystem = Cast<UParticleSystem>(FXAsset))
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(
-			WorldContextObject,
-			ParticleSystem,
-			Location,
-			Rotation,
-			Scale
-		);
+		UGameplayStatics::SpawnEmitterAtLocation(WorldContextObject, ParticleSystem, Location, Rotation, Scale);
 	}
+}
+
+FRotator UCSBlueprintFunctionLibrary::GetAimRotation(const FVector& MuzzleLocation, const FVector& AimPoint)
+{
+	const FVector Direction = (AimPoint - MuzzleLocation).GetSafeNormal();
+	return Direction.Rotation();
+}
+
+FTransform UCSBlueprintFunctionLibrary::GetProjectileSpawnTransform(USceneComponent* MuzzleComponent, FName SocketName, const FVector& AimPoint, float ForwardOffset)
+{
+	if (!MuzzleComponent)
+	{
+		return FTransform::Identity;
+	}
+
+	const FVector MuzzleLocation = MuzzleComponent->GetSocketLocation(SocketName);
+	const FRotator AimRotation = GetAimRotation(MuzzleLocation, AimPoint);
+
+	// AimRotation 방향으로 ForwardOffset만큼 밀어낸 위치. ForwardOffset이 0이면 기존 동작과 동일.
+	const FVector SpawnLocation = MuzzleLocation + (AimRotation.Vector() * ForwardOffset);
+
+	return FTransform(AimRotation, SpawnLocation);
+}
+
+ACSAbilityPickup* UCSBlueprintFunctionLibrary::SpawnRandomSkillPickup(const UObject* WorldContextObject, TSubclassOf<ACSAbilityPickup> PickupClass, FVector SpawnLocation, int32 CurrentWave)
+{
+	if (!IsValid(WorldContextObject) || !IsValid(PickupClass)) return nullptr;
+
+	UWorld* World = WorldContextObject->GetWorld();
+	if (!IsValid(World)) return nullptr;
+
+	UGameInstance* GI = World->GetGameInstance();
+	if (!IsValid(GI)) return nullptr;
+
+	UCSAbilityDropSubsystem* DropSub = GI->GetSubsystem<UCSAbilityDropSubsystem>();
+	if (!IsValid(DropSub)) return nullptr;
+
+	UCSAbilityData* Rolled = DropSub->RollRandomAbility(CurrentWave);
+	if (!IsValid(Rolled)) return nullptr;
+
+	FActorSpawnParameters Params;
+	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+	ACSAbilityPickup* Pickup = World->SpawnActor<ACSAbilityPickup>(PickupClass, SpawnLocation, FRotator::ZeroRotator, Params);
+
+	if (IsValid(Pickup))
+	{
+		Pickup->bUseDropTable = true;
+		Pickup->SpawnWave = CurrentWave;
+	}
+
+	return Pickup;
 }
