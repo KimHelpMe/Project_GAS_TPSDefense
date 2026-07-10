@@ -83,6 +83,8 @@ namespace CSGameplayTags
 	{
 		UE_DEFINE_GAMEPLAY_TAG(Fireball, "CSGameplayTags.Cooldown.Fireball");
 		UE_DEFINE_GAMEPLAY_TAG(FireWall, "CSGameplayTags.Cooldown.FireWall");
-
+		UE_DEFINE_GAMEPLAY_TAG(SpawnWeapon, "CSGameplayTags.Cooldown.SpawnWeapon");
+		UE_DEFINE_GAMEPLAY_TAG(BulletParty, "CSGameplayTags.Cooldown.BulletParty");
+		UE_DEFINE_GAMEPLAY_TAG(Teleport, "CSGameplayTags.Cooldown.Teleport");
 	}
 }
