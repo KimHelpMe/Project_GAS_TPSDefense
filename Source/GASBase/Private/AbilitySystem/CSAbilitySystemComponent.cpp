@@ -146,9 +146,20 @@ bool UCSAbilitySystemComponent::TryPickupAbility(UCSAbilityData* AbilityData)
 bool UCSAbilitySystemComponent::TryActivateAbilityBySlot(FGameplayTag SlotTag)
 {
 	const FCSSlotAbilityEntry* Entry = SlotToAbility.FindByPredicate(
-		[&SlotTag](const FCSSlotAbilityEntry& Entry) { return Entry.SlotTag == SlotTag; });
+		[&SlotTag](const FCSSlotAbilityEntry& Entry) 
+		{ 
+			return Entry.SlotTag == SlotTag; 
+		});
 
-	return Entry ? TryActivateAbility(Entry->Handle) : false;
+	if (!Entry) return false;
+
+	// 디버그: 레벨 출력
+	if (const FGameplayAbilitySpec* Spec = FindAbilitySpecFromHandle(Entry->Handle))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[%s] Level: %d"), *SlotTag.ToString(), Spec->Level);
+	}
+
+	return TryActivateAbility(Entry->Handle);
 }
 
 void UCSAbilitySystemComponent::GetSlotCooldown(FGameplayTag SlotTag, float& TimeRemaining, float& CooldownDuration)

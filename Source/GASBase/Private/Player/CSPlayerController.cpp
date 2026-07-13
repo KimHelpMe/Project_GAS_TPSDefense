@@ -104,22 +104,22 @@ void ACSPlayerController::RMB()
 void ACSPlayerController::Q()
 {
 	ActivateAbility(CSGameplayTags::Abilities::Q);
-	FGameplayEventData Payload;
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::Q, Payload);
+	//FGameplayEventData Payload;
+	//UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::Q, Payload);
 }
 
 void ACSPlayerController::E()
 {
 	ActivateAbility(CSGameplayTags::Abilities::E);
-	FGameplayEventData Payload;
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::E, Payload);
+	//FGameplayEventData Payload;
+	//UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::E, Payload);
 }
 
 void ACSPlayerController::R()
 {
-	ActivateAbility(CSGameplayTags::Abilities::Fireball);
-	FGameplayEventData Payload;
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::R, Payload);
+	ActivateAbility(CSGameplayTags::Abilities::R);
+	//FGameplayEventData Payload;
+	//UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::R, Payload);
 }
 
 void ACSPlayerController::TestAbility()

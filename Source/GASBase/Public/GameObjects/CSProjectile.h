@@ -46,8 +46,11 @@ public:
 	TSubclassOf<UGameplayEffect> DamageEffect;
 
 	// ExposeOnSpawn은 블루프린트의 SpawnActorFromClass 노드에 이 변수를 핀으로 노출
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GAS|Damage", meta = (ExposeOnSpawn = true, ClampMin = 0.0))
-	float Damage = 10.f;
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GAS|Damage", meta = (ExposeOnSpawn = true, ClampMin = 0.0))
+	//float Damage = 10.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GAS|Damage", meta = (ExposeOnSpawn = true))
+	int32 AbilityLevel = 1;
 
 	// 충돌 시 실행할 GameplayCue 태그. BP마다 다른 Cue 사용 가능
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Cue", meta = (Categories = "GameplayCue"))
