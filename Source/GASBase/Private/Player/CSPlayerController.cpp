@@ -106,6 +106,7 @@ void ACSPlayerController::Q()
 	ActivateAbility(CSGameplayTags::Abilities::Q);
 	FGameplayEventData Payload;
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::Q, Payload);
+	ServerSendGameplayEvent(CSGameplayTags::Abilities::Q);
 }
 
 void ACSPlayerController::E()
@@ -113,6 +114,7 @@ void ACSPlayerController::E()
 	ActivateAbility(CSGameplayTags::Abilities::E);
 	FGameplayEventData Payload;
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::E, Payload);
+	ServerSendGameplayEvent(CSGameplayTags::Abilities::E);
 }
 
 void ACSPlayerController::R()
@@ -120,11 +122,38 @@ void ACSPlayerController::R()
 	ActivateAbility(CSGameplayTags::Abilities::Fireball);
 	FGameplayEventData Payload;
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::R, Payload);
+	ServerSendGameplayEvent(CSGameplayTags::Abilities::R);
 }
 
 void ACSPlayerController::TestAbility()
 {
-	ActivateAbility(CSGameplayTags::Abilities::TestAbility);
+	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn());
+
+	// GA_Teleport가 이미 targeting~confirm 상태로 실행 중인지를,
+	// 태그(HasMatchingGameplayTag) 대신 어빌리티 스펙 자체의 IsActive()로 판단한다.
+	// Activation Owned Tag는 클라이언트 자기 자신에게 즉시/확실하게 반영된다는 보장이 약해서
+	// (이 프로젝트의 AddLooseGameplayTag 관련 주석 참고: 루즈 태그는 원격 클라이언트에 복제 안 됨),
+	// 리슨 서버의 클라이언트에서는 우연히 맞아도 원격 클라이언트에서는 확인 입력이 씹히는 문제가 있었다.
+	// IsActive()는 각 클라/서버가 자기 로컬 예측 인스턴스 상태를 직접 들고 있는 값이라 안전하다.
+	bool bAlreadyTeleporting = false;
+	if (IsValid(ASC))
+	{
+		for (FGameplayAbilitySpec& Spec : ASC->GetActivatableAbilities())
+		{
+			if (IsValid(Spec.Ability) && Spec.Ability->GetAssetTags().HasTagExact(CSGameplayTags::Abilities::TestAbility))
+			{
+				bAlreadyTeleporting = Spec.IsActive();
+				break;
+			}
+		}
+	}
+
+	if (!bAlreadyTeleporting)
+	{
+		ActivateAbility(CSGameplayTags::Abilities::TestAbility);
+		return;
+	}
+
 	FGameplayEventData Payload;
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::TestAbility, Payload);
 	ServerSendGameplayEvent(CSGameplayTags::Abilities::TestAbility);

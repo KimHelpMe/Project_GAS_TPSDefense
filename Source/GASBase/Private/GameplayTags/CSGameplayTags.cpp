@@ -80,6 +80,8 @@ namespace CSGameplayTags
 
 		UE_DEFINE_GAMEPLAY_TAG(UsingStamina, "CSGameplayTags.Status.UsingStamina");
 
+		UE_DEFINE_GAMEPLAY_TAG(Teleporting, "CSGameplayTags.Status.Teleporting");
+
 	}
 
 	namespace Cooldown

@@ -109,6 +109,10 @@ namespace CSGameplayTags
 
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(UsingStamina);
 
+		// 텔레포트 어빌리티가 targeting~confirm까지 실행 중임을 나타내는 상태 태그
+		// (같은 입력 태그를 시작/확인 두 용도로 재사용하면서 생기는 자기 자신 트리거 문제를 막기 위해 사용)
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Teleporting);
+
 	}
 
 	namespace Cooldown
