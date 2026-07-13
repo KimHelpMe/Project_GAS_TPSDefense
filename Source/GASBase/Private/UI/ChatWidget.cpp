@@ -172,6 +172,13 @@ void UChatWidget::AddMessageToDisplay(const FChatMessage& Message)
 	FString DisplayText = FString::Printf(TEXT("[%s] %s"), *Message.SenderName, *Message.Content);
 	MessageText->SetText(FText::FromString(DisplayText));
 
+	// ChatInputBox에 설정된 폰트를 그대로 재사용
+	if (ChatInputBox)
+	{
+		MessageText->SetFont(ChatInputBox->WidgetStyle.TextStyle.Font);
+	}
+	MessageText->SetAutoWrapText(true);
+
 	MessageScrollBox->AddChild(MessageText);
 	MessageScrollBox->ScrollToEnd();
 }
