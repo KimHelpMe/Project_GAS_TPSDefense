@@ -33,5 +33,5 @@ protected:
 private:
 	// 본 게임 맵 경로 (에디터에서 설정 가능)
 	UPROPERTY(EditDefaultsOnly, Category = "Lobby")
-	FString GameMapPath = TEXT("/Game/SHT/Maps/SHTMap");
+	FString GameMapPath = TEXT("/Game/TaehosWork/Maps/LV_PlayLevel");
 };

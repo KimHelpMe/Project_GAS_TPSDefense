@@ -9,6 +9,10 @@
 #include "GameplayTags/CSGameplayTags.h"
 #include "UI/ChatWidget.h"
 
+#include "UI/CSRespawnWidget.h"
+
+
+
 void ACSPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -27,12 +31,38 @@ void ACSPlayerController::BeginPlay()
 				InGameChatWidget->AddToViewport();
 			}
 		}
+
+		// 리스폰 카운트다운 위젯 생성
+		if (RespawnWidgetClass)
+		{
+			RespawnWidget = CreateWidget<UCSRespawnWidget>(this, RespawnWidgetClass);
+			if (RespawnWidget)
+			{
+				RespawnWidget->AddToViewport();
+			}
+		}
 	}
 }
 
 UChatWidget* ACSPlayerController::GetChatWidget() const
 {
 	return InGameChatWidget;
+}
+
+void ACSPlayerController::ClientShowGameOver_Implementation()
+{
+	if (!GameOverWidgetClass) return;
+
+	UUserWidget* GameOverWidget = CreateWidget<UUserWidget>(this, GameOverWidgetClass);
+	if (!IsValid(GameOverWidget)) return;
+
+	GameOverWidget->AddToViewport(10);
+
+	bShowMouseCursor = true;
+	SetInputMode(FInputModeUIOnly());
+
+	// 패배 후에는 더 이상 조작이 필요 없으므로 이 컨트롤러의 모든 입력을 차단
+	DisableInput(this);
 }
 
 void ACSPlayerController::SetupInputComponent()
@@ -106,7 +136,8 @@ void ACSPlayerController::Q()
 	ActivateAbility(CSGameplayTags::Abilities::Q);
 	FGameplayEventData Payload;
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::Q, Payload);
-	ServerSendGameplayEvent(CSGameplayTags::Abilities::Q);
+	//FGameplayEventData Payload;
+	//UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::Q, Payload);
 }
 
 void ACSPlayerController::E()
@@ -114,15 +145,17 @@ void ACSPlayerController::E()
 	ActivateAbility(CSGameplayTags::Abilities::E);
 	FGameplayEventData Payload;
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::E, Payload);
-	ServerSendGameplayEvent(CSGameplayTags::Abilities::E);
+	//FGameplayEventData Payload;
+	//UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::E, Payload);
 }
 
 void ACSPlayerController::R()
 {
-	ActivateAbility(CSGameplayTags::Abilities::Fireball);
+	ActivateAbility(CSGameplayTags::Abilities::R);
 	FGameplayEventData Payload;
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::R, Payload);
-	ServerSendGameplayEvent(CSGameplayTags::Abilities::R);
+	//FGameplayEventData Payload;
+	//UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::R, Payload);
 }
 
 void ACSPlayerController::TestAbility()

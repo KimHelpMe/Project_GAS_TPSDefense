@@ -53,7 +53,7 @@ void ACSProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 	FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
 	ContextHandle.AddInstigator(GetInstigator(), this);
 
-	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
+	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(DamageEffect, AbilityLevel, ContextHandle);
 	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 
 	// Cue 직접 실행 (GE와 분리)
@@ -123,7 +123,7 @@ void ACSProjectile::SphereOverlapAtImpact(const FVector& ImpactLocation, float R
 		FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
 		ContextHandle.AddInstigator(GetInstigator(), this);
 
-		FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
+		FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(DamageEffect, AbilityLevel, ContextHandle);
 		ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 
 		HitActors.Add(BaseCharacter);

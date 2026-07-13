@@ -5,6 +5,9 @@
 #include "Abilities/CSAbilityData.h"  
 #include "Abilities/GameplayAbility.h"
 #include "Net/UnrealNetwork.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
 
 ACSBaseCharacter::ACSBaseCharacter()
 {
@@ -25,7 +28,7 @@ void ACSBaseCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ThisClass, bAlive);
+	DOREPLIFETIME_CONDITION_NOTIFY(ThisClass, bAlive, COND_None, REPNOTIFY_Always);
 }
 
 void ACSBaseCharacter::GiveStartupAbilities()
@@ -116,15 +119,22 @@ void ACSBaseCharacter::ResetAttributes()
 void ACSBaseCharacter::OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData)
 {
 	// Health가 0 이하로 내려가면 사망 처리
-	if (AttributeChangeData.NewValue <= 0.f)
-	{
-		HandleDeath();
-	}
+	//if (AttributeChangeData.NewValue <= 0.f)
+	//{
+	//	HandleDeath();
+	//}
+
+	 // 사망 판정은 GA_ListenForHealthChange → GA_Death 경로가 담당
+	// 향후 피격 UI 갱신 등에 활용
 }
 
 void ACSBaseCharacter::HandleRespawn()
 {
 	bAlive = true;
+}
+
+void ACSBaseCharacter::OnRep_Alive()
+{
 }
 
 void ACSBaseCharacter::HandleDeath_Implementation()

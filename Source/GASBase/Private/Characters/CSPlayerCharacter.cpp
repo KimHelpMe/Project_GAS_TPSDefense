@@ -11,6 +11,7 @@
 #include "AbilitySystem/CSAttributeSet.h"
 #include "Abilities/CSAbilityPickup.h"
 #include "GameFramework/PlayerController.h"
+#include "Game/InGameMode.h"
 
 
 
@@ -116,6 +117,59 @@ void ACSPlayerCharacter::BeginPlay()
 	// BeginPlay 시점엔 클라이언트 쪽 Controller 빙의가 아직 안 끝났을 수 있어서,
 	// 여기서 IsLocallyControlled()로 미리 걸러버리면 타이머 자체가 안 걸릴 위험이 있음.
 	GetWorldTimerManager().SetTimer(CrosshairTraceTimerHandle, this, &ACSPlayerCharacter::UpdateCrosshairTrace, 0.1f, true);
+}
+
+void ACSPlayerCharacter::HandleDeath_Implementation()
+{
+	Super::HandleDeath_Implementation();
+
+	// 충돌 해제 + 이동 정지
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCharacterMovement()->SetMovementMode(MOVE_None);
+	bUseControllerRotationYaw = false;
+
+	// 서버에서만 GameMode에 리스폰 요청
+	if (HasAuthority())
+	{
+		if (AInGameMode* GM = GetWorld()->GetAuthGameMode<AInGameMode>())
+		{
+			GM->OnCharacterDied(GetController());
+		}
+	}
+}
+
+void ACSPlayerCharacter::HandleRespawn()
+{
+	Super::HandleRespawn();
+
+	// 충돌 복원 + 이동 복원
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	bUseControllerRotationYaw = true;
+}
+
+void ACSPlayerCharacter::OnRep_Alive()
+{
+	Super::OnRep_Alive();
+
+	if (IsAlive())
+	{
+		// 리스폰 — 클라이언트 측 복원
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		bUseControllerRotationYaw = true;
+	}
+	else
+	{
+		// 사망 — 클라이언트 측 충돌 해제
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		GetCharacterMovement()->SetMovementMode(MOVE_None);
+		bUseControllerRotationYaw = false;
+	}
 }
 
 void ACSPlayerCharacter::UpdateCrosshairTrace()

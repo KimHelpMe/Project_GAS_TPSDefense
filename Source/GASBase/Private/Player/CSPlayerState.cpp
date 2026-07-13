@@ -4,8 +4,7 @@
 #include "Player/CSPlayerState.h"
 #include "AbilitySystem/CSAbilitySystemComponent.h"
 #include "AbilitySystem/CSAttributeSet.h"
-
-
+#include "Net/UnrealNetwork.h"
 
 ACSPlayerState::ACSPlayerState()
 {
@@ -25,6 +24,13 @@ ACSPlayerState::ACSPlayerState()
 	* 개발자가 별도로 RegisterAttributeSet() 같은 함수를 호출할 필요가 없다.
 	*/
 	AttributeSet = CreateDefaultSubobject<UCSAttributeSet>(TEXT("AttributeSet"));
+}
+
+void ACSPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, RespawnTime);
 }
 
 UAbilitySystemComponent* ACSPlayerState::GetAbilitySystemComponent() const

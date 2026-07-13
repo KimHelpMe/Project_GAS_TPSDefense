@@ -59,6 +59,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GAS|Death")
 	void HandleDeath();
 
+	UFUNCTION()
+	virtual void OnRep_Alive();
 
 protected:
 	virtual void HandleDeath_Implementation();
@@ -72,7 +74,7 @@ protected:
 	// StartupEffects 배열의 GE들을 ASC에 적용
 	void ApplyStartupEffects() const;
 
-	void OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData);
+	virtual void OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData);
 
 
 public:
@@ -100,6 +102,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Effects")
 	TArray<TSubclassOf<UGameplayEffect>> StartupEffects;
 
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Replicated)
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), ReplicatedUsing = OnRep_Alive)
 	bool bAlive = true;
+
+
 };

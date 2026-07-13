@@ -23,6 +23,9 @@ protected:
 	virtual void BeginPlay() override;
 	virtual UAttributeSet* GetAttributeSet() const override;
 
+	// 적 전용: Health ≤ 0 시 직접 HandleDeath 호출
+	virtual void OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData) override;
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "GAS")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
