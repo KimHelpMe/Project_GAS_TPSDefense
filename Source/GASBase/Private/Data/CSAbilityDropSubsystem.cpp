@@ -3,6 +3,7 @@
 
 #include "Data/CSAbilityDropSubsystem.h"
 #include "Data/CSAbilityDropTableRow.h"
+#include "Data/CSDropSettings.h"
 #include "Abilities/CSAbilityData.h"
 #include "Engine/DataTable.h"
 
@@ -10,8 +11,11 @@ void UCSAbilityDropSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
-	// 에셋 경로 지정 (에디터에서 Copy Reference로 확인)
-	AbilityDropTable = LoadObject<UDataTable>(nullptr, TEXT("/Script/Engine.DataTable'/Game/Data/DT_AbilityDropTable.DT_AbilityDropTable'"));
+	const UCSDropSettings* Settings = GetDefault<UCSDropSettings>();
+	if (Settings)
+	{
+		AbilityDropTable = Settings->AbilityDropTable.LoadSynchronous();
+	}
 }
 
 UCSAbilityData* UCSAbilityDropSubsystem::RollRandomAbility(int32 CurrentWave) const
