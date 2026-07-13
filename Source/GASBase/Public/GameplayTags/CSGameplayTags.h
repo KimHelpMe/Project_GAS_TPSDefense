@@ -80,6 +80,7 @@ namespace CSGameplayTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnProjectile);
 		// 무기 소환 이벤트
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnWeapon);
+
 		// 장벽 소환 이벤트
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnFireWall);
 
@@ -114,7 +115,8 @@ namespace CSGameplayTags
 	{
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Fireball);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(FireWall);
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnWeapon);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnWeapon_Axe);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnWeapon_Sword);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(BulletParty);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Teleport);
 	}

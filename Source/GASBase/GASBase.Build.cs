@@ -25,7 +25,8 @@ public class GASBase : ModuleRules
             "OnlineSubsystem",
             "OnlineSubsystemSteam",
             "SteamSockets",
-            "MultiplayerSessions"
+            "MultiplayerSessions",
+            "DeveloperSettings"
         });
 
         PrivateDependencyModuleNames.AddRange(new string[] { });

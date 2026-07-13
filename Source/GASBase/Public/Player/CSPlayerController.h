@@ -9,12 +9,18 @@
 
 class UInputAction;
 class UChatWidget;
+class UUserWidget;
 struct FInputActionValue;
 
 UCLASS()
 class GASBASE_API ACSPlayerController : public ACSBasePlayerController
 {
 	GENERATED_BODY()
+
+public:
+	// 본진(Base) 파괴 시 BP_GameMode가 모든 클라이언트의 PlayerController에 호출 — 패배 화면 표시 + 입력 차단
+	UFUNCTION(Client, Reliable, BlueprintCallable, Category = "GAS|GameOver")
+	void ClientShowGameOver();
 
 protected:
 	virtual void BeginPlay() override;
@@ -45,6 +51,10 @@ private:
 	// 생성된 인게임 채팅 위젯
 	UPROPERTY()
 	TObjectPtr<UChatWidget> InGameChatWidget;
+
+	// 본진 파괴 시 표시할 패배 화면 위젯 클래스 (에디터에서 할당)
+	UPROPERTY(EditDefaultsOnly, Category = "UI|GameOver")
+	TSubclassOf<UUserWidget> GameOverWidgetClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Movement")
 	TObjectPtr<UInputAction> RollAction;
