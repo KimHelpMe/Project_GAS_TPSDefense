@@ -55,12 +55,21 @@ void UMultiplayerSessionsSubsystem::Deinitialize()
 	// 종료 시 세션 정리
 	if (SessionInterface.IsValid())
 	{
+		SessionInterface->ClearOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteDelegateHandle);
+		SessionInterface->ClearOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteDelegateHandle);
+		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);
+		SessionInterface->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteDelegateHandle);
+		SessionInterface->ClearOnStartSessionCompleteDelegate_Handle(StartSessionCompleteDelegateHandle);
+
 		FNamedOnlineSession* ExistingSession = SessionInterface->GetNamedSession(NAME_GameSession);
 		if (ExistingSession)
 		{
 			SessionInterface->DestroySession(NAME_GameSession);
 		}
 	}
+
+	LastSessionSearch.Reset();
+	LastSessionSettings.Reset();
 	SessionInterface.Reset();
 	Super::Deinitialize();
 }
