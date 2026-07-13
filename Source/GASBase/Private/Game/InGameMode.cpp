@@ -5,6 +5,7 @@
 #include "Characters/CSBaseCharacter.h"
 #include "AbilitySystemComponent.h"
 #include "GameplayTags/CSGameplayTags.h"
+#include "Player/CSPlayerState.h"
 
 AInGameMode::AInGameMode()
 {
@@ -25,6 +26,14 @@ void AInGameMode::OnCharacterDied(AController* DeadController)
     FTimerDelegate Delegate;
     Delegate.BindUObject(this, &ThisClass::RespawnCharacter, DeadController);
     GetWorldTimerManager().SetTimer(Handle, Delegate, RespawnDelay, false);
+    
+    // 사망 시 RespawnTime 설정
+    ACSPlayerState* PlayerController = DeadController->GetPlayerState<ACSPlayerState>();
+    if (PlayerController)
+    {
+        PlayerController->SetRespawnTime(GetWorld()->GetTimeSeconds() + RespawnDelay);
+    }
+
 }
 
 void AInGameMode::RespawnCharacter(AController* Controller)
@@ -59,4 +68,11 @@ void AInGameMode::RespawnCharacter(AController* Controller)
 
     // HandleRespawn — bAlive=true, 충돌 복원
     Character->HandleRespawn();
+
+    // 사망 시 RespawnTime 설정
+    ACSPlayerState* PlayerController = Controller->GetPlayerState<ACSPlayerState>();
+    if (PlayerController)
+    {
+        PlayerController->SetRespawnTime(0.f);
+    }
 }

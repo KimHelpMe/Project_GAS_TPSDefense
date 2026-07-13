@@ -9,6 +9,7 @@
 
 class UInputAction;
 class UChatWidget;
+class UCSRespawnWidget;
 struct FInputActionValue;
 
 UCLASS()
@@ -45,6 +46,14 @@ private:
 	// 생성된 인게임 채팅 위젯
 	UPROPERTY()
 	TObjectPtr<UChatWidget> InGameChatWidget;
+
+	// 리스폰 카운트다운 위젯 클래스 (에디터에서 할당)
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UCSRespawnWidget> RespawnWidgetClass;
+
+	// 생성된 리스폰 카운트다운 위젯
+	UPROPERTY()
+	TObjectPtr<UCSRespawnWidget> RespawnWidget;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Movement")
 	TObjectPtr<UInputAction> RollAction;

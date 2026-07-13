@@ -40,6 +40,11 @@ protected:
 	virtual void BeginPlay() override;
 	//~ End Actor Interface
 
+	// 플레이어 전용 사망/리스폰 처리 (컨트롤러 회전, GameMode 통보)
+	virtual void HandleDeath_Implementation() override;
+	virtual void HandleRespawn() override;
+	virtual void OnRep_Alive() override;
+
 private:
 	// ASC 초기화 완료 후 어트리뷰트 변경 델리게이트를 바인딩한다.
 	// 서버: PossessedBy, 클라이언트: OnRep_PlayerState에서 각각 호출

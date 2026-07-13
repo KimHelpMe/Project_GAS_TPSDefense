@@ -8,6 +8,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayTags/CSGameplayTags.h"
 #include "UI/ChatWidget.h"
+#include "UI/CSRespawnWidget.h"
 
 void ACSPlayerController::BeginPlay()
 {
@@ -25,6 +26,16 @@ void ACSPlayerController::BeginPlay()
 			if (InGameChatWidget)
 			{
 				InGameChatWidget->AddToViewport();
+			}
+		}
+
+		// 리스폰 카운트다운 위젯 생성
+		if (RespawnWidgetClass)
+		{
+			RespawnWidget = CreateWidget<UCSRespawnWidget>(this, RespawnWidgetClass);
+			if (RespawnWidget)
+			{
+				RespawnWidget->AddToViewport();
 			}
 		}
 	}

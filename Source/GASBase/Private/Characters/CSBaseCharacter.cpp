@@ -6,6 +6,8 @@
 #include "Abilities/GameplayAbility.h"
 #include "Net/UnrealNetwork.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
 
 ACSBaseCharacter::ACSBaseCharacter()
 {
@@ -26,7 +28,7 @@ void ACSBaseCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ThisClass, bAlive);
+	DOREPLIFETIME_CONDITION_NOTIFY(ThisClass, bAlive, COND_None, REPNOTIFY_Always);
 }
 
 void ACSBaseCharacter::GiveStartupAbilities()
@@ -129,14 +131,14 @@ void ACSBaseCharacter::OnHealthChanged(const FOnAttributeChangeData& AttributeCh
 void ACSBaseCharacter::HandleRespawn()
 {
 	bAlive = true;
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+}
+
+void ACSBaseCharacter::OnRep_Alive()
+{
 }
 
 void ACSBaseCharacter::HandleDeath_Implementation()
 {
 	bAlive = false;
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 

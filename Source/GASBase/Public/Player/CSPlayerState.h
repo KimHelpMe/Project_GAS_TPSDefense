@@ -26,6 +26,14 @@ public:
 
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+
+public:
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	float RespawnTime = 0.f;
+
+	void SetRespawnTime(float InTime) { RespawnTime = InTime; }
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "GAS")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
