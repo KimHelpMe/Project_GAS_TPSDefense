@@ -8,7 +8,10 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayTags/CSGameplayTags.h"
 #include "UI/ChatWidget.h"
+
 #include "UI/CSRespawnWidget.h"
+
+
 
 void ACSPlayerController::BeginPlay()
 {
@@ -44,6 +47,22 @@ void ACSPlayerController::BeginPlay()
 UChatWidget* ACSPlayerController::GetChatWidget() const
 {
 	return InGameChatWidget;
+}
+
+void ACSPlayerController::ClientShowGameOver_Implementation()
+{
+	if (!GameOverWidgetClass) return;
+
+	UUserWidget* GameOverWidget = CreateWidget<UUserWidget>(this, GameOverWidgetClass);
+	if (!IsValid(GameOverWidget)) return;
+
+	GameOverWidget->AddToViewport(10);
+
+	bShowMouseCursor = true;
+	SetInputMode(FInputModeUIOnly());
+
+	// 패배 후에는 더 이상 조작이 필요 없으므로 이 컨트롤러의 모든 입력을 차단
+	DisableInput(this);
 }
 
 void ACSPlayerController::SetupInputComponent()
