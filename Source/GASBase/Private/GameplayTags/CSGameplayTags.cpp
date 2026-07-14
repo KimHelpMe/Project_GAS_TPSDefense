@@ -45,6 +45,7 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(Long_Primary, "CSGameplayTags.Abilities.Long_Primary");
 		UE_DEFINE_GAMEPLAY_TAG(FireSpawnedWeapons, "CSGameplayTags.Abilities.FireSpawnedWeapons");
 
+
 	}
 
 	namespace Events
@@ -69,6 +70,8 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(Impact_E, "GameplayCue.Impact.E");
 		UE_DEFINE_GAMEPLAY_TAG(Impact_Fire, "GameplayCue.Impact.Fireball");
 		UE_DEFINE_GAMEPLAY_TAG(Impact_Earthquake, "GameplayCue.Impact.Earthquake");
+		UE_DEFINE_GAMEPLAY_TAG(Impact_Teleport, "GameplayCue.Impact.Teleport");
+		
 
 	}
 

@@ -96,6 +96,7 @@ namespace CSGameplayTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impact_E);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impact_Fire);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impact_Earthquake);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impact_Teleport);
 	}
 
 	namespace Status

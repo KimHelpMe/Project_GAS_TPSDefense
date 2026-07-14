@@ -68,4 +68,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	TObjectPtr<UCameraComponent> FollowCamera;
 
+public:
+	UFUNCTION(BlueprintImplementableEvent, Category = "Weapon")
+	FGameplayTag GetFireSpawnedWeaponEventTag() const;
 };

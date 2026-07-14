@@ -8,6 +8,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayTags/CSGameplayTags.h"
 #include "UI/ChatWidget.h"
+#include "Characters/CSPlayerCharacter.h"
 
 #include "UI/CSRespawnWidget.h"
 
@@ -112,10 +113,19 @@ void ACSPlayerController::LMB()
 	// 무기를 소환한 상태일 때만 FireSpawnedWeapons 이벤트를 보낸다.
 	// 그렇지 않으면 GA_FireSpawnWeapon이 매 LMB마다 불필요하게 트리거되어
 	// 빈 배열 bailout 분기에서 없는 태그를 지우려다 로그 에러가 발생한다.
+	
+
 	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn());
 	if (IsValid(ASC) && ASC->HasMatchingGameplayTag(CSGameplayTags::Status::WeaponsSpawned))
 	{
-		ServerSendGameplayEvent(CSGameplayTags::Abilities::FireSpawnedWeapons);
+		if (ACSPlayerCharacter* CSCharacter = Cast<ACSPlayerCharacter>(GetPawn()))
+		{
+			const FGameplayTag WeaponEventTag = CSCharacter->GetFireSpawnedWeaponEventTag();
+			if (WeaponEventTag.IsValid())
+			{
+				ServerSendGameplayEvent(WeaponEventTag);
+			}
+		}
 	}
 }
 
