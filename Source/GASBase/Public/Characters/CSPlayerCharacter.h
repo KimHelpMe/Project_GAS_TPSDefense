@@ -9,6 +9,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class ACSAbilityPickup;
+class UCSCameraFadeComponent;
 
 UCLASS()
 class GASBASE_API ACSPlayerCharacter : public ACSBaseCharacter
@@ -67,5 +68,8 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	TObjectPtr<UCameraComponent> FollowCamera;
+
+	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	TObjectPtr<UCSCameraFadeComponent> CameraFadeComponent;
 
 };
