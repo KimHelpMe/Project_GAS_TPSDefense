@@ -9,6 +9,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class ACSAbilityPickup;
+class UCSCameraFadeComponent;
 
 UCLASS()
 class GASBASE_API ACSPlayerCharacter : public ACSBaseCharacter
@@ -71,4 +72,8 @@ protected:
 public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Weapon")
 	FGameplayTag GetFireSpawnedWeaponEventTag() const;
+	
+	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	TObjectPtr<UCSCameraFadeComponent> CameraFadeComponent;
+
 };
