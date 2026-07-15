@@ -3,6 +3,8 @@
 
 #include "Abilities/CSGameplayAbility.h"
 #include "CSDebugHelper.h"
+#include "Characters/CSBaseCharacter.h"
+
 
 void UCSGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
@@ -39,4 +41,24 @@ FGameplayTag UCSGameplayAbility::GetAssignedSlotTag() const
 		}
 	}
 	return FGameplayTag::EmptyTag;
+}
+
+ACSBaseCharacter* UCSGameplayAbility::GetCharacterFromActorInfo()
+{
+	if (!CachedBaseCharacter.IsValid())
+	{
+		CachedBaseCharacter = Cast<ACSBaseCharacter>(CurrentActorInfo->AvatarActor);
+	}
+
+	return CachedBaseCharacter.IsValid() ? CachedBaseCharacter.Get() : nullptr;
+}
+
+UAnimMontage* UCSGameplayAbility::GetMontageFromCharacter(FGameplayTag AbilityTag)
+{
+	if (!CachedBaseCharacter.IsValid())
+	{
+		CachedBaseCharacter = Cast<ACSBaseCharacter>(CurrentActorInfo->AvatarActor);
+	}
+
+	return CachedBaseCharacter.IsValid() ? CachedBaseCharacter->GetMontageFromAbilityData(AbilityTag) : nullptr;
 }

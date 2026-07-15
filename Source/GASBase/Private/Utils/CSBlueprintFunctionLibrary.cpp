@@ -139,3 +139,8 @@ ACSAbilityPickup* UCSBlueprintFunctionLibrary::SpawnRandomSkillPickup(const UObj
 
 	return Pickup;
 }
+
+bool UCSBlueprintFunctionLibrary::MontageHasRootMotion(UAnimMontage* Montage)
+{
+	return Montage ? Montage->HasRootMotion() : false;
+}

@@ -18,14 +18,11 @@ class GASBASE_API UCSGameplayPlayerAbility : public UCSGameplayAbility
 	
 public:
 	//Player ĳ���͸� ������ ����
-	UFUNCTION(BlueprintPure, Category = "GAS|Ability")
-	ACSPlayerCharacter* GetCharacterFromActorInfo();
+	UFUNCTION(BlueprintPure, Category = "GAS|Abilities")
+	ACSPlayerCharacter* GetPlayerCharacterFromActorInfo();
 
-	UFUNCTION(BlueprintPure, Category = "GAS|Ability")
+	UFUNCTION(BlueprintPure, Category = "GAS|Abilities")
 	ACSPlayerController* GetPlayerControllerFromActorInfo();
-
-	UFUNCTION(BlueprintPure, Category = "GAS|Ability")
-	UAnimMontage* GetMontageFromCharacter(FGameplayTag AbilityTag) const;
 
 	UFUNCTION(BlueprintCallable, Category = "GAS|Aiming")
 	FVector GetAimpoint();
@@ -42,8 +39,8 @@ public:
 
 private:
 	//�����ϰ� Player�� �ּҸ� ����(ĳ��)�ص� �𸮾� ����Ʈ ������ ����
-	TWeakObjectPtr<ACSPlayerCharacter> CachedCharacter;
+	TWeakObjectPtr<ACSPlayerCharacter> CachedPlayerCharacter;
 
 	//�����ϰ� Player ��Ʈ�ѷ��� �ּҸ� ����(ĳ��)�ص� �𸮾� ����Ʈ ������ ���� 
-	TWeakObjectPtr<ACSPlayerController> CachedController;
+	TWeakObjectPtr<ACSPlayerController> CachedPlayerController;
 };

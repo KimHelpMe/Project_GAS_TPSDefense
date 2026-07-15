@@ -55,4 +55,8 @@ public:
     // 드랍 테이블에서 랜덤 스킬 픽업 스폰 (GA_Death BP에서 호출)
     UFUNCTION(BlueprintCallable, Category = "GAS|Drop", meta = (WorldContext = "WorldContextObject"))
     static ACSAbilityPickup* SpawnRandomSkillPickup(const UObject* WorldContextObject, TSubclassOf<ACSAbilityPickup> PickupClass, FVector SpawnLocation, int32 CurrentWave = 0);
+
+    // 해당 몽타주가 rootmotion인지 확인
+    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Animation")
+    static bool MontageHasRootMotion(UAnimMontage* Montage);
 };
