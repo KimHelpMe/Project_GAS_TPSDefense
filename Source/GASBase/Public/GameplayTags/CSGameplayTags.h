@@ -42,8 +42,7 @@ namespace CSGameplayTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(E);
 		// 스킬 슬롯 R
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(R);
-		// 스킬 슬롯 T
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(T);
+
 		// 스킬 슬롯 G
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(G);
 
@@ -70,9 +69,6 @@ namespace CSGameplayTags
 
 		// GA_SpawnWeapon으로 소환된 무기를 발사시키는 전용 트리거 태그
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(FireSpawnedWeapons);
-
-		// THE - Ray 어빌리티
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ray);
 	}
 
 	namespace Events

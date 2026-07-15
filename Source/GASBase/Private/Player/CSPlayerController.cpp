@@ -8,7 +8,6 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayTags/CSGameplayTags.h"
 #include "UI/ChatWidget.h"
-#include "Kismet/GameplayStatics.h"
 
 #include "UI/CSRespawnWidget.h"
 
@@ -64,18 +63,6 @@ void ACSPlayerController::ClientShowGameOver_Implementation()
 
 	// 패배 후에는 더 이상 조작이 필요 없으므로 이 컨트롤러의 모든 입력을 차단
 	DisableInput(this);
-}
-
-void ACSPlayerController::ServerRequestRestart_Implementation()
-{
-	// 서버가 현재 레벨을 다시 열면 서버 트래블이 발생해 모든 클라이언트가 함께 로드됨
-	const FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(this);
-	UGameplayStatics::OpenLevel(this, FName(*CurrentLevelName), true);
-}
-
-void ACSPlayerController::ServerRequestReturnToLobby_Implementation()
-{
-	UGameplayStatics::OpenLevel(this, FName("/MultiplayerSessions/Maps/Lobby"), true);
 }
 
 void ACSPlayerController::SetupInputComponent()

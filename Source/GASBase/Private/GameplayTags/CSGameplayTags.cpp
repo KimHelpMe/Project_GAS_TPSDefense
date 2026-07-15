@@ -1,4 +1,4 @@
-﻿// CSK
+// CSK
 
 
 #include "GameplayTags/CSGameplayTags.h"
@@ -25,7 +25,7 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(Q, "CSGameplayTags.Abilities.Q");
 		UE_DEFINE_GAMEPLAY_TAG(E, "CSGameplayTags.Abilities.E");
 		UE_DEFINE_GAMEPLAY_TAG(R, "CSGameplayTags.Abilities.R");
-		UE_DEFINE_GAMEPLAY_TAG(T, "CSGameplayTags.Abilities.T");
+
 		UE_DEFINE_GAMEPLAY_TAG(G, "CSGameplayTags.Abilities.G");
 
 		UE_DEFINE_GAMEPLAY_TAG(BulletParty, "CSGameplayTags.Abilities.BulletParty");
@@ -45,10 +45,6 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(Long_Primary, "CSGameplayTags.Abilities.Long_Primary");
 		UE_DEFINE_GAMEPLAY_TAG(FireSpawnedWeapons, "CSGameplayTags.Abilities.FireSpawnedWeapons");
 
-
-
-		UE_DEFINE_GAMEPLAY_TAG(Ray, "CSGameplayTags.Abilities.Ray");
-
 	}
 
 	namespace Events
@@ -63,7 +59,7 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(SpawnAbilityBox, "CSGameplayTags.Events.SpawnAbilityBox");
 
 		
-		UE_DEFINE_GAMEPLAY_TAG(Ray, "CSGameplayTags.Events.SpawnRay");
+
 
 	}
 

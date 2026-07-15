@@ -23,14 +23,6 @@ public:
 	UFUNCTION(Client, Reliable, BlueprintCallable, Category = "GAS|GameOver")
 	void ClientShowGameOver();
 
-	// GameOver 화면의 "재시작" 버튼에서 호출 — 서버가 현재 레벨을 다시 로드해서 모든 클라이언트를 트래블시킴
-	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "GAS|GameOver")
-	void ServerRequestRestart();
-
-	// GameOver 화면의 "로비로" 버튼에서 호출 — 서버가 로비 맵으로 트래블시킴
-	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "GAS|GameOver")
-	void ServerRequestReturnToLobby();
-
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
