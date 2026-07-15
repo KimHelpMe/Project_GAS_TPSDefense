@@ -63,7 +63,7 @@ private:
 	FTimerHandle CrosshairTraceTimerHandle;
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera")
 	TObjectPtr<USpringArmComponent> CameraBoom;
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
@@ -72,7 +72,7 @@ protected:
 public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Weapon")
 	FGameplayTag GetFireSpawnedWeaponEventTag() const;
-	
+
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	TObjectPtr<UCSCameraFadeComponent> CameraFadeComponent;
 

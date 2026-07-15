@@ -71,6 +71,10 @@ namespace CSGameplayTags
 
 		// GA_SpawnWeapon으로 소환된 무기를 발사시키는 전용 트리거 태그
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(FireSpawnedWeapons);
+
+		// Sprint 어빌리티
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Sprint);
+
 	}
 
 	namespace Events
@@ -116,6 +120,8 @@ namespace CSGameplayTags
 		// (같은 입력 태그를 시작/확인 두 용도로 재사용하면서 생기는 자기 자신 트리거 문제를 막기 위해 사용)
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Teleporting);
 
+		// 달리고 있는 상태를 나타내는 태그
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Sprinting);
 	}
 
 	namespace Cooldown

@@ -45,7 +45,7 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(Long_Primary, "CSGameplayTags.Abilities.Long_Primary");
 		UE_DEFINE_GAMEPLAY_TAG(FireSpawnedWeapons, "CSGameplayTags.Abilities.FireSpawnedWeapons");
 
-
+		UE_DEFINE_GAMEPLAY_TAG(Sprint, "CSGameplayTags.Abilities.Sprint");
 	}
 
 	namespace Events
@@ -84,6 +84,8 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(UsingStamina, "CSGameplayTags.Status.UsingStamina");
 
 		UE_DEFINE_GAMEPLAY_TAG(Teleporting, "CSGameplayTags.Status.Teleporting");
+		
+		UE_DEFINE_GAMEPLAY_TAG(Sprinting, "CSGameplayTags.Status.Sprinting");
 
 	}
 
