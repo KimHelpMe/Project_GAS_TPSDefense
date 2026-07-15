@@ -38,8 +38,10 @@ namespace CSGameplayTags
 
 		// 스킬 슬롯 Q
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Q);
+		
 		// 스킬 슬롯 E
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(E);
+
 		// 스킬 슬롯 R
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(R);
 

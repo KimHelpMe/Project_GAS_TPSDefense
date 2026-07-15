@@ -15,6 +15,7 @@ class UAttributeSet;
 class UGameplayAbility;
 class UGameplayEffect;
 class UCSAbilityData;
+class UCSCharacterAbilityData;
 
 // 멀티플레이어에서는 ASC와 AttributeSet이 BeginPlay 시점에 아직 초기화되지 않았을 수 있다. 
 // 이를 해결하기 위해 초기화 완료 시점을 알리는 델리게이트가 필요하다.
@@ -62,6 +63,14 @@ public:
 	UFUNCTION()
 	virtual void OnRep_Alive();
 
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "GAS|Abilities")
+	UCSCharacterAbilityData* GetCharacterAbilityData() const { return CharacterAbilityData; }
+
+	UFUNCTION(BlueprintCallable, Category = "GAS|Abilities")
+	UAnimMontage* GetMontageFromAbilityData(FGameplayTag AbilityTag) const;
+
 protected:
 	virtual void HandleDeath_Implementation();
 
@@ -81,6 +90,9 @@ public:
 	bool IsAlive() const { return bAlive; }
 	void SetAlive(bool bAliveStatus) { bAlive = bAliveStatus; }
 
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Abilities")
+	TObjectPtr<UCSCharacterAbilityData> CharacterAbilityData;
 
 private:
 	// 항상 고정으로 시작하는 어빌리티 (좌클릭 기본 공격, 우클릭 등) — 슬롯 시스템과 무관

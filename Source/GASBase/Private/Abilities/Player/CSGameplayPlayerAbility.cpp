@@ -23,6 +23,12 @@ ACSPlayerController* UCSGameplayPlayerAbility::GetPlayerControllerFromActorInfo(
     return CachedController.IsValid() ? CachedController.Get() : nullptr;
 }
 
+UAnimMontage* UCSGameplayPlayerAbility::GetMontageFromCharacter(FGameplayTag AbilityTag) const
+{
+    
+    return CachedCharacter.IsValid() ? CachedCharacter ->GetMontageFromAbilityData(AbilityTag) : nullptr;
+}
+
 FVector UCSGameplayPlayerAbility::GetAimpoint()
 {
     return GetAimpointHitResult().ImpactPoint;
