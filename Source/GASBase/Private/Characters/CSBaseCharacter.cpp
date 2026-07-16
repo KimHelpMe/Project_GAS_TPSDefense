@@ -138,6 +138,52 @@ void ACSBaseCharacter::OnRep_Alive()
 {
 }
 
+void ACSBaseCharacter::EnableRagdoll()
+{
+	// 메시 충돌을 켜서 바닥과 부딪히도록
+	//GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+
+	// 메쉬의 모든 피지컬 바디(뼈대)에 물리 시뮬레이션 활성화
+	GetMesh()->SetAllBodiesSimulatePhysics(true);
+
+	// 스켈레탈 메쉬 컴포넌트 자체의 물리 루트 시뮬레이션 활성화
+	GetMesh()->SetSimulatePhysics(true);
+
+	// 물리 엔진(Chaos Physics)에서 잠들어 있는 바디들을 깨워 즉시 낙하/반응하도록 유도
+	GetMesh()->WakeAllRigidBodies();
+
+	// 애니메이션 포즈와 물리 연산 결과를 자연스럽게 블렌딩하도록 설정
+	GetMesh()->bBlendPhysics = true;
+
+	// 캐릭터의 충돌을 담당하던 루트 캡슐의 모든 충돌을 비활성화
+	// (서버/클라이언트 모두 시체가 맵 바닥을 뚫고 지나가는 물리적 캡슐을 지우는 역할)
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	// 이동 컴포넌트의 모드를 None으로 변경하여 중력 및 바닥 검사(Floor Check) 중지
+	GetCharacterMovement()->SetMovementMode(MOVE_None);
+
+	// 이동 컴포넌트 자체를 완전히 비활성화하여 틱(Tick) 오버헤드 방지 및 이동 로직 차단
+	GetCharacterMovement()->DisableMovement();
+}
+
+void ACSBaseCharacter::DisableRagdoll()
+{
+	GetMesh()->SetAllBodiesSimulatePhysics(false);
+	GetMesh()->SetSimulatePhysics(false);
+	GetMesh()->bBlendPhysics = false;
+
+	GetMesh()->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -GetCapsuleComponent()->GetScaledCapsuleHalfHeight()), FRotator(0.f, -90.f, 0.f));
+
+	// 원래 콜리전 프로파일로 복원
+	GetMesh()->SetCollisionProfileName(TEXT("CharacterMesh"));
+	//GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+}
+
 UAnimMontage* ACSBaseCharacter::GetMontageFromAbilityData(FGameplayTag AbilityTag) const
 {
 	if (!CharacterAbilityData) return nullptr;

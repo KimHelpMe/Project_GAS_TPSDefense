@@ -19,6 +19,4 @@ public:
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "Montage")
 	TMap<FGameplayTag, TObjectPtr<UAnimMontage>> MontageMap;
-	
-	
 };

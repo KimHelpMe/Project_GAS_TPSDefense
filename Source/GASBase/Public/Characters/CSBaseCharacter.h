@@ -63,6 +63,11 @@ public:
 	UFUNCTION()
 	virtual void OnRep_Alive();
 
+	UFUNCTION(BlueprintCallable, Category = "GAS|Death")
+	void EnableRagdoll();
+
+	UFUNCTION(BlueprintCallable, Category = "GAS|Death")
+	void DisableRagdoll();
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "GAS|Abilities")

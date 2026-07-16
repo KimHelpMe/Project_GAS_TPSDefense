@@ -126,10 +126,6 @@ void ACSPlayerCharacter::HandleDeath_Implementation()
 {
 	Super::HandleDeath_Implementation();
 
-	// 충돌 해제 + 이동 정지
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	GetCharacterMovement()->SetMovementMode(MOVE_None);
 	bUseControllerRotationYaw = false;
 
 	// 서버에서만 GameMode에 리스폰 요청
@@ -146,10 +142,7 @@ void ACSPlayerCharacter::HandleRespawn()
 {
 	Super::HandleRespawn();
 
-	// 충돌 복원 + 이동 복원
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	DisableRagdoll();
 	bUseControllerRotationYaw = true;
 }
 
@@ -160,18 +153,13 @@ void ACSPlayerCharacter::OnRep_Alive()
 	if (IsAlive())
 	{
 		// 리스폰 — 클라이언트 측 복원
-		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		DisableRagdoll();
 		bUseControllerRotationYaw = true;
 	}
 	else
 	{
-		// 사망 — 클라이언트 측 충돌 해제
-		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		GetCharacterMovement()->SetMovementMode(MOVE_None);
 		bUseControllerRotationYaw = false;
+		EnableRagdoll();
 	}
 }
 
