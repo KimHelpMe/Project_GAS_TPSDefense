@@ -47,7 +47,11 @@ namespace CSGameplayTags
 
 
 
+
 		UE_DEFINE_GAMEPLAY_TAG(Ray, "CSGameplayTags.Abilities.Ray");
+
+
+		UE_DEFINE_GAMEPLAY_TAG(Sprint, "CSGameplayTags.Abilities.Sprint");
 
 	}
 
@@ -85,6 +89,8 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(UsingStamina, "CSGameplayTags.Status.UsingStamina");
 
 		UE_DEFINE_GAMEPLAY_TAG(Teleporting, "CSGameplayTags.Status.Teleporting");
+		
+		UE_DEFINE_GAMEPLAY_TAG(Sprinting, "CSGameplayTags.Status.Sprinting");
 
 	}
 

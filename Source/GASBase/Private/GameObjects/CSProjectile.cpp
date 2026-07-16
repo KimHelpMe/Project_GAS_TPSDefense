@@ -95,6 +95,11 @@ void ACSProjectile::ExecuteImpactCue(const FVector& Location, const FVector& Nor
 
 void ACSProjectile::SphereOverlapAtImpact(const FVector& ImpactLocation, float Radius)
 {
+	if (FMath::IsNearlyEqual(Radius, 0.f)) 
+	{ 
+		return; 
+	}
+
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionShape Sphere = FCollisionShape::MakeSphere(Radius);
 
@@ -102,14 +107,7 @@ void ACSProjectile::SphereOverlapAtImpact(const FVector& ImpactLocation, float R
 	QueryParams.AddIgnoredActor(this);
 	QueryParams.AddIgnoredActor(GetInstigator());
 
-	GetWorld()->OverlapMultiByChannel(
-		OverlapResults,
-		ImpactLocation,
-		FQuat::Identity,
-		ECC_Pawn,
-		Sphere,
-		QueryParams
-	);
+	GetWorld()->OverlapMultiByChannel(OverlapResults, ImpactLocation, FQuat::Identity, ECC_Pawn, Sphere, QueryParams);
 
 	TArray<AActor*> HitActors;
 	for (const FOverlapResult& Result : OverlapResults)

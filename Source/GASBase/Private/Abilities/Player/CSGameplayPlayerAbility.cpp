@@ -5,22 +5,22 @@
 #include "Characters/CSPlayerCharacter.h"
 #include "Player/CSPlayerController.h"
 
-ACSPlayerCharacter* UCSGameplayPlayerAbility::GetCharacterFromActorInfo()
+ACSPlayerCharacter* UCSGameplayPlayerAbility::GetPlayerCharacterFromActorInfo()
 {
-    if (!CachedCharacter.IsValid())
+    if (!CachedPlayerCharacter.IsValid())
     {
-        CachedCharacter = Cast<ACSPlayerCharacter>(CurrentActorInfo->AvatarActor);
+        CachedPlayerCharacter = Cast<ACSPlayerCharacter>(CurrentActorInfo->AvatarActor);
     }
-    return CachedCharacter.IsValid() ? CachedCharacter.Get() : nullptr;
+    return CachedPlayerCharacter.IsValid() ? CachedPlayerCharacter.Get() : nullptr;
 }
 
 ACSPlayerController* UCSGameplayPlayerAbility::GetPlayerControllerFromActorInfo()
 {
-    if (!CachedController.IsValid())
+    if (!CachedPlayerController.IsValid())
     {
-        CachedController = Cast<ACSPlayerController>(CurrentActorInfo->PlayerController);
+        CachedPlayerController = Cast<ACSPlayerController>(CurrentActorInfo->PlayerController);
     }
-    return CachedController.IsValid() ? CachedController.Get() : nullptr;
+    return CachedPlayerController.IsValid() ? CachedPlayerController.Get() : nullptr;
 }
 
 FVector UCSGameplayPlayerAbility::GetAimpoint()

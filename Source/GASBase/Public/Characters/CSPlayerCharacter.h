@@ -1,4 +1,4 @@
-// CSK
+﻿// CSK
 
 #pragma once
 
@@ -62,10 +62,20 @@ private:
 	FTimerHandle CrosshairTraceTimerHandle;
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera")
 	TObjectPtr<USpringArmComponent> CameraBoom;
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	TObjectPtr<UCameraComponent> FollowCamera;
+
+
+
+public:
+	UFUNCTION(BlueprintImplementableEvent, Category = "Weapon")
+	FGameplayTag GetFireSpawnedWeaponEventTag() const;
+
+	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	TObjectPtr<UCSCameraFadeComponent> CameraFadeComponent;
+
 
 };

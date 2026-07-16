@@ -51,6 +51,8 @@ private:
 	void E();
 	void R();
 	void TestAbility();
+	void StartSprint();
+	void StopSprint();
 
 private:
 	// 인게임 채팅 위젯 클래스 (에디터에서 할당)
@@ -78,6 +80,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Movement")
 	TObjectPtr<UInputAction> RollAction;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input|Movement")
+	TObjectPtr<UInputAction> SprintAction;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
 	TObjectPtr<UInputAction> PrimaryAction;
 
@@ -95,4 +100,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Ability")
 	TObjectPtr<UInputAction> TAction;
+
+
 };

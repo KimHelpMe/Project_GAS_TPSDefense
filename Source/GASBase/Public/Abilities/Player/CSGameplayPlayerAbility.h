@@ -18,10 +18,10 @@ class GASBASE_API UCSGameplayPlayerAbility : public UCSGameplayAbility
 	
 public:
 	//Player ĳ���͸� ������ ����
-	UFUNCTION(BlueprintPure, Category = "Ability")
-	ACSPlayerCharacter* GetCharacterFromActorInfo();
+	UFUNCTION(BlueprintPure, Category = "GAS|Abilities")
+	ACSPlayerCharacter* GetPlayerCharacterFromActorInfo();
 
-	UFUNCTION(BlueprintPure, Category = "Ability")
+	UFUNCTION(BlueprintPure, Category = "GAS|Abilities")
 	ACSPlayerController* GetPlayerControllerFromActorInfo();
 
 	UFUNCTION(BlueprintCallable, Category = "GAS|Aiming")
@@ -39,8 +39,8 @@ public:
 
 private:
 	//�����ϰ� Player�� �ּҸ� ����(ĳ��)�ص� �𸮾� ����Ʈ ������ ����
-	TWeakObjectPtr<ACSPlayerCharacter> CachedCharacter;
+	TWeakObjectPtr<ACSPlayerCharacter> CachedPlayerCharacter;
 
 	//�����ϰ� Player ��Ʈ�ѷ��� �ּҸ� ����(ĳ��)�ص� �𸮾� ����Ʈ ������ ���� 
-	TWeakObjectPtr<ACSPlayerController> CachedController;
+	TWeakObjectPtr<ACSPlayerController> CachedPlayerController;
 };

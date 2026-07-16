@@ -7,6 +7,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Data/CSCharacterAbilityData.h"
 
 
 ACSBaseCharacter::ACSBaseCharacter()
@@ -135,6 +136,13 @@ void ACSBaseCharacter::HandleRespawn()
 
 void ACSBaseCharacter::OnRep_Alive()
 {
+}
+
+UAnimMontage* ACSBaseCharacter::GetMontageFromAbilityData(FGameplayTag AbilityTag) const
+{
+	if (!CharacterAbilityData) return nullptr;
+
+	return CharacterAbilityData->GetMontage(AbilityTag);
 }
 
 void ACSBaseCharacter::HandleDeath_Implementation()

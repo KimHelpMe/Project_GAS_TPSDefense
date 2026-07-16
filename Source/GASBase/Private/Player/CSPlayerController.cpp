@@ -94,6 +94,8 @@ void ACSPlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(EAction, ETriggerEvent::Started, this, &ThisClass::E);
 	EnhancedInputComponent->BindAction(RAction, ETriggerEvent::Started, this, &ThisClass::R);
 	EnhancedInputComponent->BindAction(TAction, ETriggerEvent::Started, this, &ThisClass::TestAbility);
+	EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ThisClass::StartSprint);
+	EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ThisClass::StopSprint);
 }
 
 void ACSPlayerController::ActivateAbility(const FGameplayTag& AbilityTag) const
@@ -203,4 +205,19 @@ void ACSPlayerController::TestAbility()
 	FGameplayEventData Payload;
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::TestAbility, Payload);
 	ServerSendGameplayEvent(CSGameplayTags::Abilities::TestAbility);
+}
+
+void ACSPlayerController::StartSprint()
+{
+	ActivateAbility(CSGameplayTags::Abilities::Sprint);
+	
+}
+
+void ACSPlayerController::StopSprint()
+{
+	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn());
+	if (!IsValid(ASC)) return;
+
+	FGameplayTagContainer SprintTagContainer = CSGameplayTags::Abilities::Sprint.GetTag().GetSingleTagContainer();
+	ASC->CancelAbilities(&SprintTagContainer);
 }
