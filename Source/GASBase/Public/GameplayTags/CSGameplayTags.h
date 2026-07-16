@@ -44,7 +44,8 @@ namespace CSGameplayTags
 
 		// 스킬 슬롯 R
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(R);
-
+		// 스킬 슬롯 T
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(T);
 		// 스킬 슬롯 G
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(G);
 
@@ -60,6 +61,8 @@ namespace CSGameplayTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(FireSpawnAxe);
 		// Teleport 어빌리티
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Teleport);
+		// Laser 어빌리티
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Laser);
 
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(TestAbility);
 
@@ -72,8 +75,13 @@ namespace CSGameplayTags
 		// GA_SpawnWeapon으로 소환된 무기를 발사시키는 전용 트리거 태그
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(FireSpawnedWeapons);
 
+
+		// THE - Ray 어빌리티
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ray);
+
 		// Sprint 어빌리티
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Sprint);
+
 
 	}
 
@@ -90,6 +98,8 @@ namespace CSGameplayTags
 		// 장벽 소환 이벤트
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnFireWall);
 
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnLaser);
+
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnAbilityBox);
 
 		// 점수 획득 이벤트
@@ -102,7 +112,6 @@ namespace CSGameplayTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impact_E);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impact_Fire);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impact_Earthquake);
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impact_Teleport);
 	}
 
 	namespace Status
@@ -132,5 +141,6 @@ namespace CSGameplayTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnWeapon_Sword);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(BulletParty);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Teleport);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Laser);
 	}
 }
