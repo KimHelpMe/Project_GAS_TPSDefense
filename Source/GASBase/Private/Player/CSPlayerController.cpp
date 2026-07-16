@@ -8,7 +8,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayTags/CSGameplayTags.h"
 #include "UI/ChatWidget.h"
-#include "Characters/CSPlayerCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "UI/CSRespawnWidget.h"
 
@@ -66,6 +66,18 @@ void ACSPlayerController::ClientShowGameOver_Implementation()
 	DisableInput(this);
 }
 
+void ACSPlayerController::ServerRequestRestart_Implementation()
+{
+	// 서버가 현재 레벨을 다시 열면 서버 트래블이 발생해 모든 클라이언트가 함께 로드됨
+	const FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(this);
+	UGameplayStatics::OpenLevel(this, FName(*CurrentLevelName), true);
+}
+
+void ACSPlayerController::ServerRequestReturnToLobby_Implementation()
+{
+	UGameplayStatics::OpenLevel(this, FName("/MultiplayerSessions/Maps/Lobby"), true);
+}
+
 void ACSPlayerController::SetupInputComponent()
 {
 	// 베이스 클래스에서 IMC 등록 + 이동 입력 바인딩 처리
@@ -115,19 +127,10 @@ void ACSPlayerController::LMB()
 	// 무기를 소환한 상태일 때만 FireSpawnedWeapons 이벤트를 보낸다.
 	// 그렇지 않으면 GA_FireSpawnWeapon이 매 LMB마다 불필요하게 트리거되어
 	// 빈 배열 bailout 분기에서 없는 태그를 지우려다 로그 에러가 발생한다.
-	
-
 	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn());
 	if (IsValid(ASC) && ASC->HasMatchingGameplayTag(CSGameplayTags::Status::WeaponsSpawned))
 	{
-		if (ACSPlayerCharacter* CSCharacter = Cast<ACSPlayerCharacter>(GetPawn()))
-		{
-			const FGameplayTag WeaponEventTag = CSCharacter->GetFireSpawnedWeaponEventTag();
-			if (WeaponEventTag.IsValid())
-			{
-				ServerSendGameplayEvent(WeaponEventTag);
-			}
-		}
+		ServerSendGameplayEvent(CSGameplayTags::Abilities::FireSpawnedWeapons);
 	}
 }
 
