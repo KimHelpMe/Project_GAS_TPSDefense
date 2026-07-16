@@ -35,6 +35,7 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(FireSpawnSword, "CSGameplayTags.Abilities.FireSpawnSword");
 		UE_DEFINE_GAMEPLAY_TAG(FireSpawnAxe, "CSGameplayTags.Abilities.FireSpawnAxe");
 		UE_DEFINE_GAMEPLAY_TAG(Teleport, "CSGameplayTags.Abilities.Teleport");
+		UE_DEFINE_GAMEPLAY_TAG(Laser, "CSGameplayTags.Abilities.Laser");
 
 
 		UE_DEFINE_GAMEPLAY_TAG(TestAbility, "CSGameplayTags.Abilities.TestAbility");
@@ -57,6 +58,8 @@ namespace CSGameplayTags
 
 		UE_DEFINE_GAMEPLAY_TAG(SpawnWeapon, "CSGameplayTags.Events.SpawnWeapon");
 		UE_DEFINE_GAMEPLAY_TAG(SpawnFireWall, "CSGameplayTags.Events.SpawnFireWall");
+		UE_DEFINE_GAMEPLAY_TAG(SpawnLaser, "CSGameplayTags.Events.SpawnLaser");
+
 		UE_DEFINE_GAMEPLAY_TAG(SpawnAbilityBox, "CSGameplayTags.Events.SpawnAbilityBox");
 
 		
@@ -99,5 +102,6 @@ namespace CSGameplayTags
 
 		UE_DEFINE_GAMEPLAY_TAG(BulletParty, "CSGameplayTags.Cooldown.BulletParty");
 		UE_DEFINE_GAMEPLAY_TAG(Teleport, "CSGameplayTags.Cooldown.Teleport");
+		UE_DEFINE_GAMEPLAY_TAG(Laser, "CSGameplayTags.Cooldown.Laser");
 	}
 }

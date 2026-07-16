@@ -60,6 +60,8 @@ namespace CSGameplayTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(FireSpawnAxe);
 		// Teleport 어빌리티
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Teleport);
+		// Laser 어빌리티
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Laser);
 
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(TestAbility);
 
@@ -89,6 +91,8 @@ namespace CSGameplayTags
 
 		// 장벽 소환 이벤트
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnFireWall);
+
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnLaser);
 
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnAbilityBox);
 
@@ -132,5 +136,6 @@ namespace CSGameplayTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SpawnWeapon_Sword);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(BulletParty);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Teleport);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Laser);
 	}
 }
