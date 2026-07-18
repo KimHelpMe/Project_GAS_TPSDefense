@@ -74,8 +74,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Weapon")
 	FGameplayTag GetFireSpawnedWeaponEventTag() const;
 
-	UPROPERTY(VisibleAnywhere, Category = "Camera")
-	TObjectPtr<UCSCameraFadeComponent> CameraFadeComponent;
+	//UPROPERTY(VisibleAnywhere, Category = "Camera")
+	//TObjectPtr<UCSCameraFadeComponent> CameraFadeComponent;
 
 
 };
