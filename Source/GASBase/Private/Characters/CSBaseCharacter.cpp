@@ -140,8 +140,6 @@ void ACSBaseCharacter::OnRep_Alive()
 
 void ACSBaseCharacter::EnableRagdoll()
 {
-	// 메시 충돌을 켜서 바닥과 부딪히도록
-	//GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 
 	// 메쉬의 모든 피지컬 바디(뼈대)에 물리 시뮬레이션 활성화
@@ -167,6 +165,16 @@ void ACSBaseCharacter::EnableRagdoll()
 	GetCharacterMovement()->DisableMovement();
 }
 
+void ACSBaseCharacter::Multicast_EnableRagdoll_Implementation()
+{
+	EnableRagdoll();
+}
+
+void ACSBaseCharacter::Multicast_DisableRagdoll_Implementation()
+{
+	DisableRagdoll();
+}
+
 void ACSBaseCharacter::DisableRagdoll()
 {
 	GetMesh()->SetAllBodiesSimulatePhysics(false);
@@ -176,9 +184,7 @@ void ACSBaseCharacter::DisableRagdoll()
 	GetMesh()->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -GetCapsuleComponent()->GetScaledCapsuleHalfHeight()), FRotator(0.f, -90.f, 0.f));
 
-	// 원래 콜리전 프로파일로 복원
 	GetMesh()->SetCollisionProfileName(TEXT("CharacterMesh"));
-	//GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetCharacterMovement()->SetMovementMode(MOVE_Walking);

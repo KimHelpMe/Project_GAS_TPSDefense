@@ -69,6 +69,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GAS|Death")
 	void DisableRagdoll();
 
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable, Category = "GAS|Death")
+	void Multicast_EnableRagdoll();
+
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable, Category = "GAS|Death")
+	void Multicast_DisableRagdoll();
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "GAS|Abilities")
 	UCSCharacterAbilityData* GetCharacterAbilityData() const { return CharacterAbilityData; }

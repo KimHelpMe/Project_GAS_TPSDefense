@@ -157,7 +157,6 @@ void ACSPlayerCharacter::OnRep_Alive()
 	else
 	{
 		bUseControllerRotationYaw = false;
-		EnableRagdoll();
 	}
 }
 
