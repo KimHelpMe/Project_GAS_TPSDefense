@@ -6,8 +6,12 @@
 #include "UI/ChatWidget.h"
 #include "MultiplayerSessionsSubsystem.h"
 #include "GameFramework/GameStateBase.h"
+#include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "InputMappingContext.h"
 #include "InputAction.h"
+#include "Camera/CameraActor.h"
+#include "EngineUtils.h"
 
 ACSLobbyPlayerController::ACSLobbyPlayerController()
 {
@@ -18,11 +22,24 @@ void ACSLobbyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// 기본 상태: 커서 비활성, 게임 입력 (이동 가능)
+	// 캐릭터 선택창: 커서 활성, UI 전용 입력 모드
 	if (IsLocalController())
 	{
-		bShowMouseCursor = false;
-		SetInputMode(FInputModeGameOnly());
+		// 태그 "LobbyCamera"가 붙은 CameraActor를 뷰 타겟으로 설정
+		for (TActorIterator<ACameraActor> It(GetWorld()); It; ++It)
+		{
+			if (It->ActorHasTag(TEXT("LobbyCamera")))
+			{
+				SetViewTargetWithBlend(*It);
+				break;
+			}
+		}
+
+		bShowMouseCursor = true;
+		FInputModeGameAndUI InputMode;
+		InputMode.SetHideCursorDuringCapture(false);
+		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+		SetInputMode(InputMode);
 	}
 
 	// 로비 위젯 생성
@@ -32,6 +49,13 @@ void ACSLobbyPlayerController::BeginPlay()
 		if (LobbyWidget)
 		{
 			LobbyWidget->AddToViewport();
+
+			// 위젯 생성 후 포커스 지정 — 클릭 없이도 Enter 입력 바로 받음
+			FInputModeGameAndUI InputMode;
+			InputMode.SetHideCursorDuringCapture(false);
+			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+			InputMode.SetWidgetToFocus(LobbyWidget->TakeWidget());
+			SetInputMode(InputMode);
 		}
 	}
 
@@ -56,39 +80,39 @@ void ACSLobbyPlayerController::BeginPlay()
 
 void ACSLobbyPlayerController::SetupInputComponent()
 {
-	Super::SetupInputComponent();
+	// 베이스의 이동 입력 바인딩 스킵, 채팅 Enter만 바인딩
+	APlayerController::SetupInputComponent();
 
-	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
-	if (!IsValid(EnhancedInputComponent)) return;
+	UEnhancedInputLocalPlayerSubsystem* InputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+	if (!IsValid(InputSubsystem)) return;
 
-	if (ToggleCursorAction)
+	for (UInputMappingContext* IMC : InputMappingContexts)
 	{
-		EnhancedInputComponent->BindAction(ToggleCursorAction, ETriggerEvent::Started, this, &ThisClass::ToggleCursor);
+		InputSubsystem->AddMappingContext(IMC, 0);
+	}
+
+	UEnhancedInputComponent* EIC = Cast<UEnhancedInputComponent>(InputComponent);
+	if (!IsValid(EIC)) return;
+
+	// 채팅 Enter만 바인딩
+	if (ChatActivateAction)
+	{
+		EIC->BindAction(ChatActivateAction, ETriggerEvent::Started, this, &ThisClass::ActivateChat);
 	}
 }
 
-void ACSLobbyPlayerController::ToggleCursor()
+
+void ACSLobbyPlayerController::OnChatDeactivated()
 {
-	// 채팅 활성 중이면 먼저 채팅 비활성
-	if (bChatActive)
-	{
-		DeactivateChat();
-		return;
-	}
+	if (!LobbyWidget) return;
 
-	// 커서 토글
-	bShowMouseCursor = !bShowMouseCursor;
-
-	if (bShowMouseCursor)
-	{
-		FInputModeGameAndUI InputMode;
-		SetInputMode(InputMode);
-	}
-	else
-	{
-		SetInputMode(FInputModeGameOnly());
-	}
+	FInputModeGameAndUI InputMode;
+	InputMode.SetHideCursorDuringCapture(false);
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	InputMode.SetWidgetToFocus(LobbyWidget->TakeWidget());
+	SetInputMode(InputMode);
 }
+
 
 UChatWidget* ACSLobbyPlayerController::GetChatWidget() const
 {

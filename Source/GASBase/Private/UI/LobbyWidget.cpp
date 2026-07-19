@@ -62,11 +62,6 @@ void ULobbyWidget::OnLeaveButtonClicked()
 
 void ULobbyWidget::OnStartButtonClicked()
 {
-	if (StartButton)
-	{
-		StartButton->SetIsEnabled(false);
-	}
-
 	// LobbyInteractionComponent를 통해 서버에 시작 요청
 	APlayerController* PC = GetOwningPlayer();
 	if (PC)

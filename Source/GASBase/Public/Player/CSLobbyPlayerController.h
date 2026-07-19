@@ -28,6 +28,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
+	virtual void OnChatDeactivated() override;
 
 	// 베이스 오버라이드: 로비 위젯 안의 ChatWidget 반환
 	virtual UChatWidget* GetChatWidget() const override;
@@ -39,14 +40,7 @@ protected:
 	// GameState의 PlayerArray를 폴링하여 인원 변화 감지
 	void PollPlayerCount();
 
-	// Alt 키: 커서 토글 (Start 버튼 등 UI 클릭용)
-	void ToggleCursor();
-
 private:
-	// 커서 토글용 입력 액션 (에디터에서 할당)
-	UPROPERTY(EditDefaultsOnly, Category = "Input|UI")
-	TObjectPtr<UInputAction> ToggleCursorAction;
-
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<ULobbyWidget> LobbyWidgetClass;
 

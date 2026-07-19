@@ -26,6 +26,7 @@ public:
 
 protected:
 	virtual void SetupInputComponent() override;
+	virtual void OnChatDeactivated() {}
 
 	// 이동 콜백 (하위 클래스에서 오버라이드 가능)
 	virtual void Jump();

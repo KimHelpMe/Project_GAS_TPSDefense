@@ -18,6 +18,9 @@ public:
     // 캐릭터 사망 시 호출 — 리스폰 타이머 시작
     void OnCharacterDied(AController* DeadController);
 
+    // "플레이어 스폰(Spawn/생성) 프로세스"를 제어하는 함수
+    virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
+
 protected:
     // 타이머 완료 시 호출 — 실제 리스폰 수행
     void RespawnCharacter(AController* Controller);

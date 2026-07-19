@@ -52,11 +52,6 @@ void ACSBasePlayerController::ActivateChat()
 
 	bChatActive = true;
 
-	// 커서 활성 + UI 입력 허용
-	bShowMouseCursor = true;
-	FInputModeGameAndUI InputMode;
-	SetInputMode(InputMode);
-
 	// ChatWidget 활성 상태 진입 (입력창 표시 + 포커스 + 페이드 중단)
 	Chat->ActivateChat();
 
@@ -72,10 +67,7 @@ void ACSBasePlayerController::DeactivateChat()
 	if (!bChatActive) return;
 
 	bChatActive = false;
-
-	// 커서 비활성 + 게임 전용 입력
-	bShowMouseCursor = false;
-	SetInputMode(FInputModeGameOnly());
+	OnChatDeactivated();
 }
 
 void ACSBasePlayerController::Jump()

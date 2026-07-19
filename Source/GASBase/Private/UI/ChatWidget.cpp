@@ -41,9 +41,9 @@ void UChatWidget::NativeConstruct()
 		}
 	}
 
-	// 초기 상태: Idle (입력창 숨김, 메시지 영역 투명)
+	// 초기 상태: Idle (입력창 숨김, 메시지 영역 최소 투명도)
 	SetInputAreaVisible(false);
-	CurrentOpacity = 0.f;
+	CurrentOpacity = 0.2f;
 	if (MessageScrollBox)
 	{
 		MessageScrollBox->SetRenderOpacity(CurrentOpacity);
@@ -246,9 +246,9 @@ void UChatWidget::FadeOutTick()
 
 	CurrentOpacity -= TickInterval / FadeDuration;
 
-	if (CurrentOpacity <= 0.f)
+	if (CurrentOpacity <= 0.2f)
 	{
-		CurrentOpacity = 0.f;
+		CurrentOpacity = 0.2f;
 
 		if (UWorld* World = GetWorld())
 		{

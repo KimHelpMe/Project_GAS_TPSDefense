@@ -1,6 +1,5 @@
 
 
-
 #include "Game/InGameMode.h"
 #include "Characters/CSBaseCharacter.h"
 #include "AbilitySystemComponent.h"
@@ -27,13 +26,27 @@ void AInGameMode::OnCharacterDied(AController* DeadController)
     Delegate.BindUObject(this, &ThisClass::RespawnCharacter, DeadController);
     GetWorldTimerManager().SetTimer(Handle, Delegate, RespawnDelay, false);
     
-    // 사망 시 RespawnTime 설정
     ACSPlayerState* PlayerController = DeadController->GetPlayerState<ACSPlayerState>();
     if (PlayerController)
     {
         PlayerController->SetRespawnTime(GetWorld()->GetTimeSeconds() + RespawnDelay);
     }
+}
 
+UClass* AInGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
+{
+    if (APlayerController* Controller = Cast<APlayerController>(InController))
+    {
+        if (ACSPlayerState* State = Controller->GetPlayerState<ACSPlayerState>())
+        {
+            if (State->SelectedCharacterClass)
+            {
+                return State->SelectedCharacterClass;
+            }
+        }
+    }
+
+    return Super::GetDefaultPawnClassForController_Implementation(InController);
 }
 
 void AInGameMode::RespawnCharacter(AController* Controller)
@@ -69,7 +82,6 @@ void AInGameMode::RespawnCharacter(AController* Controller)
     // HandleRespawn — bAlive=true, 충돌 복원
     Character->HandleRespawn();
 
-    // 사망 시 RespawnTime 설정
     ACSPlayerState* PlayerController = Controller->GetPlayerState<ACSPlayerState>();
     if (PlayerController)
     {

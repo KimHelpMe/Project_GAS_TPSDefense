@@ -31,6 +31,23 @@ void ACSPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ThisClass, RespawnTime);
+	DOREPLIFETIME(ACSPlayerState, SelectedCharacterClass);
+}
+
+void ACSPlayerState::SeamlessTravelTo(APlayerState* NewPlayerState)
+{
+	Super::SeamlessTravelTo(NewPlayerState);
+
+	if (ACSPlayerState* NewState = Cast<ACSPlayerState>(NewPlayerState))
+	{
+		// 로비에서 선택한 캐릭터 클래스를 새 PlayerState로 이전
+		NewState->SelectedCharacterClass = SelectedCharacterClass;
+	}
+}
+
+void ACSPlayerState::ServerSelectCharacter_Implementation(TSubclassOf<APawn> InCharacterClass)
+{
+	SelectedCharacterClass = InCharacterClass;
 }
 
 UAbilitySystemComponent* ACSPlayerState::GetAbilitySystemComponent() const
