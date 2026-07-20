@@ -12,7 +12,7 @@
 #include "Abilities/CSAbilityPickup.h"
 #include "GameFramework/PlayerController.h"
 #include "Game/InGameMode.h"
-
+#include "Camera/CSCameraFadeComponent.h"
 
 
 ACSPlayerCharacter::ACSPlayerCharacter()
@@ -46,6 +46,7 @@ ACSPlayerCharacter::ACSPlayerCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
+	CameraFadeComponent = CreateDefaultSubobject<UCSCameraFadeComponent>(TEXT("CameraFadeComponent"));
 }
 
 UAbilitySystemComponent* ACSPlayerCharacter::GetAbilitySystemComponent() const
