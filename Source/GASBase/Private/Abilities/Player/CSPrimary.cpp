@@ -43,7 +43,7 @@ TArray<AActor*>  UCSPrimary::HitBoxOverlap()
 		OverlapResults,       // 결과를 받을 배열
 		HitBoxLocation,       // 구체 중심 위치
 		FQuat::Identity,      // 회전 (구체이므로 무관)
-		ECC_Visibility,       // 사용할 트레이스 채널
+		ECC_GameTraceChannel2,       // DamageTrace 채널
 		Sphere,               // 구체 형상
 		QueryParams,          // 무시할 액터 설정
 		ResponseParams        // 채널별 응답 설정 (Pawn만 감지)
