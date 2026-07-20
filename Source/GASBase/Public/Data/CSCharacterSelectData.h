@@ -13,6 +13,8 @@ enum class ECSCharacterID : uint8
 	None		UMETA(DisplayName = "None"),
 	Twinblast	UMETA(DisplayName = "Twinblast"),
 	Revenant	UMETA(DisplayName = "Revenant"),
+	LtBelica	UMETA(DisplayName = "LtBelica"),
+	Murdock		UMETA(DisplayName = "Murdock"),
 };
 
 // 캐릭터 한 종류의 프리뷰 데이터
