@@ -59,7 +59,7 @@ namespace CSGameplayTags
 	namespace Events
 	{
 		UE_DEFINE_GAMEPLAY_TAG(HitReact, "CSGameplayTags.Events.HitReact");
-		UE_DEFINE_GAMEPLAY_TAG(Scored,"CSGameplayTags.Events.Scored
+		UE_DEFINE_GAMEPLAY_TAG(Scored, "CSGameplayTags.Events.Scored");
 
 		UE_DEFINE_GAMEPLAY_TAG(SpawnProjectile, "CSGameplayTags.Events.SpawnProjectile");
 
@@ -71,15 +71,28 @@ namespace CSGameplayTags
 
 		
 		UE_DEFINE_GAMEPLAY_TAG(Ray, "CSGameplayTags.Events.SpawnRay");
-
 	}
 
+
+	// 주의: 반드시 GameplayCue.로 시작해야 GAS가 Cue로 인식
 	namespace Cues
 	{
-		// 주의: 반드시 GameplayCue.로 시작해야 GAS가 Cue로 인식
+		// 격발
+		UE_DEFINE_GAMEPLAY_TAG(Fire_LMB_LtBelica, "GameplayCue.Fire.LMB.LtBelica");
+		UE_DEFINE_GAMEPLAY_TAG(Fire_LMB_Murdock, "GameplayCue.Fire.LMB.Murdock");
+
+		// 히트
+		UE_DEFINE_GAMEPLAY_TAG(Impact_LMB_LtBelica, "GameplayCue.Impact.LMB.LtBelica");
+		UE_DEFINE_GAMEPLAY_TAG(Impact_LMB_Murdock, "GameplayCue.Impact.LMB.Murdock");
+
 		UE_DEFINE_GAMEPLAY_TAG(Impact_E, "GameplayCue.Impact.E");
 		UE_DEFINE_GAMEPLAY_TAG(Impact_Fire, "GameplayCue.Impact.Fireball");
 		UE_DEFINE_GAMEPLAY_TAG(Impact_Earthquake, "GameplayCue.Impact.Earthquake");
+
+
+		// 트레이서 이펙트
+		UE_DEFINE_GAMEPLAY_TAG(Tracer_LMB_LtBelica, "GameplayCue.Tracer.LMB.LtBelica");
+
 
 	}
 
@@ -108,5 +121,11 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(BulletParty, "CSGameplayTags.Cooldown.BulletParty");
 		UE_DEFINE_GAMEPLAY_TAG(Teleport, "CSGameplayTags.Cooldown.Teleport");
 		UE_DEFINE_GAMEPLAY_TAG(Laser, "CSGameplayTags.Cooldown.Laser");
+	}
+
+	namespace Data
+	{
+		UE_DEFINE_GAMEPLAY_TAG(Damage_Base, "CSGameplayTags.Data.Damage.Base");
+		UE_DEFINE_GAMEPLAY_TAG(Damage_Distance, "CSGameplayTags.Data.Damage.Distance");
 	}
 }
