@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
+#include "LobbyTransitionInterface.h"
 #include "LobbyGameMode.generated.h"
 
 class UMultiplayerSessionsSubsystem;
@@ -31,6 +32,9 @@ protected:
 	void OnStartSessionComplete(bool bWasSuccessful);
 
 private:
+	// 모든 PC에 StartBattleTransition 전달 (인터페이스 경유)
+	void NotifyAllPlayersStartTransition();
+
 	// 본 게임 맵 경로 (에디터에서 설정 가능)
 	UPROPERTY(EditDefaultsOnly, Category = "Lobby")
 	FString GameMapPath = TEXT("/Game/TaehosWork/Maps/LV_PlayLevel");

@@ -22,6 +22,9 @@ public:
     virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
 
 protected:
+    // SeamlessTravel 완료 후 호출 — 클라이언트에 EndBattleTransition 전달
+    virtual void PostSeamlessTravel() override;
+
     // 타이머 완료 시 호출 — 실제 리스폰 수행
     void RespawnCharacter(AController* Controller);
 

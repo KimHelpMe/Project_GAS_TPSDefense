@@ -88,4 +88,6 @@ void ULobbyInteractionComponent::ServerRequestStartGame_Implementation()
 
 void ULobbyInteractionComponent::MulticastGameStarting_Implementation()
 {
+	// 연출 트리거는 LobbyGameMode::OnStartSessionComplete → NotifyAllPlayersStartTransition 경로로 처리
+	// (ILobbyTransitionInterface → Client_StartBattleTransition → BP_StartBattleTransition)
 }

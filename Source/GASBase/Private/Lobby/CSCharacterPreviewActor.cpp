@@ -30,6 +30,7 @@ void ACSCharacterPreviewActor::SetCharacter(ECSCharacterID InID)
 	{
 		PreviewMesh->SetSkeletalMesh(nullptr);
 		PreviewMesh->SetVisibility(false);
+		PreviewMesh->SetRenderCustomDepth(false);
 		return;
 	}
 
@@ -45,5 +46,8 @@ void ACSCharacterPreviewActor::SetCharacter(ECSCharacterID InID)
 		PreviewMesh->SetAnimInstanceClass(Entry->PreviewAnimBP);
 	}
 
+	// 실루엣 연출용 Custom Depth 활성화
+	PreviewMesh->SetRenderCustomDepth(true);
+	PreviewMesh->SetCustomDepthStencilValue(1);
 	PreviewMesh->SetVisibility(true);
 }

@@ -101,7 +101,6 @@ void ACSLobbyPlayerController::SetupInputComponent()
 	}
 }
 
-
 void ACSLobbyPlayerController::OnChatDeactivated()
 {
 	if (!LobbyWidget) return;
@@ -112,7 +111,6 @@ void ACSLobbyPlayerController::OnChatDeactivated()
 	InputMode.SetWidgetToFocus(LobbyWidget->TakeWidget());
 	SetInputMode(InputMode);
 }
-
 
 UChatWidget* ACSLobbyPlayerController::GetChatWidget() const
 {
@@ -164,6 +162,18 @@ void ACSLobbyPlayerController::RequestLeaveLobby()
 
 	// 타이틀 맵으로 이동
 	ClientTravel(TEXT("/MultiplayerSessions/Maps/Main"), ETravelType::TRAVEL_Absolute);
+}
+
+void ACSLobbyPlayerController::StartBattleTransition_Implementation()
+{
+	// 서버에서 Execute_StartBattleTransition 호출 → 실제 연출은 클라이언트에서
+	Client_StartBattleTransition();
+}
+
+void ACSLobbyPlayerController::Client_StartBattleTransition_Implementation()
+{
+	// 달리기 연출 시작 — BP에서 구현
+	BP_StartBattleTransition();
 }
 
 void ACSLobbyPlayerController::OnGameStartRequested()

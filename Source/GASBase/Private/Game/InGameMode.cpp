@@ -5,10 +5,25 @@
 #include "AbilitySystemComponent.h"
 #include "GameplayTags/CSGameplayTags.h"
 #include "Player/CSPlayerState.h"
+#include "Player/CSPlayerController.h"
 
 AInGameMode::AInGameMode()
 {
 	bUseSeamlessTravel = true;
+}
+
+void AInGameMode::PostSeamlessTravel()
+{
+	Super::PostSeamlessTravel();
+
+	// SeamlessTravel 완료 — 모든 클라이언트에 EndBattleTransition 전달
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		if (ACSPlayerController* PC = Cast<ACSPlayerController>(It->Get()))
+		{
+			PC->Client_EndBattleTransition();
+		}
+	}
 }
 
 void AInGameMode::OnCharacterDied(AController* DeadController)

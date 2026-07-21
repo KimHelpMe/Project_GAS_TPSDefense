@@ -14,6 +14,12 @@
 
 
 
+void ACSPlayerController::Client_EndBattleTransition_Implementation()
+{
+	// 마름모 열림 연출 — BP에서 구현
+	BP_EndBattleTransition();
+}
+
 void ACSPlayerController::BeginPlay()
 {
 	Super::BeginPlay();

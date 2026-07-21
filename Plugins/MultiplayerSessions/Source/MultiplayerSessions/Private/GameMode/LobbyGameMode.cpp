@@ -2,8 +2,10 @@
 
 #include "GameMode/LobbyGameMode.h"
 #include "MultiplayerSessionsSubsystem.h"
+#include "LobbyTransitionInterface.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerState.h"
+#include "EngineUtils.h"
 
 ALobbyGameMode::ALobbyGameMode()
 {
@@ -103,10 +105,35 @@ void ALobbyGameMode::OnStartSessionComplete(bool bWasSuccessful)
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Yellow, TEXT("StartSession failed - proceeding with travel anyway."));
 	}
 
-	// StartSession 성공 여부와 무관하게 본 게임 맵으로 이동
-	// StartSession은 추가 접속 차단용이며 ServerTravel의 필수 조건이 아님
-	if (UWorld* World = GetWorld())
+	// 모든 클라이언트에 달리기 연출 시작 지시
+	NotifyAllPlayersStartTransition();
+
+	// Wipe + 달리기 실루얣 연출 시간(3초) 후 ServerTravel
+	FTimerHandle TravelTimerHandle;
+	GetWorldTimerManager().SetTimer(
+		TravelTimerHandle,
+		[this]()
+		{
+			if (UWorld* World = GetWorld())
+			{
+				World->ServerTravel(FString::Printf(TEXT("%s?listen"), *GameMapPath));
+			}
+		},
+		3.0f,
+		false
+	);
+}
+
+void ALobbyGameMode::NotifyAllPlayersStartTransition()
+{
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 	{
-		World->ServerTravel(FString::Printf(TEXT("%s?listen"), *GameMapPath));
+		if (APlayerController* PC = It->Get())
+		{
+			if (PC->Implements<ULobbyTransitionInterface>())
+			{
+				ILobbyTransitionInterface::Execute_StartBattleTransition(PC);
+			}
+		}
 	}
 }

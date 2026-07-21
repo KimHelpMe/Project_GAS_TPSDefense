@@ -19,6 +19,14 @@ class GASBASE_API ACSPlayerController : public ACSBasePlayerController
 	GENERATED_BODY()
 
 public:
+	// 서버 → 클라이언트: 마름모 열림 연출
+	UFUNCTION(Client, Reliable)
+	void Client_EndBattleTransition();
+
+	// BP에서 마름모 열림 연출 구현
+	UFUNCTION(BlueprintImplementableEvent, Category = "Battle Transition")
+	void BP_EndBattleTransition();
+
 	// 본진(Base) 파괴 시 BP_GameMode가 모든 클라이언트의 PlayerController에 호출 — 패배 화면 표시 + 입력 차단
 	UFUNCTION(Client, Reliable, BlueprintCallable, Category = "GAS|GameOver")
 	void ClientShowGameOver();
