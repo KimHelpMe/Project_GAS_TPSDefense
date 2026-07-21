@@ -88,6 +88,7 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(Impact_E, "GameplayCue.Impact.E");
 		UE_DEFINE_GAMEPLAY_TAG(Impact_Fire, "GameplayCue.Impact.Fireball");
 		UE_DEFINE_GAMEPLAY_TAG(Impact_Earthquake, "GameplayCue.Impact.Earthquake");
+		UE_DEFINE_GAMEPLAY_TAG(Impact_Teleport, "GameplayCue.Impact.Teleport");
 
 
 		// 트레이서 이펙트

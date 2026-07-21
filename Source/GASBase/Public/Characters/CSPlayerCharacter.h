@@ -10,6 +10,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class ACSAbilityPickup;
 class UCSCameraFadeComponent;
+class AGameplayAbilityWorldReticle;
 
 UCLASS()
 class GASBASE_API ACSPlayerCharacter : public ACSBaseCharacter
@@ -78,5 +79,6 @@ public:
 	//UPROPERTY(VisibleAnywhere, Category = "Camera")
 	TObjectPtr<UCSCameraFadeComponent> CameraFadeComponent;
 
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Teleport")
+	TSubclassOf<AGameplayAbilityWorldReticle> TeleportReticleClass;
 };

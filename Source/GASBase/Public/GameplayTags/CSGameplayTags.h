@@ -122,8 +122,12 @@ namespace CSGameplayTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impact_Fire);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impact_Earthquake);
 
+
 		// 트레이서 이펙트
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Tracer_LMB_LtBelica);
+
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impact_Teleport);
+
 	}
 
 	namespace Status
