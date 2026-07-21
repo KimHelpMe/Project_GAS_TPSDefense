@@ -59,7 +59,7 @@ namespace CSGameplayTags
 	namespace Events
 	{
 		UE_DEFINE_GAMEPLAY_TAG(HitReact, "CSGameplayTags.Events.HitReact");
-		UE_DEFINE_GAMEPLAY_TAG(Scored,"CSGameplayTags.Events.Scored
+		UE_DEFINE_GAMEPLAY_TAG(Scored, "CSGameplayTags.Events.Scored");
 
 		UE_DEFINE_GAMEPLAY_TAG(SpawnProjectile, "CSGameplayTags.Events.SpawnProjectile");
 
@@ -80,6 +80,7 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(Impact_E, "GameplayCue.Impact.E");
 		UE_DEFINE_GAMEPLAY_TAG(Impact_Fire, "GameplayCue.Impact.Fireball");
 		UE_DEFINE_GAMEPLAY_TAG(Impact_Earthquake, "GameplayCue.Impact.Earthquake");
+		UE_DEFINE_GAMEPLAY_TAG(Impact_Teleport, "GameplayCue.Impact.Teleport");
 
 	}
 
