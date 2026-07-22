@@ -8,7 +8,11 @@ namespace CSGameplayTags
 {
 	namespace Input
 	{
-
+		UE_DEFINE_GAMEPLAY_TAG(Q, "CSGameplayTags.Input.Q");
+		UE_DEFINE_GAMEPLAY_TAG(E, "CSGameplayTags.Input.E");
+		UE_DEFINE_GAMEPLAY_TAG(R, "CSGameplayTags.Input.R");
+		UE_DEFINE_GAMEPLAY_TAG(T, "CSGameplayTags.Input.T");
+		UE_DEFINE_GAMEPLAY_TAG(G, "CSGameplayTags.Input.G");
 	}
 
 	namespace Abilities
@@ -22,11 +26,11 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(Death, "CSGameplayTags.Abilities.Death");
 
 
-		UE_DEFINE_GAMEPLAY_TAG(Q, "CSGameplayTags.Abilities.Q");
-		UE_DEFINE_GAMEPLAY_TAG(E, "CSGameplayTags.Abilities.E");
-		UE_DEFINE_GAMEPLAY_TAG(R, "CSGameplayTags.Abilities.R");
-		UE_DEFINE_GAMEPLAY_TAG(T, "CSGameplayTags.Abilities.T");
-		UE_DEFINE_GAMEPLAY_TAG(G, "CSGameplayTags.Abilities.G");
+		//UE_DEFINE_GAMEPLAY_TAG(Q, "CSGameplayTags.Abilities.Q");
+		//UE_DEFINE_GAMEPLAY_TAG(E, "CSGameplayTags.Abilities.E");
+		//UE_DEFINE_GAMEPLAY_TAG(R, "CSGameplayTags.Abilities.R");
+		//UE_DEFINE_GAMEPLAY_TAG(T, "CSGameplayTags.Abilities.T");
+		//UE_DEFINE_GAMEPLAY_TAG(G, "CSGameplayTags.Abilities.G");
 
 		UE_DEFINE_GAMEPLAY_TAG(BulletParty, "CSGameplayTags.Abilities.BulletParty");
 		UE_DEFINE_GAMEPLAY_TAG(FireWall, "CSGameplayTags.Abilities.FireWall");
