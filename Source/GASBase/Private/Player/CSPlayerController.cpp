@@ -1,4 +1,4 @@
-// CSK
+﻿// CSK
 
 #include "Player/CSPlayerController.h"
 #include "InputAction.h"
@@ -11,6 +11,9 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "UI/CSRespawnWidget.h"
+#include "UI/CSAttributeWidget.h"
+#include "Characters/CSEnemyCharacter.h"
+#include "AbilitySystem/CSAttributeSet.h"
 
 
 
@@ -70,6 +73,50 @@ void ACSPlayerController::ClientShowGameOver_Implementation()
 
 	// 패배 후에는 더 이상 조작이 필요 없으므로 이 컨트롤러의 모든 입력을 차단
 	DisableInput(this);
+}
+
+void ACSPlayerController::ShowBossHPBar(ACSEnemyCharacter* Boss)
+{
+	if (!BossHPBarWidgetClass || !IsValid(Boss)) return;
+
+	ACSBaseCharacter* BossCharacter = Boss;
+	UAbilitySystemComponent* BossASC = BossCharacter->GetAbilitySystemComponent();
+	UCSAttributeSet* BossAttributeSet = Cast<UCSAttributeSet>(BossCharacter->GetAttributeSet());
+	if (!IsValid(BossASC) || !IsValid(BossAttributeSet)) return;
+
+	if (!BossHPBarWidget)
+	{
+		BossHPBarWidget = CreateWidget<UCSAttributeWidget>(this, BossHPBarWidgetClass);
+	}
+	if (!IsValid(BossHPBarWidget)) return;
+
+	if (!BossHPBarWidget->IsInViewport())
+	{
+		BossHPBarWidget->AddToViewport();
+	}
+
+	const TTuple<FGameplayAttribute, FGameplayAttribute> Pair(BossHPBarWidget->Attribute, BossHPBarWidget->MaxAttribute);
+
+	// 현재 값으로 즉시 갱신
+	BossHPBarWidget->OnAttributeChange(Pair, BossAttributeSet, 0.f);
+
+	// 이후 변경 값 구독 (댕글링 방지를 위해 약한 참조 캡처)
+	TWeakObjectPtr<UCSAttributeWidget> WeakWidget(BossHPBarWidget);
+	TWeakObjectPtr<UCSAttributeSet> WeakAttributeSet(BossAttributeSet);
+	BossASC->GetGameplayAttributeValueChangeDelegate(Pair.Key).AddLambda(
+		[WeakWidget, WeakAttributeSet, Pair](const FOnAttributeChangeData& AttributeChangeData)
+		{
+			if (!WeakWidget.IsValid() || !WeakAttributeSet.IsValid()) return;
+			WeakWidget->OnAttributeChange(Pair, WeakAttributeSet.Get(), AttributeChangeData.OldValue);
+		});
+}
+
+void ACSPlayerController::HideBossHPBar()
+{
+	if (IsValid(BossHPBarWidget))
+	{
+		BossHPBarWidget->RemoveFromParent();
+	}
 }
 
 void ACSPlayerController::ServerRequestRestart_Implementation()

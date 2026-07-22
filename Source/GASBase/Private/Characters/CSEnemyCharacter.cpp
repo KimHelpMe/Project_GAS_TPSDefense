@@ -1,9 +1,11 @@
-// CSK
+﻿// CSK
 
 
 #include "Characters/CSEnemyCharacter.h"
 #include "AbilitySystem/CSAbilitySystemComponent.h"
 #include "AbilitySystem/CSAttributeSet.h"
+#include "GameplayTags/CSGameplayTags.h"
+#include "Player/CSPlayerController.h"
 
 
 ACSEnemyCharacter::ACSEnemyCharacter()
@@ -52,8 +54,17 @@ void ACSEnemyCharacter::BeginPlay()
 	InitializeAttributes();
 
 	// 초기화 완료 시점을 알리는 델리게이트
-	// HasAuthority() 블록 바깥에서 호출하는 이유 -> 로컬, 서버 동시에 초기화하기 위해 
+	// HasAuthority() 블록 바깥에서 호출하는 이유 -> 로컬, 서버 동시에 초기화하기 위해
 	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
+
+	// 보스라면 각 클라이언트에서 로컬 PlayerController에게 체력바 UI 표시를 요청
+	if (bIsBoss)
+	{
+		if (ACSPlayerController* PC = Cast<ACSPlayerController>(GetWorld()->GetFirstPlayerController()))
+		{
+			PC->ShowBossHPBar(this);
+		}
+	}
 
 	// 서버가 아닐 때는 나감요
 	if (!HasAuthority()) return;
@@ -66,6 +77,8 @@ void ACSEnemyCharacter::BeginPlay()
 	if (!IsValid(CC_AttributeSet)) return;
 
 	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(CC_AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
+
+	AbilitySystemComponent->AddMinimalReplicationGameplayTag(CSGameplayTags::Team::Enemy);
 }
 
 void ACSEnemyCharacter::OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData)
@@ -73,6 +86,35 @@ void ACSEnemyCharacter::OnHealthChanged(const FOnAttributeChangeData& AttributeC
 	if (AttributeChangeData.NewValue <= 0.f)
 	{
 		HandleDeath();
+	}
+}
+
+void ACSEnemyCharacter::OnRep_Alive()
+{
+	Super::OnRep_Alive();
+
+	// 보스 사망 시 원격 클라이언트에서 로컬 PlayerController에게 체력바 UI 숨김을 요청
+	if (bIsBoss && !IsAlive())
+	{
+		if (ACSPlayerController* PC = Cast<ACSPlayerController>(GetWorld()->GetFirstPlayerController()))
+		{
+			PC->HideBossHPBar();
+		}
+	}
+}
+
+void ACSEnemyCharacter::HandleDeath_Implementation()
+{
+	Super::HandleDeath_Implementation();
+
+	// HandleDeath는 서버에서만 호출되고, OnRep_Alive는 서버(호스트) 자신에게는 호출되지 않으므로
+	// 서버/호스트(싱글플레이 포함) 로컬 UI는 여기서 직접 숨김
+	if (bIsBoss)
+	{
+		if (ACSPlayerController* PC = Cast<ACSPlayerController>(GetWorld()->GetFirstPlayerController()))
+		{
+			PC->HideBossHPBar();
+		}
 	}
 }
 
