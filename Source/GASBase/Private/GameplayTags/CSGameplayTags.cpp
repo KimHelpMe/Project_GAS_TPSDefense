@@ -98,7 +98,10 @@ namespace CSGameplayTags
 		// 트레이서 이펙트
 		UE_DEFINE_GAMEPLAY_TAG(Tracer_LMB_LtBelica, "GameplayCue.Tracer.LMB.LtBelica");
 
+		// 힐링 이펙트
+		UE_DEFINE_GAMEPLAY_TAG(Effect_Healing, "GameplayCue.Effect.Healing");
 
+		
 	}
 
 	namespace Status
@@ -132,6 +135,7 @@ namespace CSGameplayTags
 	{
 		UE_DEFINE_GAMEPLAY_TAG(Damage_Base, "CSGameplayTags.Data.Damage.Base");
 		UE_DEFINE_GAMEPLAY_TAG(Damage_Distance, "CSGameplayTags.Data.Damage.Distance");
+		UE_DEFINE_GAMEPLAY_TAG(Heal_Amount, "CSGameplayTags.Data.Heal.Amount");
 	}
 
 	namespace Team

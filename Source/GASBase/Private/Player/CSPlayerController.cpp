@@ -156,6 +156,7 @@ void ACSPlayerController::Q()
 	ActivateAbility(CSGameplayTags::Input::Q);
 	FGameplayEventData Payload;
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Input::Q, Payload);
+
 }
 
 void ACSPlayerController::E()
