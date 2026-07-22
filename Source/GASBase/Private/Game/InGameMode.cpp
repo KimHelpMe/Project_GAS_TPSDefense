@@ -12,17 +12,13 @@ AInGameMode::AInGameMode()
 	bUseSeamlessTravel = true;
 }
 
-void AInGameMode::PostSeamlessTravel()
+void AInGameMode::HandleSeamlessTravelPlayer(AController*& C)
 {
-	Super::PostSeamlessTravel();
+	Super::HandleSeamlessTravelPlayer(C);
 
-	// SeamlessTravel 완료 — 모든 클라이언트에 EndBattleTransition 전달
-	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	if (ACSPlayerController* CSPlayer = Cast<ACSPlayerController>(C))
 	{
-		if (ACSPlayerController* PC = Cast<ACSPlayerController>(It->Get()))
-		{
-			PC->Client_EndBattleTransition();
-		}
+		CSPlayer->Client_EndBattleTransition();
 	}
 }
 
