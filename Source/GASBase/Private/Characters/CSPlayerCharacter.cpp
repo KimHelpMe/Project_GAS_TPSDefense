@@ -13,6 +13,8 @@
 #include "GameFramework/PlayerController.h"
 #include "Game/InGameMode.h"
 #include "Camera/CSCameraFadeComponent.h"
+#include "AbilitySystem/CSGE_SprintStaminaDrain.h"
+#include "GameplayTags/CSGameplayTags.h"
 
 
 ACSPlayerCharacter::ACSPlayerCharacter()
@@ -109,6 +111,32 @@ void ACSPlayerCharacter::BindAttributeDelegates()
 	if (!IsValid(AttributeSet)) return;
 
 	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
+
+	GetAbilitySystemComponent()->RegisterGameplayTagEvent(CSGameplayTags::Status::Sprinting, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ThisClass::OnSprintingTagChanged);
+}
+
+void ACSPlayerCharacter::OnSprintingTagChanged(const FGameplayTag Tag, int32 NewCount)
+{
+	// GE 적용/제거는 서버에서만 수행 (복제는 GAS가 자동 처리)
+	if (!HasAuthority()) return;
+
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	if (!IsValid(ASC)) return;
+
+	if (NewCount > 0)
+	{
+		FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
+		FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(UCSGE_SprintStaminaDrain::StaticClass(), 1.f, ContextHandle);
+		SprintStaminaDrainHandle = ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+
+		// GE_StaminaRegen의 OngoingTagRequirements(IgnoreTags)가 이 태그를 보고 회복을 일시 정지시킴
+		ASC->AddLooseGameplayTag(CSGameplayTags::Status::UsingStamina);
+	}
+	else
+	{
+		ASC->RemoveActiveGameplayEffect(SprintStaminaDrainHandle);
+		ASC->RemoveLooseGameplayTag(CSGameplayTags::Status::UsingStamina);
+	}
 }
 
 void ACSPlayerCharacter::BeginPlay()

@@ -20,7 +20,7 @@ namespace CSGameplayTags
 	{
 
 	}
-
+	
 	namespace Abilities
 	{
 		// ASC에 부여(Give)되는 즉시 자동 활성화할 어빌리티에 붙이는 메타 태그
@@ -128,6 +128,9 @@ namespace CSGameplayTags
 
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Impact_Teleport);
 
+		// 힐링 이펙트
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Effect_Healing);
+
 	}
 
 	namespace Status
@@ -166,5 +169,7 @@ namespace CSGameplayTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage_Base);
 		// SetByCaller — 트레이스 거리 (cm), Falloff 계산용
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage_Distance);
+		// SetByCaller — 틱당 회복량 (HealingZone 등에서 사용)
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Heal_Amount);
 	}
 }

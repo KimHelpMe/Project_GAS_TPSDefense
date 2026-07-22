@@ -52,6 +52,12 @@ private:
 	// 서버: PossessedBy, 클라이언트: OnRep_PlayerState에서 각각 호출
 	void BindAttributeDelegates();
 
+	// Status.Sprinting 태그가 붙거나 떨어질 때 호출 — 스태미나 드레인 GE를 적용/제거 (서버 전용)
+	void OnSprintingTagChanged(const FGameplayTag Tag, int32 NewCount);
+
+	// 스프린트 중 적용된 스태미나 드레인 GE의 핸들 (해제 시 사용)
+	FActiveGameplayEffectHandle SprintStaminaDrainHandle;
+
 	// 크로스헤어(화면 중앙) 라인트레이스로 AbilityPickup을 조준 중인지 주기적으로 확인.
 	// 로컬 컨트롤 캐릭터가 아니면 내부에서 조기 반환하므로, BeginPlay에서 무조건 타이머만 걸어둔다.
 	void UpdateCrosshairTrace();

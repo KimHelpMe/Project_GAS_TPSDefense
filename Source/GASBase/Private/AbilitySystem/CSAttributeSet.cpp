@@ -50,6 +50,13 @@ void UCSAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 		SetStamina(FMath::Clamp(GetStamina(), 0.f, GetMaxStamina()));
 	}
 
+	// Stamina가 바닥나면 스프린트 강제 종료 (드레인 GE도 Sprinting 태그 해제와 함께 자동 제거됨)
+	if (Data.EvaluatedData.Attribute == GetStaminaAttribute() && GetStamina() <= 0.f)
+	{
+		FGameplayTagContainer SprintTagContainer = CSGameplayTags::Abilities::Sprint.GetTag().GetSingleTagContainer();
+		Data.Target.CancelAbilities(&SprintTagContainer);
+	}
+
 	// Health 어트리뷰트가 0 이하로 내려간 경우 → 대상 사망 처리
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute() && GetHealth() <= 0.f)
 	{
