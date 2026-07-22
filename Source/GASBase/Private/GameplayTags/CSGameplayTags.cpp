@@ -137,4 +137,10 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(Damage_Distance, "CSGameplayTags.Data.Damage.Distance");
 		UE_DEFINE_GAMEPLAY_TAG(Heal_Amount, "CSGameplayTags.Data.Heal.Amount");
 	}
+
+	namespace Team
+	{
+		UE_DEFINE_GAMEPLAY_TAG(Player, "CSGameplayTags.Team.Player");
+		UE_DEFINE_GAMEPLAY_TAG(Enemy, "CSGameplayTags.Team.Enemy");
+	}
 }
