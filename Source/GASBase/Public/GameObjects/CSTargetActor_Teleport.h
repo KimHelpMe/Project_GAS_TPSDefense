@@ -22,5 +22,5 @@ public:
 	float TeleportRange = 1500.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Teleport")
-	float WallPushOffset = 15.f;  // º®¿¡ ¸Â¾ÒÀ» ¶§ º® Ç¥¸é¿¡¼­ ¹Ð¾î³»´Â ¿©À¯ °Å¸®
+	float WallPushOffset = 15.f;  // ï¿½ï¿½ï¿½ï¿½ ï¿½Â¾ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ Ç¥ï¿½é¿¡ï¿½ï¿½ ï¿½Ð¾î³»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½
 };
