@@ -155,8 +155,8 @@ void ACSPlayerController::RMB()
 void ACSPlayerController::Q()
 {
 	ActivateAbility(CSGameplayTags::Abilities::Q);
-	FGameplayEventData Payload;
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::Q, Payload);
+	//FGameplayEventData Payload;
+	//UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::Q, Payload);
 	//FGameplayEventData Payload;
 	//UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::Q, Payload);
 }
