@@ -1,9 +1,10 @@
-// CSK
+﻿// CSK
 
 
 #include "Characters/CSEnemyCharacter.h"
 #include "AbilitySystem/CSAbilitySystemComponent.h"
 #include "AbilitySystem/CSAttributeSet.h"
+#include "GameplayTags/CSGameplayTags.h"
 
 
 ACSEnemyCharacter::ACSEnemyCharacter()
@@ -66,6 +67,8 @@ void ACSEnemyCharacter::BeginPlay()
 	if (!IsValid(CC_AttributeSet)) return;
 
 	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(CC_AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
+
+	AbilitySystemComponent->AddMinimalReplicationGameplayTag(CSGameplayTags::Team::Enemy);
 }
 
 void ACSEnemyCharacter::OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData)

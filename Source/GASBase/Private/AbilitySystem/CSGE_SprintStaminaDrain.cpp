@@ -6,7 +6,7 @@
 namespace
 {
 	constexpr float SprintStaminaDrainPeriod = 0.2f;
-	constexpr float SprintStaminaDrainPerSecond = 30d.f;
+	constexpr float SprintStaminaDrainPerSecond = 30.f;
 }
 
 UCSGE_SprintStaminaDrain::UCSGE_SprintStaminaDrain()
