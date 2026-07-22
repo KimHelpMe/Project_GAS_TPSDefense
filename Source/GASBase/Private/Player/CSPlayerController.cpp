@@ -94,12 +94,16 @@ void ACSPlayerController::SetupInputComponent()
 
 	// 어빌리티 전용 입력 바인딩 추가
 	EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Started, this, &ThisClass::Roll);
+
 	EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Triggered, this, &ThisClass::LMB);
 	EnhancedInputComponent->BindAction(SecondaryAction, ETriggerEvent::Started, this, &ThisClass::RMB);
+
 	EnhancedInputComponent->BindAction(QAction, ETriggerEvent::Started, this, &ThisClass::Q);
 	EnhancedInputComponent->BindAction(EAction, ETriggerEvent::Started, this, &ThisClass::E);
 	EnhancedInputComponent->BindAction(RAction, ETriggerEvent::Started, this, &ThisClass::R);
-	EnhancedInputComponent->BindAction(TAction, ETriggerEvent::Started, this, &ThisClass::TestAbility);
+	EnhancedInputComponent->BindAction(TAction, ETriggerEvent::Started, this, &ThisClass::T);
+
+	//EnhancedInputComponent->BindAction(TAction, ETriggerEvent::Started, this, &ThisClass::TestAbility);
 	EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ThisClass::StartSprint);
 	EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ThisClass::StopSprint);
 }
@@ -125,11 +129,6 @@ void ACSPlayerController::LMB()
 {
 	ActivateAbility(CSGameplayTags::Abilities::Primary);
 
-	FGameplayEventData Payload;
-	Payload.Instigator = GetPawn();
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::Long_Primary, Payload);
-	ServerSendGameplayEvent(CSGameplayTags::Abilities::Long_Primary);
-
 	// 무기를 소환한 상태일 때만 FireSpawnedWeapons 이벤트를 보낸다.
 	// 그렇지 않으면 GA_FireSpawnWeapon이 매 LMB마다 불필요하게 트리거되어
 	// 빈 배열 bailout 분기에서 없는 태그를 지우려다 로그 에러가 발생한다.
@@ -154,29 +153,31 @@ void ACSPlayerController::RMB()
 
 void ACSPlayerController::Q()
 {
-	ActivateAbility(CSGameplayTags::Abilities::Q);
+	ActivateAbility(CSGameplayTags::Input::Q);
 	FGameplayEventData Payload;
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::Q, Payload);
-	//FGameplayEventData Payload;
-	//UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::Q, Payload);
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Input::Q, Payload);
+
 }
 
 void ACSPlayerController::E()
 {
-	ActivateAbility(CSGameplayTags::Abilities::E);
+	ActivateAbility(CSGameplayTags::Input::E);
 	FGameplayEventData Payload;
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::E, Payload);
-	//FGameplayEventData Payload;
-	//UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::E, Payload);
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Input::E, Payload);
 }
 
 void ACSPlayerController::R()
 {
-	ActivateAbility(CSGameplayTags::Abilities::R);
+	ActivateAbility(CSGameplayTags::Input::R);
 	FGameplayEventData Payload;
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::R, Payload);
-	//FGameplayEventData Payload;
-	//UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Abilities::R, Payload);
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Input::R, Payload);
+}
+
+void ACSPlayerController::T()
+{
+	ActivateAbility(CSGameplayTags::Input::T);
+	FGameplayEventData Payload;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Input::T, Payload);
 }
 
 void ACSPlayerController::TestAbility()

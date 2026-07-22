@@ -55,9 +55,12 @@ private:
 	void Roll();
 	void LMB();
 	void RMB();
+
 	void Q();
 	void E();
 	void R();
+	void T();
+
 	void TestAbility();
 	void StartSprint();
 	void StopSprint();
