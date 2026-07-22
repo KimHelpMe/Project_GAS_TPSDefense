@@ -11,6 +11,8 @@ class UInputAction;
 class UChatWidget;
 class UCSRespawnWidget;
 class UUserWidget;
+class UCSAttributeWidget;
+class ACSEnemyCharacter;
 struct FInputActionValue;
 
 UCLASS()
@@ -38,6 +40,12 @@ public:
 	// GameOver 화면의 "로비로" 버튼에서 호출 — 서버가 로비 맵으로 트래블시킴
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "GAS|GameOver")
 	void ServerRequestReturnToLobby();
+
+	// 보스 출현 시 화면 고정 보스 체력바 UI를 표시 (없으면 생성), Boss의 Health/MaxHealth에 바인딩
+	void ShowBossHPBar(ACSEnemyCharacter* Boss);
+
+	// 보스 사망 시 보스 체력바 UI를 숨김
+	void HideBossHPBar();
 
 protected:
 	virtual void BeginPlay() override;
@@ -86,6 +94,14 @@ private:
 	// 본진 파괴 시 표시할 패배 화면 위젯 클래스 (에디터에서 할당)
 	UPROPERTY(EditDefaultsOnly, Category = "UI|GameOver")
 	TSubclassOf<UUserWidget> GameOverWidgetClass;
+
+	// 화면 고정 보스 체력바 위젯 클래스 (에디터에서 WBP_BossHPBar 할당)
+	UPROPERTY(EditDefaultsOnly, Category = "UI|Boss")
+	TSubclassOf<UCSAttributeWidget> BossHPBarWidgetClass;
+
+	// 생성된 보스 체력바 위젯
+	UPROPERTY()
+	TObjectPtr<UCSAttributeWidget> BossHPBarWidget;
 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Movement")
