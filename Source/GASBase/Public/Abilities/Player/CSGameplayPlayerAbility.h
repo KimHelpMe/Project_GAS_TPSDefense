@@ -25,12 +25,12 @@ public:
 	ACSPlayerController* GetPlayerControllerFromActorInfo();
 
 	UFUNCTION(BlueprintCallable, Category = "GAS|Aiming")
-	FVector GetAimpoint();
+	FVector GetAimpoint(bool bIgnorePawns = false);
 
 	// GetAimpoint()와 동일한 트레이스를 수행하되, ImpactNormal/bBlockingHit 등 전체 결과를 반환한다.
 	// (기존 GetAimpoint() 호출부는 그대로 두고, Normal이 필요한 곳에서만 이 함수를 쓰면 됨)
 	UFUNCTION(BlueprintCallable, Category = "GAS|Aiming")
-	FHitResult GetAimpointHitResult();
+	FHitResult GetAimpointHitResult(bool bIgnorePawns = false);
 
 	// GetAimpointHitResult()의 다중 발사 버전.
 	// PelletCount 수만큼 SpreadAngleDegrees 범위 안에서 랜덤 방향으로 각각 트레이스를 수행한다.

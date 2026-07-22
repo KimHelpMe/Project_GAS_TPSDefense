@@ -23,12 +23,12 @@ ACSPlayerController* UCSGameplayPlayerAbility::GetPlayerControllerFromActorInfo(
     return CachedPlayerController.IsValid() ? CachedPlayerController.Get() : nullptr;
 }
 
-FVector UCSGameplayPlayerAbility::GetAimpoint()
+FVector UCSGameplayPlayerAbility::GetAimpoint(bool bIgnorePawns)
 {
-    return GetAimpointHitResult().ImpactPoint;
+    return GetAimpointHitResult(bIgnorePawns).ImpactPoint;
 }
 
-FHitResult UCSGameplayPlayerAbility::GetAimpointHitResult()
+FHitResult UCSGameplayPlayerAbility::GetAimpointHitResult(bool bIgnorePawns)
 {
     FHitResult Hit;
 
@@ -44,14 +44,28 @@ FHitResult UCSGameplayPlayerAbility::GetAimpointHitResult()
     FCollisionQueryParams QueryParams;
     QueryParams.AddIgnoredActor(GetAvatarActorFromActorInfo());
 
-    GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_GameTraceChannel2, QueryParams);
+    if (bIgnorePawns)
+    {
+        TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+        ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldStatic));
+        ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldDynamic));
 
+        GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, FCollisionObjectQueryParams(ObjectTypes), QueryParams);
+
+    }
+
+    else 
+    {
+        GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_GameTraceChannel2, QueryParams);
+    }
+    
     // 아무것도 안 맞았을 때, 기존 GetAimpoint()와 동일하게 최대 사거리 지점을 ImpactPoint로 채워준다.
     // (bBlockingHit는 false로 남아있으니, 호출부에서 실제로 맞았는지 여부는 bBlockingHit로 구분하면 됨)
     if (!Hit.bBlockingHit)
     {
         Hit.ImpactPoint = End;
     }
+
 
     return Hit;
 }
