@@ -5,6 +5,7 @@
 #include "AbilitySystem/CSAttributeSet.h"
 #include "AbilitySystemComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "GameplayTags/CSGameplayTags.h" 
 
 ACSBaseStructure::ACSBaseStructure()
 {
@@ -56,6 +57,9 @@ void ACSBaseStructure::BeginPlay()
 	if (!IsValid(CC_AttributeSet)) return;
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CC_AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
+
+	// 팀 설정
+	AbilitySystemComponent->AddMinimalReplicationGameplayTag(CSGameplayTags::Team::Player);
 }
 
 void ACSBaseStructure::InitializeAttributes() const
@@ -71,7 +75,7 @@ void ACSBaseStructure::InitializeAttributes() const
 void ACSBaseStructure::OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData)
 {
 	if (bDestroyed) return;
-
+	
 	// Health가 0 이하로 내려가면 파괴 처리
 	if (AttributeChangeData.NewValue <= 0.f)
 	{

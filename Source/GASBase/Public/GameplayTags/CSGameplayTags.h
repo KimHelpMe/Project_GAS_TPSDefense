@@ -180,4 +180,12 @@ namespace CSGameplayTags
 		// SetByCaller — 트레이스 거리 (cm), Falloff 계산용
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage_Distance);
 	}
+
+	namespace Team
+	{
+		// 플레이어 팀 소속 — 이 태그가 붙은 대상에게는 플레이어 데미지 GE가 적용되지 않음
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player);
+		// 에너미 팀 소속
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy);
+	}
 }
