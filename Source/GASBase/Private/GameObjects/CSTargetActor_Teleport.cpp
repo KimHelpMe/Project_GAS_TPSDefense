@@ -20,8 +20,8 @@ FHitResult ACSTargetActor_Teleport::PerformTrace(AActor* InSourceActor)
 	FVector CandidateXY;
 	if (bUsePreciseHit)
 	{
-		// º®Ã³·³ ¼­ ÀÖ´Â ¸é¿¡ ¸Â¾ÒÀ» °æ¿ì, ±× Ç¥¸é¿¡¼­ ³ë¸Ö ¹æÇâÀ¸·Î »ìÂ¦ ¹Ð¾î³»¼­
-		// ´ÙÀ½ ´Ù¿îÆ®·¹ÀÌ½º°¡ º® ÀÚÃ¼¿¡ °É¸®Áö ¾Êµµ·Ï ÇÔ
+		// ï¿½ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½é¿¡ ï¿½Â¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½, ï¿½ï¿½ Ç¥ï¿½é¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Â¦ ï¿½Ð¾î³»ï¿½ï¿½
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¿ï¿½Æ®ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½É¸ï¿½ï¿½ï¿½ ï¿½Êµï¿½ï¿½ï¿½ ï¿½ï¿½
 		CandidateXY = ForwardHit.ImpactPoint + ForwardHit.ImpactNormal * WallPushOffset;
 	}
 	else

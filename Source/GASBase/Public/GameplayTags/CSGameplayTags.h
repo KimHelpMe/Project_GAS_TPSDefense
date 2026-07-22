@@ -18,7 +18,19 @@ namespace CSGameplayTags
 {
 	namespace Input
 	{
+		// 스킬 슬롯 Q
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Q);
 
+		// 스킬 슬롯 E
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(E);
+
+		// 스킬 슬롯 R
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(R);
+		// 스킬 슬롯 T
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(T);
+
+		// 스킬 슬롯 G
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(G);
 	}
 
 	namespace Abilities
@@ -36,18 +48,19 @@ namespace CSGameplayTags
 		// 사망 처리 어빌리티 — 체력 0 이하 시 활성화
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Death);
 
-		// 스킬 슬롯 Q
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Q);
-		
-		// 스킬 슬롯 E
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(E);
+		//// 스킬 슬롯 Q
+		//UE_DECLARE_GAMEPLAY_TAG_EXTERN(Q);
+		//
+		//// 스킬 슬롯 E
+		//UE_DECLARE_GAMEPLAY_TAG_EXTERN(E);
 
-		// 스킬 슬롯 R
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(R);
-		// 스킬 슬롯 T
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(T);
-		// 스킬 슬롯 G
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(G);
+		//// 스킬 슬롯 R
+		//UE_DECLARE_GAMEPLAY_TAG_EXTERN(R);
+		//// 스킬 슬롯 T
+		//UE_DECLARE_GAMEPLAY_TAG_EXTERN(T);
+
+		//// 스킬 슬롯 G
+		//UE_DECLARE_GAMEPLAY_TAG_EXTERN(G);
 
 		// BulletParty(난사) 어빌리티
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(BulletParty);
