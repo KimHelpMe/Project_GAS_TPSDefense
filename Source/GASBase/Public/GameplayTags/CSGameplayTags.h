@@ -119,6 +119,9 @@ namespace CSGameplayTags
 
 		// 점수 획득 이벤트
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Scored);
+
+		// 데미지 누적 이벤트 — 공격자의 총 데미지 통계 집계용
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(DamageDealt);
 	}
 
 	namespace Cues
