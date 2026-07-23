@@ -15,6 +15,8 @@
 #include "Camera/CSCameraFadeComponent.h"
 #include "AbilitySystem/CSGE_SprintStaminaDrain.h"
 #include "GameplayTags/CSGameplayTags.h"
+#include "Materials/MaterialParameterCollection.h"
+#include "Materials/MaterialParameterCollectionInstance.h"
 
 
 ACSPlayerCharacter::ACSPlayerCharacter()
@@ -186,6 +188,32 @@ void ACSPlayerCharacter::OnRep_Alive()
 	else
 	{
 		bUseControllerRotationYaw = false;
+	}
+}
+
+void ACSPlayerCharacter::OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData)
+{
+	Super::OnHealthChanged(AttributeChangeData);
+
+	// 남의 화면에 내 체력 이펙트가 뜨면 안 되니, 로컬 컨트롤 캐릭터일 때만 처리
+	if (!IsLocallyControlled()) return;
+
+	const UCSAttributeSet* AttributeSet = Cast<UCSAttributeSet>(GetAttributeSet());
+	if (!IsValid(AttributeSet)) return;
+
+	const float MaxHealth = AttributeSet->GetMaxHealth();
+	if (MaxHealth <= 0.f) return;
+
+	// 데미지 비율(1 - HP비율)을 거듭제곱해서 낮은 HP일수록 급격히 커지는 커브 적용
+	const float HealthRatio = FMath::Clamp(AttributeChangeData.NewValue / MaxHealth, 0.f, 1.f);
+	const float DamageRatio = 1.f - HealthRatio;
+	const float VignetteIntensity = FMath::Pow(DamageRatio, DamageVignetteExponent);
+
+	if (!IsValid(DamageVignetteMPC)) return;
+
+	if (UMaterialParameterCollectionInstance* MPCInstance = GetWorld()->GetParameterCollectionInstance(DamageVignetteMPC))
+	{
+		MPCInstance->SetScalarParameterValue(DamageVignetteParamName, VignetteIntensity);
 	}
 }
 

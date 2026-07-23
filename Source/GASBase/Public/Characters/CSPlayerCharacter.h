@@ -47,6 +47,9 @@ protected:
 	virtual void HandleRespawn() override;
 	virtual void OnRep_Alive() override;
 
+	// LocalPlayer인지 확인하는 로직 추가 오버라이드 함수
+	virtual void OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData) override;
+
 private:
 	// ASC 초기화 완료 후 어트리뷰트 변경 델리게이트를 바인딩한다.
 	// 서버: PossessedBy, 클라이언트: OnRep_PlayerState에서 각각 호출
@@ -87,4 +90,14 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Teleport")
 	TSubclassOf<AGameplayAbilityWorldReticle> TeleportReticleClass;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Damage Vignette")
+	TObjectPtr<class UMaterialParameterCollection> DamageVignetteMPC;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Damage Vignette")
+	FName DamageVignetteParamName = TEXT("DamageVignette");
+
+	UPROPERTY(EditDefaultsOnly, Category = "Damage Vignette")
+	float DamageVignetteExponent = 2.f;
 };
