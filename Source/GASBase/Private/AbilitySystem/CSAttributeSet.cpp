@@ -6,6 +6,7 @@
 #include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
 #include "GameplayTags/CSGameplayTags.h"
+#include "Characters/CSBaseCharacter.h"
 
 // 어떤 프로퍼티를 리플리케이트할지, 그리고 리플리케이트될 때 어떤 조건/알림 방식을 쓸지 등록하는 함수
 // 엔진이 게임 시작 시 한 번 호출해서 리플리케이션 테이블을 구성함
@@ -33,6 +34,27 @@ void UCSAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME(ThisClass, bAttributesInitialized);
 }
 
+// 서버(Authority)에서 GameplayEffect가 attribute에 실제로 적용되기 "직전" 호출됨
+// false를 반환하면 이 Effect는 적용되지 않음(취소)
+// 죽은 대상(사망 → 리스폰 대기 중 포함)에게 들어오는 데미지를 여기서 중앙 차단한다.
+// 몬스터 공격이 CSProjectile을 거치든 GA에서 GE를 직접 적용하든 상관없이 한 곳에서 막히도록 하기 위함.
+// 체력을 늘리는 효과(리스폰 시 ResetAttributes 등)는 막지 않는다.
+bool UCSAttributeSet::PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data)
+{
+	if (!Super::PreGameplayEffectExecute(Data)) return false;
+
+	if (Data.EvaluatedData.Attribute == GetHealthAttribute() && Data.EvaluatedData.Magnitude < 0.f)
+	{
+		const ACSBaseCharacter* TargetCharacter = Cast<ACSBaseCharacter>(Data.Target.GetAvatarActor());
+		if (IsValid(TargetCharacter) && !TargetCharacter->IsAlive())
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 // 서버(Authority)에서 GameplayEffect가 적용되어 attribute 값이 실제로 변경된 "직후" 호출됨
 // 클라이언트에서는 절대 호출되지 않음 (서버 전용 함수)
 // 여기서 클램핑, 부가 로직(사망 처리, 초기화 완료 신호 등)을 처리하는 게 GAS 표준 패턴
@@ -43,6 +65,9 @@ void UCSAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
+
+		// WaitForAttributeChanged가 듣는 내부 델리게이트는 서버 자신에게는 안정적으로 발동되지 않으므로 직접 브로드캐스트
+		OnHealthChanged.Broadcast(GetHealth(), GetMaxHealth());
 	}
 
 	if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
@@ -100,11 +125,13 @@ void UCSAttributeSet::OnRep_Health(const FGameplayAttributeData& OldValue)
 {
 	// GAS 예측 시스템에 Rep Notify를 연결하는 필수 매크로
 	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, Health, OldValue);
+	OnHealthChanged.Broadcast(GetHealth(), GetMaxHealth());
 }
 
 void UCSAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldValue)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, MaxHealth, OldValue);
+	OnHealthChanged.Broadcast(GetHealth(), GetMaxHealth());
 }
 
 void UCSAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldValue)

@@ -10,6 +10,9 @@
 #include "Data/CSAbilityDropSubsystem.h"
 #include "Abilities/CSAbilityPickup.h"
 #include "Abilities/CSAbilityData.h"
+#include "GameFramework/GameStateBase.h"
+#include "GameFramework/PlayerState.h"
+#include "Characters/CSBaseCharacter.h"
 
 
 EHitDirection UCSBlueprintFunctionLibrary::GetHitDirection(const FVector& TargetForward, const FVector& ToInstigator)
@@ -143,4 +146,24 @@ ACSAbilityPickup* UCSBlueprintFunctionLibrary::SpawnRandomSkillPickup(const UObj
 bool UCSBlueprintFunctionLibrary::MontageHasRootMotion(UAnimMontage* Montage)
 {
 	return Montage ? Montage->HasRootMotion() : false;
+}
+
+TArray<APlayerState*> UCSBlueprintFunctionLibrary::GetAllPlayerStates(const UObject* WorldContextObject)
+{
+	TArray<APlayerState*> Result;
+
+	const UWorld* World = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
+	const AGameStateBase* GameState = World ? World->GetGameState() : nullptr;
+	if (IsValid(GameState))
+	{
+		Result = GameState->PlayerArray;
+	}
+
+	return Result;
+}
+
+bool UCSBlueprintFunctionLibrary::IsValidAttackTarget(AActor* Actor)
+{
+	const ACSBaseCharacter* Character = Cast<ACSBaseCharacter>(Actor);
+	return IsValid(Character) && Character->IsAlive();
 }

@@ -20,6 +20,7 @@ enum class EHitDirection : uint8
 
 
 class ACSAbilityPickup;
+class APlayerState;
 
 UCLASS()
 class GASBASE_API UCSBlueprintFunctionLibrary : public UBlueprintFunctionLibrary
@@ -59,4 +60,14 @@ public:
     // 해당 몽타주가 rootmotion인지 확인
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Animation")
     static bool MontageHasRootMotion(UAnimMontage* Montage);
+
+    // 세션에 접속한 모든 플레이어의 PlayerState 목록 (팀 구분 없음)
+    UFUNCTION(BlueprintPure, Category = "GAS|Player", meta = (WorldContext = "WorldContextObject"))
+    static TArray<APlayerState*> GetAllPlayerStates(const UObject* WorldContextObject);
+
+    // AI 타겟 유효성 체크: 액터가 유효하고 ACSBaseCharacter이며 살아있는지 확인.
+    // 죽은(리스폰 대기 중 포함) 대상은 false를 반환하므로, 적 AI의 타겟 선택/공격 트리거 조건에 연결해서
+    // 시체를 계속 공격하는 문제를 막는 데 사용한다.
+    UFUNCTION(BlueprintPure, Category = "GAS|AI")
+    static bool IsValidAttackTarget(AActor* Actor);
 };

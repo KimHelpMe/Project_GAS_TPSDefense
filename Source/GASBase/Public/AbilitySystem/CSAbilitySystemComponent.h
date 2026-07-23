@@ -59,6 +59,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GAS|Abilities")
 	void AddToAbilityLevel(TSubclassOf<UGameplayAbility> AbilityClass, int32 Level = 1);
 
+	// 어빌리티 레벨의 상한선
+	static constexpr int32 MaxAbilityLevel = 10;
+
 	// 드랍박스가 호출하는 단일 진입점. 성공(습득됨) 여부만 반환.
 	UFUNCTION(BlueprintCallable, Category = "GAS|Abilities")
 	bool TryPickupAbility(UCSAbilityData* AbilityData);
@@ -79,6 +82,10 @@ public:
 	// 슬롯에 배정된 어빌리티의 남은 쿨다운/전체 쿨다운을 조회 (스킬 슬롯 UI용)
 	UFUNCTION(BlueprintCallable, Category = "GAS|Abilities")
 	void GetSlotCooldown(FGameplayTag SlotTag, float& TimeRemaining, float& CooldownDuration);
+
+	// 슬롯에 배정된 어빌리티의 현재 레벨을 조회 (스킬 슬롯 UI용)
+	UFUNCTION(BlueprintCallable, Category = "GAS|Abilities")
+	int32 GetSlotAbilityLevel(FGameplayTag SlotTag);
 
 	// UAbilitySystemComponent::AddLooseGameplayTag/RemoveLooseGameplayTag는 BlueprintCallable이 아니라서 블루프린트에서 직접 못 씀. Super로 기능 가져오고 Callable 추가함.
 	UFUNCTION(BlueprintCallable, Category = "GAS|Tags")

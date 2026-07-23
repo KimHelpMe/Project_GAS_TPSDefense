@@ -50,6 +50,11 @@ void ACSPlayerState::ServerSelectCharacter_Implementation(TSubclassOf<APawn> InC
 	SelectedCharacterClass = InCharacterClass;
 }
 
+void ACSPlayerState::OnRep_SelectedCharacterClass()
+{
+	OnCharacterSelected.Broadcast();
+}
+
 UAbilitySystemComponent* ACSPlayerState::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;

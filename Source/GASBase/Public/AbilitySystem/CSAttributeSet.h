@@ -16,6 +16,9 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAttributesInitialized);
 
+// Health/MaxHealth 확정 시 서버·클라이언트 양쪽에서 직접 브로드캐스트 (WaitForAttributeChanged가 서버에서 누락될 수 있어 대체용으로 사용)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, NewHealth, float, NewMaxHealth);
+
 
 UCLASS()
 class GASBASE_API UCSAttributeSet : public UAttributeSet
@@ -24,6 +27,7 @@ class GASBASE_API UCSAttributeSet : public UAttributeSet
 
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual bool PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 public:
@@ -52,6 +56,10 @@ public:
 	// 첫 Effect 적용 시 브로드캐스트되는 델리게이트
 	UPROPERTY(BlueprintAssignable)
 	FAttributesInitialized OnAttributesInitialized;
+
+	// Health/MaxHealth가 확정될 때마다 브로드캐스트 (서버: PostGameplayEffectExecute, 클라이언트: OnRep)
+	UPROPERTY(BlueprintAssignable)
+	FOnHealthChanged OnHealthChanged;
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health)
 	FGameplayAttributeData Health;
