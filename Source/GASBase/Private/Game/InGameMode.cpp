@@ -68,7 +68,7 @@ void AInGameMode::OnCharacterDied(AController* DeadController)
     if (!IsValid(DeadController)) return;
 
     // 이미 타이머가 걸려있으면 무시 (이중 사망 방지)
-    if (FTimerHandle* Existing = RespawnTimers.Find(DeadController))
+    if (FTimerHandle* Existing = RespawnTimers.Find(TWeakObjectPtr<AController>(DeadController)))
     {
         if (GetWorldTimerManager().IsTimerActive(*Existing)) return;
     }
@@ -81,7 +81,8 @@ void AInGameMode::OnCharacterDied(AController* DeadController)
     ACSPlayerState* PlayerController = DeadController->GetPlayerState<ACSPlayerState>();
     if (PlayerController)
     {
-        PlayerController->SetRespawnTime(GetWorld()->GetTimeSeconds() + RespawnDelay);
+        // duration만 저장 — 클라이언트는 복제받은 시점(OnRep_RespawnTime)부터 자체 카운트다운
+        PlayerController->SetRespawnTime(RespawnDelay);
     }
 }
 
@@ -103,7 +104,7 @@ UClass* AInGameMode::GetDefaultPawnClassForController_Implementation(AController
 
 void AInGameMode::RespawnCharacter(AController* Controller)
 {
-    RespawnTimers.Remove(Controller);
+    RespawnTimers.Remove(TWeakObjectPtr<AController>(Controller));
 
     if (!IsValid(Controller)) return;
 

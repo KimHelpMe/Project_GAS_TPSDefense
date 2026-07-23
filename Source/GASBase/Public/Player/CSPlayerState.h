@@ -36,7 +36,7 @@ public:
 public:
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
-	void SetRespawnTime(float InTime) { RespawnTime = InTime; }
+	void SetRespawnTime(float InDuration);
 
 	// 킬 수 누적 (서버에서 GA_ListenForScored 경유 호출)
 	UFUNCTION(BlueprintCallable)
@@ -47,7 +47,8 @@ public:
 	void AddDamageScore(float Damage) { TotalDamageDealt += Damage; }
 
 public:
-	UPROPERTY(BlueprintReadOnly, Replicated)
+	// 리스폰까지 남은 시간 (duration). 0이면 살아있음
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_RespawnTime)
 	float RespawnTime = 0.f;
 
 	// 이번 매치에서 처치한 적 수
@@ -62,9 +63,20 @@ public:
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	TSubclassOf<APawn> SelectedCharacterClass;
 
-
+	// 클라이언트 전용 getter
+	float GetLocalRespawnStartTime() const { return LocalRespawnStartTime; }
+	float GetLocalRespawnDuration() const { return LocalRespawnDuration; }
 
 private:
+	// 클라이언트 전용 — 복제받은 시점의 로컬 TimeSeconds
+	float LocalRespawnStartTime = 0.f;
+
+	// 클라이언트 전용 — 복제받은 시점의 총 duration
+	float LocalRespawnDuration = 0.f;
+
+	UFUNCTION()
+	void OnRep_RespawnTime();
+
 	UPROPERTY(VisibleAnywhere, Category = "GAS")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
