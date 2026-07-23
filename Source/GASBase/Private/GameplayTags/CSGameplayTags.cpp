@@ -115,6 +115,7 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(Teleporting, "CSGameplayTags.Status.Teleporting");
 		
 		UE_DEFINE_GAMEPLAY_TAG(Sprinting, "CSGameplayTags.Status.Sprinting");
+		UE_DEFINE_GAMEPLAY_TAG(Rolling, "CSGameplayTags.Status.Rolling");
 
 	}
 

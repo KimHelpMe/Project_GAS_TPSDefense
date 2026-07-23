@@ -163,6 +163,9 @@ namespace CSGameplayTags
 
 		// 달리고 있는 상태를 나타내는 태그
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Sprinting);
+
+		// 구르고 있는 상태를 나타내는 태그
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Rolling);
 	}
 
 	namespace Cooldown
