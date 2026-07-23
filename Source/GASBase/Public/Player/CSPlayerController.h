@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Player/CSBasePlayerController.h"
 #include "GameplayTagContainer.h"
+#include "Game/CSMatchResult.h"
 #include "CSPlayerController.generated.h"
 
 class UInputAction;
@@ -32,6 +33,14 @@ public:
 	// 본진(Base) 파괴 시 BP_GameMode가 모든 클라이언트의 PlayerController에 호출 — 패배 화면 표시 + 입력 차단
 	UFUNCTION(Client, Reliable, BlueprintCallable, Category = "GAS|GameOver")
 	void ClientShowGameOver();
+
+	// 보스 사망 시 서버 → 클라이언트: 승리 화면 표시
+	UFUNCTION(Client, Reliable)
+	void Client_NotifyVictory(float LobbyDelay, FCSMatchResult MatchResult);
+
+	// BP에서 승리 위젯 생성 + 카운트다운 구현
+	UFUNCTION(BlueprintImplementableEvent, Category = "Victory")
+	void BP_ShowVictoryScreen(float LobbyDelay, const FCSMatchResult& MatchResult);
 
 	// GameOver 화면의 "재시작" 버튼에서 호출 — 서버가 현재 레벨을 다시 로드해서 모든 클라이언트를 트래블시킴
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "GAS|GameOver")

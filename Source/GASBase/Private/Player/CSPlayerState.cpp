@@ -31,6 +31,8 @@ void ACSPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ThisClass, RespawnTime);
+	DOREPLIFETIME(ThisClass, KillCount);
+	DOREPLIFETIME(ThisClass, TotalDamageDealt);
 	DOREPLIFETIME(ACSPlayerState, SelectedCharacterClass);
 }
 

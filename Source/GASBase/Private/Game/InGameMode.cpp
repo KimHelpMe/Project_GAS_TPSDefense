@@ -6,6 +6,7 @@
 #include "GameplayTags/CSGameplayTags.h"
 #include "Player/CSPlayerState.h"
 #include "Player/CSPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 
 AInGameMode::AInGameMode()
 {
@@ -21,6 +22,45 @@ void AInGameMode::HandleSeamlessTravelPlayer(AController*& C)
 		CSPlayer->Client_EndBattleTransition();
 		CSPlayer->Client_RestoreInput(); // SeamlessTravel 시 PC가 재활용되므로 BeginPlay가 호출되지 않음 — 입력 상태를 명시적으로 복구
 	}
+}
+
+void AInGameMode::OnBossDied()
+{
+	// 중복 호출 방지 (에너미 헬스 0 이하 연습 발생 방지)
+	if (bVictoryTriggered) return;
+	bVictoryTriggered = true;
+
+	// 모든 PlayerController에게 개별 통계 수집 후 승리 RPC 전송
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		ACSPlayerController* PC = Cast<ACSPlayerController>(It->Get());
+		if (!PC) continue;
+
+		FCSMatchResult Result;
+		if (ACSPlayerState* PS = PC->GetPlayerState<ACSPlayerState>())
+		{
+			Result.KillCount = PS->KillCount;
+			Result.TotalDamageDealt = PS->TotalDamageDealt;
+		}
+
+		PC->Client_NotifyVictory(VictoryLobbyDelay, Result);
+	}
+
+	// N초 후 로비로 자동 이동
+	FTimerHandle VictoryTimer;
+	GetWorldTimerManager().SetTimer(
+		VictoryTimer,
+		this,
+		&ThisClass::ReturnAllPlayersToLobby,
+		VictoryLobbyDelay,
+		false
+	);
+}
+
+void AInGameMode::ReturnAllPlayersToLobby()
+{
+	// 기존 ServerRequestReturnToLobby와 동일한 패턴
+	UGameplayStatics::OpenLevel(this, FName("/MultiplayerSessions/Maps/Lobby"), true);
 }
 
 void AInGameMode::OnCharacterDied(AController* DeadController)

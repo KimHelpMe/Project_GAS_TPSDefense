@@ -64,6 +64,7 @@ namespace CSGameplayTags
 	{
 		UE_DEFINE_GAMEPLAY_TAG(HitReact, "CSGameplayTags.Events.HitReact");
 		UE_DEFINE_GAMEPLAY_TAG(Scored, "CSGameplayTags.Events.Scored");
+		UE_DEFINE_GAMEPLAY_TAG(DamageDealt, "CSGameplayTags.Events.DamageDealt");
 
 		UE_DEFINE_GAMEPLAY_TAG(SpawnProjectile, "CSGameplayTags.Events.SpawnProjectile");
 
