@@ -1,4 +1,4 @@
-// CSK
+﻿// CSK
 
 #pragma once
 
@@ -12,7 +12,6 @@
 class UAbilitySystemComponent;
 class UAttributeSet;
 class UGameplayEffect;
-
 // 본진(Base)이 파괴됐을 때 브로드캐스트되는 델리게이트 — GameMode/GameState가 구독해서 패배 처리에 사용
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBaseDestroyed);
 
