@@ -47,6 +47,13 @@ public:
 	// 보스 사망 시 보스 체력바 UI를 숨김
 	void HideBossHPBar();
 
+	// Input 설정 초기화
+	void InitInput();
+
+	// 서버 → 클라이언트: SeamlessTravel 후 입력 복구
+	UFUNCTION(Client, Reliable)
+	void Client_RestoreInput();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;

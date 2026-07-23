@@ -19,6 +19,7 @@ void AInGameMode::HandleSeamlessTravelPlayer(AController*& C)
 	if (ACSPlayerController* CSPlayer = Cast<ACSPlayerController>(C))
 	{
 		CSPlayer->Client_EndBattleTransition();
+		CSPlayer->Client_RestoreInput(); // SeamlessTravel 시 PC가 재활용되므로 BeginPlay가 호출되지 않음 — 입력 상태를 명시적으로 복구
 	}
 }
 
