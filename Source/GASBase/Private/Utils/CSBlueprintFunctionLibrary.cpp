@@ -1,4 +1,4 @@
-// CSK
+﻿// CSK
 
 
 #include "Utils/CSBlueprintFunctionLibrary.h"
@@ -13,6 +13,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerState.h"
 #include "Characters/CSBaseCharacter.h"
+#include "GameObjects/CSBaseStructure.h"
 
 
 EHitDirection UCSBlueprintFunctionLibrary::GetHitDirection(const FVector& TargetForward, const FVector& ToInstigator)
@@ -165,5 +166,9 @@ TArray<APlayerState*> UCSBlueprintFunctionLibrary::GetAllPlayerStates(const UObj
 bool UCSBlueprintFunctionLibrary::IsValidAttackTarget(AActor* Actor)
 {
 	const ACSBaseCharacter* Character = Cast<ACSBaseCharacter>(Actor);
-	return IsValid(Character) && Character->IsAlive();
+
+	ACSBaseStructure * temp = Cast<ACSBaseStructure>(Actor);
+
+
+	return IsValid(Character) && Character->IsAlive() || (IsValid(temp));
 }
