@@ -25,7 +25,9 @@ void UCSRespawnWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 	// 사망 중일 때만 카운트다운 업데이트
 	if (bIsDead)
 	{
-		const float Remaining = FMath::Max(0.f, PS->RespawnTime - GetWorld()->GetTimeSeconds());
+		// 복제받은 시점부터 로컬 경과 시간으로 남은 시간 계산
+		const float Elapsed = GetWorld()->GetTimeSeconds() - PS->GetLocalRespawnStartTime();
+		const float Remaining = FMath::Max(0.f, PS->GetLocalRespawnDuration() - Elapsed);
 		BP_OnCountdownUpdate(Remaining);
 	}
 }

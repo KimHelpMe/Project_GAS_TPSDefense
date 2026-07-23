@@ -154,6 +154,10 @@ void ACSBaseCharacter::EnableRagdoll()
 	// 애니메이션 포즈와 물리 연산 결과를 자연스럽게 블렌딩하도록 설정
 	GetMesh()->bBlendPhysics = true;
 
+	// 래그돌 메쉬가 살아있는 캐릭터 이동을 막지 않도록 Pawn 채널만 Ignore
+	// (프로파일 전체 변경 대신 채널 응답만 수정 — DisableRagdoll에서 프로파일 복원 시 자동 원상복구)
+	GetMesh()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+
 	// 캐릭터의 충돌을 담당하던 루트 캡슐의 모든 충돌을 비활성화
 	// (서버/클라이언트 모두 시체가 맵 바닥을 뚫고 지나가는 물리적 캡슐을 지우는 역할)
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);

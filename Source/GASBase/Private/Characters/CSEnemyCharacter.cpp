@@ -1,4 +1,4 @@
-﻿// CSK
+// CSK
 
 
 #include "Characters/CSEnemyCharacter.h"
@@ -6,6 +6,7 @@
 #include "AbilitySystem/CSAttributeSet.h"
 #include "GameplayTags/CSGameplayTags.h"
 #include "Player/CSPlayerController.h"
+#include "Game/InGameMode.h"
 
 
 ACSEnemyCharacter::ACSEnemyCharacter()
@@ -115,7 +116,11 @@ void ACSEnemyCharacter::HandleDeath_Implementation()
 		{
 			PC->HideBossHPBar();
 		}
+
+		// 보스 사망 → GameMode에 승리 판정 요청 (서버 전용)
+		if (AInGameMode* GM = GetWorld()->GetAuthGameMode<AInGameMode>())
+		{
+			GM->OnBossDied();
+		}
 	}
 }
-
-

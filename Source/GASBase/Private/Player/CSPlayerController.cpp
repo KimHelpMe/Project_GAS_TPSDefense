@@ -23,14 +23,19 @@ void ACSPlayerController::Client_EndBattleTransition_Implementation()
 	BP_EndBattleTransition();
 }
 
+void ACSPlayerController::InitInput()
+{
+	EnableInput(this);
+	bShowMouseCursor = false;
+	SetInputMode(FInputModeGameOnly());
+}
 void ACSPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
 	if (IsLocalController())
 	{
-		bShowMouseCursor = false;
-		SetInputMode(FInputModeGameOnly());
+		InitInput();
 
 		// 인게임 채팅 위젯 생성
 		if (ChatWidgetClass)
@@ -57,6 +62,18 @@ void ACSPlayerController::BeginPlay()
 UChatWidget* ACSPlayerController::GetChatWidget() const
 {
 	return InGameChatWidget;
+}
+
+void ACSPlayerController::Client_NotifyVictory_Implementation(float LobbyDelay, FCSMatchResult MatchResult)
+{
+	// 마우스 커서 표시, 게임 조작은 유지 (배그 승리 화면 방식)
+	SetShowMouseCursor(true);
+	FInputModeGameAndUI InputMode;
+	InputMode.SetHideCursorDuringCapture(false);
+	SetInputMode(InputMode);
+
+	// BP에서 승리 위젯 생성 + 카운트다운 처리
+	BP_ShowVictoryScreen(LobbyDelay, MatchResult);
 }
 
 void ACSPlayerController::ClientShowGameOver_Implementation()
@@ -119,11 +136,20 @@ void ACSPlayerController::HideBossHPBar()
 	}
 }
 
+
+
+void ACSPlayerController::Client_RestoreInput_Implementation()
+{
+	InitInput();
+}
+
 void ACSPlayerController::ServerRequestRestart_Implementation()
 {
 	// 서버가 현재 레벨을 다시 열면 서버 트래블이 발생해 모든 클라이언트가 함께 로드됨
 	const FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(this);
-	UGameplayStatics::OpenLevel(this, FName(*CurrentLevelName), true);
+
+	// 서버 트래블로 전환 — SeamlessTravel 적용, PlayerState 유지됨
+	GetWorld()->ServerTravel(CurrentLevelName + "?listen", true);
 }
 
 void ACSPlayerController::ServerRequestReturnToLobby_Implementation()

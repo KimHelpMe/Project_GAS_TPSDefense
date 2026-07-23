@@ -66,8 +66,8 @@ void UCSAbilitySystemComponent::AddToAbilityLevel(TSubclassOf<UGameplayAbility> 
 
 	if (FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromClass(AbilityClass))
 	{
-		// 현재 레벨에 지정한 값만큼 누적 증가
-		AbilitySpec->Level += Level;
+		// 현재 레벨에 지정한 값만큼 누적 증가 (최대 레벨을 넘지 않도록 캡)
+		AbilitySpec->Level = FMath::Min(AbilitySpec->Level + Level, MaxAbilityLevel);
 
 		// 변경 사항을 즉시 복제 트리거
 		MarkAbilitySpecDirty(*AbilitySpec);
@@ -112,6 +112,9 @@ bool UCSAbilitySystemComponent::TryPickupAbility(UCSAbilityData* AbilityData)
 		if (Entry.AbilityData && Entry.AbilityData->AbilityClass == AbilityData->AbilityClass)
 		{
 			AddToAbilityLevel(AbilityData->AbilityClass, 1);
+
+			// 레벨업 사실을 UI(스킬 슬롯)에도 알림 (기존엔 최초 습득 시에만 브로드캐스트되어 레벨업이 UI에 반영 안 됐음)
+			OnSlotAbilityChanged.Broadcast(Entry.SlotTag, AbilityData);
 			return true;
 		}
 	}
@@ -176,6 +179,19 @@ void UCSAbilitySystemComponent::GetSlotCooldown(FGameplayTag SlotTag, float& Tim
 	if (!Spec || !Spec->Ability) return;
 
 	Spec->Ability->GetCooldownTimeRemainingAndDuration(Entry->Handle, AbilityActorInfo.Get(), TimeRemaining, CooldownDuration);
+}
+
+int32 UCSAbilitySystemComponent::GetSlotAbilityLevel(FGameplayTag SlotTag)
+{
+	const FCSSlotAbilityEntry* Entry = SlotToAbility.FindByPredicate(
+		[&SlotTag](const FCSSlotAbilityEntry& Entry) { return Entry.SlotTag == SlotTag; });
+
+	if (!Entry || !Entry->Handle.IsValid()) return 0;
+
+	const FGameplayAbilitySpec* Spec = FindAbilitySpecFromHandle(Entry->Handle);
+	if (!Spec) return 0;
+
+	return Spec->Level;
 }
 
 void UCSAbilitySystemComponent::AddLooseGameplayTag(FGameplayTag TagToAdd)

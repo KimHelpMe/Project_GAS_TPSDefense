@@ -31,7 +31,32 @@ void ACSPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ThisClass, RespawnTime);
+	DOREPLIFETIME(ThisClass, KillCount);
+	DOREPLIFETIME(ThisClass, TotalDamageDealt);
 	DOREPLIFETIME(ACSPlayerState, SelectedCharacterClass);
+}
+
+void ACSPlayerState::OnRep_RespawnTime()
+{
+	if (RespawnTime > 0.f)
+	{
+		// 복제받은 순간 로컬 기준점 저장
+		LocalRespawnStartTime = GetWorld()->GetTimeSeconds();
+		LocalRespawnDuration = RespawnTime;
+	}
+}
+
+
+void ACSPlayerState::SetRespawnTime(float InDuration)
+{
+	RespawnTime = InDuration;
+
+	// 서버는 OnRep이 호출되지 않으므로 직접 로컬 기준점 세팅
+	if (InDuration > 0.f)
+	{
+		LocalRespawnStartTime = GetWorld()->GetTimeSeconds();
+		LocalRespawnDuration = InDuration;
+	}
 }
 
 void ACSPlayerState::SeamlessTravelTo(APlayerState* NewPlayerState)
@@ -48,6 +73,11 @@ void ACSPlayerState::SeamlessTravelTo(APlayerState* NewPlayerState)
 void ACSPlayerState::ServerSelectCharacter_Implementation(TSubclassOf<APawn> InCharacterClass)
 {
 	SelectedCharacterClass = InCharacterClass;
+}
+
+void ACSPlayerState::OnRep_SelectedCharacterClass()
+{
+	OnCharacterSelected.Broadcast();
 }
 
 UAbilitySystemComponent* ACSPlayerState::GetAbilitySystemComponent() const
