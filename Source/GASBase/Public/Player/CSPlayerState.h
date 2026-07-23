@@ -44,23 +44,54 @@ public:
 	UFUNCTION(BlueprintPure, Category = "GAS")
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
-	void SetRespawnTime(float InTime) { RespawnTime = InTime; }
+	void SetRespawnTime(float InDuration);
+
+	// 킬 수 누적 (서버에서 GA_ListenForScored 경유 호출)
+	UFUNCTION(BlueprintCallable)
+	void AddKillScore() { KillCount++; }
+
+	// 데미지 누적 (서버에서 GA_ListenForScored 경유 호출)
+	UFUNCTION(BlueprintCallable)
+	void AddDamageScore(float Damage) { TotalDamageDealt += Damage; }
 
 public:
-	UPROPERTY(BlueprintReadOnly, Replicated)
+	// 리스폰까지 남은 시간 (duration). 0이면 살아있음
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_RespawnTime)
 	float RespawnTime = 0.f;
+
+	// 이번 매치에서 처치한 적 수
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	int32 KillCount = 0;
+
+	// 이번 매치에서 가한 총 데미지
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	float TotalDamageDealt = 0.f;
 
 	// 로비에서 선택한 캐릭터 클래스 (SeamlessTravel 후에도 유지됨)
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SelectedCharacterClass)
 	TSubclassOf<APawn> SelectedCharacterClass;
+
 
 	// TargetPlayerState의 Bind Event 노드에서 구독해서, 늦게 도착한 캐릭터 선택 정보로 아이콘 등을 갱신할 때 사용
 	UPROPERTY(BlueprintAssignable, Category = "Lobby")
 	FOnCharacterSelected OnCharacterSelected;
 
 
+	// 클라이언트 전용 getter
+	float GetLocalRespawnStartTime() const { return LocalRespawnStartTime; }
+	float GetLocalRespawnDuration() const { return LocalRespawnDuration; }
+
 
 private:
+	// 클라이언트 전용 — 복제받은 시점의 로컬 TimeSeconds
+	float LocalRespawnStartTime = 0.f;
+
+	// 클라이언트 전용 — 복제받은 시점의 총 duration
+	float LocalRespawnDuration = 0.f;
+
+	UFUNCTION()
+	void OnRep_RespawnTime();
+
 	UPROPERTY(VisibleAnywhere, Category = "GAS")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 

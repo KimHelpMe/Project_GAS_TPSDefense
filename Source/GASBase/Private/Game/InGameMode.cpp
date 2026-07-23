@@ -6,6 +6,7 @@
 #include "GameplayTags/CSGameplayTags.h"
 #include "Player/CSPlayerState.h"
 #include "Player/CSPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 
 AInGameMode::AInGameMode()
 {
@@ -19,7 +20,47 @@ void AInGameMode::HandleSeamlessTravelPlayer(AController*& C)
 	if (ACSPlayerController* CSPlayer = Cast<ACSPlayerController>(C))
 	{
 		CSPlayer->Client_EndBattleTransition();
+		CSPlayer->Client_RestoreInput(); // SeamlessTravel 시 PC가 재활용되므로 BeginPlay가 호출되지 않음 — 입력 상태를 명시적으로 복구
 	}
+}
+
+void AInGameMode::OnBossDied()
+{
+	// 중복 호출 방지 (에너미 헬스 0 이하 연습 발생 방지)
+	if (bVictoryTriggered) return;
+	bVictoryTriggered = true;
+
+	// 모든 PlayerController에게 개별 통계 수집 후 승리 RPC 전송
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		ACSPlayerController* PC = Cast<ACSPlayerController>(It->Get());
+		if (!PC) continue;
+
+		FCSMatchResult Result;
+		if (ACSPlayerState* PS = PC->GetPlayerState<ACSPlayerState>())
+		{
+			Result.KillCount = PS->KillCount;
+			Result.TotalDamageDealt = PS->TotalDamageDealt;
+		}
+
+		PC->Client_NotifyVictory(VictoryLobbyDelay, Result);
+	}
+
+	// N초 후 로비로 자동 이동
+	FTimerHandle VictoryTimer;
+	GetWorldTimerManager().SetTimer(
+		VictoryTimer,
+		this,
+		&ThisClass::ReturnAllPlayersToLobby,
+		VictoryLobbyDelay,
+		false
+	);
+}
+
+void AInGameMode::ReturnAllPlayersToLobby()
+{
+	// 기존 ServerRequestReturnToLobby와 동일한 패턴
+	UGameplayStatics::OpenLevel(this, FName("/MultiplayerSessions/Maps/Lobby"), true);
 }
 
 void AInGameMode::OnCharacterDied(AController* DeadController)
@@ -27,7 +68,7 @@ void AInGameMode::OnCharacterDied(AController* DeadController)
     if (!IsValid(DeadController)) return;
 
     // 이미 타이머가 걸려있으면 무시 (이중 사망 방지)
-    if (FTimerHandle* Existing = RespawnTimers.Find(DeadController))
+    if (FTimerHandle* Existing = RespawnTimers.Find(TWeakObjectPtr<AController>(DeadController)))
     {
         if (GetWorldTimerManager().IsTimerActive(*Existing)) return;
     }
@@ -40,7 +81,8 @@ void AInGameMode::OnCharacterDied(AController* DeadController)
     ACSPlayerState* PlayerController = DeadController->GetPlayerState<ACSPlayerState>();
     if (PlayerController)
     {
-        PlayerController->SetRespawnTime(GetWorld()->GetTimeSeconds() + RespawnDelay);
+        // duration만 저장 — 클라이언트는 복제받은 시점(OnRep_RespawnTime)부터 자체 카운트다운
+        PlayerController->SetRespawnTime(RespawnDelay);
     }
 }
 
@@ -62,7 +104,7 @@ UClass* AInGameMode::GetDefaultPawnClassForController_Implementation(AController
 
 void AInGameMode::RespawnCharacter(AController* Controller)
 {
-    RespawnTimers.Remove(Controller);
+    RespawnTimers.Remove(TWeakObjectPtr<AController>(Controller));
 
     if (!IsValid(Controller)) return;
 

@@ -64,10 +64,34 @@ void UCSAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
+		const float OldHealth = GetHealth();
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
+
 
 		// WaitForAttributeChanged가 듣는 내부 델리게이트는 서버 자신에게는 안정적으로 발동되지 않으므로 직접 브로드캐스트
 		OnHealthChanged.Broadcast(GetHealth(), GetMaxHealth());
+
+		const float ActualDamage = FMath::Abs(Data.EvaluatedData.Magnitude);
+
+		AActor* Causer = Data.EffectSpec.GetEffectContext().GetInstigator();
+
+		// 데미지 누적 이벤트 — GA_ListenForScored에서 WaitGameplayEvent로 수신해 PlayerState에 누적
+		if (ActualDamage > 0.f)
+		{
+			FGameplayEventData DamagePayload;
+			DamagePayload.EventMagnitude = ActualDamage; // BP에서 EventMagnitude로 쿨냄
+			DamagePayload.Instigator = Data.Target.GetAvatarActor();
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Causer, CSGameplayTags::Events::DamageDealt, DamagePayload);
+		}
+
+		// 킬 이벤트
+		if (GetHealth() <= 0.f)
+		{
+			FGameplayEventData ScoredPayload;
+			ScoredPayload.Instigator = Data.Target.GetAvatarActor(); // 피격자(죽은 적)를 Instigator로 전달
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Causer, CSGameplayTags::Events::Scored, ScoredPayload);
+		}
+
 	}
 
 	if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
@@ -80,24 +104,6 @@ void UCSAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 	{
 		FGameplayTagContainer SprintTagContainer = CSGameplayTags::Abilities::Sprint.GetTag().GetSingleTagContainer();
 		Data.Target.CancelAbilities(&SprintTagContainer);
-	}
-
-	// Health 어트리뷰트가 0 이하로 내려간 경우 → 대상 사망 처리
-	if (Data.EvaluatedData.Attribute == GetHealthAttribute() && GetHealth() <= 0.f)
-	{
-
-		// 페이로드 생성 및 설정
-		FGameplayEventData Payload;
-
-		// 피격자의 아바타 액터를 Instigator로 설정
-		Payload.Instigator = Data.Target.GetAvatarActor();
-
-		// 이 게임플레이 이펙트를 발생시킨 주체(공격자) 액터 획득
-		AActor* Causer = Data.EffectSpec.GetEffectContext().GetInstigator();
-
-		// 공격자에게 Scored 이벤트 전송
-		// ex) 경험치, 골드, 아이템 등
-		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Causer, CSGameplayTags::Events::Scored, Payload);
 	}
 
 	// 첫 번째 Effect가 적용될 때만 플래그 설정 및 브로드캐스트 (서버)
