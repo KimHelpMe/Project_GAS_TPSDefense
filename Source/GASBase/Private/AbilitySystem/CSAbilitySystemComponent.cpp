@@ -39,6 +39,12 @@ void UCSAbilitySystemComponent::OnRep_ActivateAbilities()
 	{
 		HandleAutoActivatedAbility(AbilitySpec);
 	}
+
+	// 어빌리티 스펙(레벨 등)이 리플리케이트될 때마다 슬롯 UI도 갱신 (레벨업이 클라이언트에 반영되도록)
+	for (const FCSSlotAbilityEntry& Entry : SlotToAbility)
+	{
+		OnSlotAbilityChanged.Broadcast(Entry.SlotTag, Entry.AbilityData);
+	}
 }
 
 void UCSAbilitySystemComponent::SetAbilityLevel(TSubclassOf<UGameplayAbility> AbilityClass, int32 Level)
@@ -79,7 +85,9 @@ void UCSAbilitySystemComponent::HandleAutoActivatedAbility(const FGameplayAbilit
 	// 어빌리티 CDO가 유효한지 먼저 확인
 	// TObjectPtr<UGameplayAbility> 타입으로, 실제 인스턴스가 아닌 Class Default Object(CDO) 를 가리킨다
 	// CDO는 해당 클래스의 기본값 템플릿으로 단 하나만 존재하며, 어빌리티 스펙들은 모두 이 CDO를 공유
-	if (!IsValid(AbilitySpec.Ability)) return;
+	// 이미 활성화된 어빌리티는 재시도하지 않음: OnRep_ActivateAbilities가 레벨업 등으로 매번 호출되는데,
+	// 여기서 매번 재시도하면 서버가 거부하는 RPC가 무한 반복되어 리플리케이션 트래픽을 잠식시킴
+	if (!IsValid(AbilitySpec.Ability) || AbilitySpec.IsActive()) return;
 
 
 	// 어빌리티에 부여된 Asset Tag를 순회
@@ -112,6 +120,9 @@ bool UCSAbilitySystemComponent::TryPickupAbility(UCSAbilityData* AbilityData)
 		if (Entry.AbilityData && Entry.AbilityData->AbilityClass == AbilityData->AbilityClass)
 		{
 			AddToAbilityLevel(AbilityData->AbilityClass, 1);
+
+			UE_LOG(LogTemp, Warning, TEXT("[TryPickupAbility] RELEVEL Slot=%s Class=%s"),
+				*Entry.SlotTag.ToString(), *AbilityData->AbilityClass->GetName());
 
 			// 레벨업 사실을 UI(스킬 슬롯)에도 알림 (기존엔 최초 습득 시에만 브로드캐스트되어 레벨업이 UI에 반영 안 됐음)
 			OnSlotAbilityChanged.Broadcast(Entry.SlotTag, AbilityData);
@@ -190,6 +201,10 @@ int32 UCSAbilitySystemComponent::GetSlotAbilityLevel(FGameplayTag SlotTag)
 
 	const FGameplayAbilitySpec* Spec = FindAbilitySpecFromHandle(Entry->Handle);
 	if (!Spec) return 0;
+
+	UE_LOG(LogTemp, Warning, TEXT("[GetSlotAbilityLevel] Slot=%s Level=%d Handle=%s Role=%s"),
+		*SlotTag.ToString(), Spec->Level, *Entry->Handle.ToString(),
+		GetOwnerRole() == ROLE_Authority ? TEXT("Server") : TEXT("Client"));
 
 	return Spec->Level;
 }

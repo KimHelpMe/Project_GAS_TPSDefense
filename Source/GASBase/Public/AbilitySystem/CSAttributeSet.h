@@ -50,7 +50,7 @@ public:
 
 public:
 	// 첫 번째 Gameplay Effect 적용 완료 여부 (서버→클라이언트 복제)
-	UPROPERTY(ReplicatedUsing = OnRep_AttributesInitialized)
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_AttributesInitialized)
 	bool bAttributesInitialized = false;
 
 	// 첫 Effect 적용 시 브로드캐스트되는 델리게이트
