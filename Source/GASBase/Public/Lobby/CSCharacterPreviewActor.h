@@ -22,6 +22,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Lobby|Preview")
 	void SetCharacter(ECSCharacterID InID);
 
+	// 배틀 트랜지션 연출용 달리기 애니메이션 전환
+	UFUNCTION(BlueprintCallable, Category = "Lobby|Preview")
+	void StartRunAnimation();
+
 protected:
 	virtual void BeginPlay() override;
 

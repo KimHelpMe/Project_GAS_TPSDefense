@@ -23,6 +23,12 @@ void ACSPlayerController::Client_EndBattleTransition_Implementation()
 	BP_EndBattleTransition();
 }
 
+void ACSPlayerController::Client_StartTransitionCinematic_Implementation()
+{
+	// LV_Transition 진입 연출 — BP에서 PreviewActor 스폰 + 카메라 워크 구현
+	BP_StartTransitionCinematic();
+}
+
 void ACSPlayerController::InitInput()
 {
 	EnableInput(this);

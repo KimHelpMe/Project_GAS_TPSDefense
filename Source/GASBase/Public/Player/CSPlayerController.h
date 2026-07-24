@@ -30,6 +30,14 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Battle Transition")
 	void BP_EndBattleTransition();
 
+	// 서버 → 클라이언트: LV_Transition 진입 시 PreviewActor 스폰 + 카메라 연출 시작
+	UFUNCTION(Client, Reliable)
+	void Client_StartTransitionCinematic();
+
+	// BP에서 PreviewActor 스폰 + 카메라 워크 구현
+	UFUNCTION(BlueprintImplementableEvent, Category = "Battle Transition")
+	void BP_StartTransitionCinematic();
+
 	// 본진(Base) 파괴 시 BP_GameMode가 모든 클라이언트의 PlayerController에 호출 — 패배 화면 표시 + 입력 차단
 	UFUNCTION(Client, Reliable, BlueprintCallable, Category = "GAS|GameOver")
 	void ClientShowGameOver();

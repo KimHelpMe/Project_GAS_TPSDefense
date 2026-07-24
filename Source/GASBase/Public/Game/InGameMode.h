@@ -29,6 +29,10 @@ protected:
     // SeamlessTravel 중 PC 교체 완료 직후 호출 — EndBattleTransition 전달
     virtual void HandleSeamlessTravelPlayer(AController*& C) override;
 
+    // SeamlessTravel 목적지 맵 로드 완료 직후 호출
+    // LV_Transition 진입 시에만 RPC 발송, LV_CSK 진입 시는 HandleSeamlessTravelPlayer가 담당
+    virtual void PostSeamlessTravel() override;
+
     // 타이머 완료 시 호출 — 실제 리스폰 수행
     void RespawnCharacter(AController* Controller);
 

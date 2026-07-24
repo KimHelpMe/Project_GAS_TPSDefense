@@ -13,6 +13,24 @@ AInGameMode::AInGameMode()
 	bUseSeamlessTravel = true;
 }
 
+void AInGameMode::PostSeamlessTravel()
+{
+	Super::PostSeamlessTravel();
+
+	// LV_Transition 진입 시에만 연출 RPC 발송
+	// LV_CSK 진입 시는 HandleSeamlessTravelPlayer에서 Client_EndBattleTransition이 처리
+	const FString CurrentMap = GetWorld()->GetMapName();
+	if (!CurrentMap.Contains(TEXT("Transition"))) return;
+
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		if (ACSPlayerController* PC = Cast<ACSPlayerController>(It->Get()))
+		{
+			PC->Client_StartTransitionCinematic();
+		}
+	}
+}
+
 void AInGameMode::HandleSeamlessTravelPlayer(AController*& C)
 {
 	Super::HandleSeamlessTravelPlayer(C);
