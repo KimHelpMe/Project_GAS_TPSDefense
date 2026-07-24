@@ -7,6 +7,7 @@
 #include "AbilitySystemInterface.h"
 
 
+#include "Data/CSCharacterSelectData.h"
 #include "CSPlayerState.generated.h"
 
 class UAttributeSet;
@@ -32,9 +33,9 @@ public:
 	// SeamlessTravel 시 커스텀 프로퍼티를 새 PlayerState로 복사
 	virtual void SeamlessTravelTo(APlayerState* NewPlayerState) override;
 
-	// 클라이언트 → 서버: 캐릭터 선택 저장
+	// 클라이언트 → 서버: 캐릭터 선택 저장 (Class + ID 동시 저장)
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Lobby")
-	void ServerSelectCharacter(TSubclassOf<APawn> InCharacterClass);
+	void ServerSelectCharacter(TSubclassOf<APawn> InCharacterClass, ECSCharacterID InCharacterID);
 
 	// SelectedCharacterClass 리플리케이트 도착 시 호출 (도착 시점이 위젯 생성 시점보다 늦을 수 있어 OnCharacterSelected로 통지)
 	UFUNCTION()
@@ -70,6 +71,10 @@ public:
 	// 로비에서 선택한 캐릭터 클래스 (SeamlessTravel 후에도 유지됨)
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SelectedCharacterClass)
 	TSubclassOf<APawn> SelectedCharacterClass;
+
+	// 로비에서 선택한 캐릭터 ID — 트랜지션 연출용 PreviewActor 스폰에 사용
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	ECSCharacterID SelectedCharacterID = ECSCharacterID::None;
 
 
 	// TargetPlayerState의 Bind Event 노드에서 구독해서, 늦게 도착한 캐릭터 선택 정보로 아이콘 등을 갱신할 때 사용

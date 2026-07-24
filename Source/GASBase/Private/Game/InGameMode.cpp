@@ -5,6 +5,7 @@
 #include "AbilitySystemComponent.h"
 #include "GameplayTags/CSGameplayTags.h"
 #include "Player/CSPlayerState.h"
+#include "Player/CSBasePlayerController.h"
 #include "Player/CSPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -13,32 +14,19 @@ AInGameMode::AInGameMode()
 	bUseSeamlessTravel = true;
 }
 
-void AInGameMode::PostSeamlessTravel()
-{
-	Super::PostSeamlessTravel();
-
-	// LV_Transition 진입 시에만 연출 RPC 발송
-	// LV_CSK 진입 시는 HandleSeamlessTravelPlayer에서 Client_EndBattleTransition이 처리
-	const FString CurrentMap = GetWorld()->GetMapName();
-	if (!CurrentMap.Contains(TEXT("Transition"))) return;
-
-	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
-	{
-		if (ACSPlayerController* PC = Cast<ACSPlayerController>(It->Get()))
-		{
-			PC->Client_StartTransitionCinematic();
-		}
-	}
-}
-
 void AInGameMode::HandleSeamlessTravelPlayer(AController*& C)
 {
 	Super::HandleSeamlessTravelPlayer(C);
 
-	if (ACSPlayerController* CSPlayer = Cast<ACSPlayerController>(C))
+	if (ACSBasePlayerController* PC = Cast<ACSBasePlayerController>(C))
 	{
-		CSPlayer->Client_EndBattleTransition();
-		CSPlayer->Client_RestoreInput(); // SeamlessTravel 시 PC가 재활용되므로 BeginPlay가 호출되지 않음 — 입력 상태를 명시적으로 복구
+		PC->Client_EndBattleTransition();
+
+		// SeamlessTravel 시 PC가 재활용되므로 BeginPlay가 호출되지 않음 — 입력 상태를 명시적으로 복구
+		if (ACSPlayerController* CSPlayer = Cast<ACSPlayerController>(PC))
+		{
+			CSPlayer->Client_RestoreInput();
+		}
 	}
 }
 

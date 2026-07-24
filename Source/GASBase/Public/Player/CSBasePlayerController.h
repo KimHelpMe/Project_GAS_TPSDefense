@@ -24,6 +24,22 @@ public:
 
 	FORCEINLINE UChatComponent* GetChatComponent() const { return ChatComponent; }
 
+	// 서버 → 클라이언트: LV_Transition 진입 시 PreviewActor 스폰 + 카메라 연출 시작
+	UFUNCTION(Client, Reliable)
+	void Client_StartTransitionCinematic();
+
+	// BP에서 PreviewActor 스폰 + 카메라 워크 구현
+	UFUNCTION(BlueprintImplementableEvent, Category = "Battle Transition")
+	void BP_StartTransitionCinematic();
+
+	// 서버 → 클라이언트: LV_CSK 진입 완료 시 마름모 열림 연출
+	UFUNCTION(Client, Reliable)
+	void Client_EndBattleTransition();
+
+	// BP에서 마름모 열림 연출 구현
+	UFUNCTION(BlueprintImplementableEvent, Category = "Battle Transition")
+	void BP_EndBattleTransition();
+
 protected:
 	virtual void SetupInputComponent() override;
 	virtual void OnChatDeactivated() {}

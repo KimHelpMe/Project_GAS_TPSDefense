@@ -34,6 +34,7 @@ void ACSPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ThisClass, KillCount);
 	DOREPLIFETIME(ThisClass, TotalDamageDealt);
 	DOREPLIFETIME(ACSPlayerState, SelectedCharacterClass);
+	DOREPLIFETIME(ACSPlayerState, SelectedCharacterID);
 }
 
 void ACSPlayerState::OnRep_RespawnTime()
@@ -65,14 +66,16 @@ void ACSPlayerState::SeamlessTravelTo(APlayerState* NewPlayerState)
 
 	if (ACSPlayerState* NewState = Cast<ACSPlayerState>(NewPlayerState))
 	{
-		// 로비에서 선택한 캐릭터 클래스를 새 PlayerState로 이전
+		// 로비에서 선택한 캐릭터 클래스 + ID를 새 PlayerState로 이전
 		NewState->SelectedCharacterClass = SelectedCharacterClass;
+		NewState->SelectedCharacterID = SelectedCharacterID;
 	}
 }
 
-void ACSPlayerState::ServerSelectCharacter_Implementation(TSubclassOf<APawn> InCharacterClass)
+void ACSPlayerState::ServerSelectCharacter_Implementation(TSubclassOf<APawn> InCharacterClass, ECSCharacterID InCharacterID)
 {
 	SelectedCharacterClass = InCharacterClass;
+	SelectedCharacterID = InCharacterID;
 }
 
 void ACSPlayerState::OnRep_SelectedCharacterClass()
