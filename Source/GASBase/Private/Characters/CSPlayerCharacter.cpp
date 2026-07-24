@@ -214,6 +214,9 @@ void ACSPlayerCharacter::OnHealthChanged(const FOnAttributeChangeData& Attribute
 	if (UMaterialParameterCollectionInstance* MPCInstance = GetWorld()->GetParameterCollectionInstance(DamageVignetteMPC))
 	{
 		MPCInstance->SetScalarParameterValue(DamageVignetteParamName, VignetteIntensity);
+
+		const bool bIsDead = AttributeChangeData.NewValue <= 0.f;
+		MPCInstance->SetScalarParameterValue(TEXT("IsDead"), bIsDead ? 1.f : 0.f);
 	}
 }
 
