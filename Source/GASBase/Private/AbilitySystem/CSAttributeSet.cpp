@@ -84,12 +84,18 @@ void UCSAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Causer, CSGameplayTags::Events::DamageDealt, DamagePayload);
 		}
 
-		// 킬 이벤트
+		// 킬 이벤트 + 방어 장치: GA_Death 직접 트리거
+		// GA_ListenForHealthChange가 Block 등으로 죽어있어도 사망 누락 방지
 		if (GetHealth() <= 0.f)
 		{
 			FGameplayEventData ScoredPayload;
 			ScoredPayload.Instigator = Data.Target.GetAvatarActor(); // 피격자(죽은 적)를 Instigator로 전달
 			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Causer, CSGameplayTags::Events::Scored, ScoredPayload);
+
+			// GA_Death가 이미 활성화 중이면 TryActivate는 조용히 무시됨 (중복 실행 없음)
+			FGameplayTagContainer DeathTag;
+			DeathTag.AddTag(CSGameplayTags::Abilities::Death);
+			Data.Target.TryActivateAbilitiesByTag(DeathTag);
 		}
 
 	}
