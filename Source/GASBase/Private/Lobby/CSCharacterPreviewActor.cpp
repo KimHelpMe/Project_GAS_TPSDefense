@@ -17,6 +17,7 @@ ACSCharacterPreviewActor::ACSCharacterPreviewActor()
 void ACSCharacterPreviewActor::BeginPlay()
 {
 	Super::BeginPlay();
+
 }
 
 void ACSCharacterPreviewActor::SetCharacter(ECSCharacterID InID)
