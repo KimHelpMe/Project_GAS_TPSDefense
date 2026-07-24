@@ -79,6 +79,7 @@ void ACSPlayerCharacter::PossessedBy(AController* NewController)
 
 	// 서버 전용: Owner = PlayerState, Avatar = 이 캐릭터
 	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
+	GetAbilitySystemComponent()->AddMinimalReplicationGameplayTag(CSGameplayTags::Team::Player);
 
 	// 어빌리티 부여는 서버에서만 수행
 	// 서버에서 GiveAbility를 호출하면 클라이언트에는 자동으로 복제(replicate)
@@ -101,6 +102,8 @@ void ACSPlayerCharacter::OnRep_PlayerState()
 
 	// 어트리뷰트 변경 델리게이트를 바인딩
 	BindAttributeDelegates();
+
+	GetAbilitySystemComponent()->AddMinimalReplicationGameplayTag(CSGameplayTags::Team::Player);
 
 }
 
