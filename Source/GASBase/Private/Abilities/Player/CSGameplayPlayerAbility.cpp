@@ -70,7 +70,7 @@ FHitResult UCSGameplayPlayerAbility::GetAimpointHitResult(bool bIgnorePawns)
     return Hit;
 }
 
-TArray<FHitResult> UCSGameplayPlayerAbility::GetSpreadHitResults(int32 PelletCount, float SpreadAngleDegrees, FName MuzzleSocketName)
+TArray<FHitResult> UCSGameplayPlayerAbility::GetSpreadHitResults(int32 PelletCount, float SpreadAngleDegrees, FName MuzzleSocketName, float MaxRange)
 {
     TArray<FHitResult> Results;
 
@@ -87,7 +87,7 @@ TArray<FHitResult> UCSGameplayPlayerAbility::GetSpreadHitResults(int32 PelletCou
     // 1. 카메라 기준으로 조준점 계산
     const FVector CamStart   = PC->PlayerCameraManager->GetCameraLocation();
     const FVector CamForward = PC->PlayerCameraManager->GetCameraRotation().Vector();
-    const FVector CamEnd     = CamStart + CamForward * TraceDistance;
+    const FVector CamEnd     = CamStart + CamForward * MaxRange;
 
     FHitResult AimHit;
     GetWorld()->LineTraceSingleByChannel(AimHit, CamStart, CamEnd, ECC_GameTraceChannel2, QueryParams);
@@ -107,7 +107,7 @@ TArray<FHitResult> UCSGameplayPlayerAbility::GetSpreadHitResults(int32 PelletCou
         // MuzzleForward를 중심으로 SpreadAngleDegrees 범위 안에서 랜덤 방향 생성
         // FMath::VRandCone은 라디안을 받으므로 DegreesToRadians 변환 필요
         const FVector Direction = FMath::VRandCone(MuzzleForward, FMath::DegreesToRadians(SpreadAngleDegrees));
-        const FVector End       = MuzzleLoc + Direction * TraceDistance;
+        const FVector End       = MuzzleLoc + Direction * MaxRange;
 
         FHitResult Hit;
         GetWorld()->LineTraceSingleByChannel(Hit, MuzzleLoc, End, ECC_GameTraceChannel2, QueryParams);
