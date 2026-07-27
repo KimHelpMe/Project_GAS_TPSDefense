@@ -154,9 +154,6 @@ void UMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResu
 		// SETTING_MATCHTYPE 커스텀 키를 통해 데이터 추출
 		Result.Session.SessionSettings.Get(FName("MatchType"), SettingsValue);
 
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Yellow,
-			FString::Printf(TEXT("Session MatchType: %s"), *SettingsValue));
-
 		// 내가 설정한 매치 타입(예: FreeForAll)과 일치하는 방을 찾았다면
 		if (SettingsValue == MatchType)
 		{
@@ -167,8 +164,7 @@ void UMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResu
 	}
 
 	// 루프를 다 돌았는데 매칭되는 세션이 없었을 때
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red,
-		TEXT("No matching session found!"));
+	if (JoinButton) JoinButton->SetIsEnabled(true);
 }
 
 void UMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
@@ -176,12 +172,9 @@ void UMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
 	// 조인 결과 자체가 실패한 경우 얼리 리턴
 	if (Result != EOnJoinSessionCompleteResult::Success)
 	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("Failed to join session."));
 		if (JoinButton) JoinButton->SetIsEnabled(true); // 버튼 복구
 		return;
 	}
-
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Green, TEXT("Successfully joined session! Accessing address..."));
 
 	// 주소 분석을 위해 로컬 세션 인터페이스 획득
 	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
@@ -195,7 +188,6 @@ void UMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
 	FString ConnectAddress;
 	if (!SessionInterface->GetResolvedConnectString(NAME_GameSession, ConnectAddress))
 	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("Failed to get resolve connect string."));
 		return;
 	}
 
@@ -214,13 +206,7 @@ void UMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
 
 void UMenu::OnDestroySession(bool bWasSuccessful)
 {
-	if (!bWasSuccessful)
-	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("Failed to destroy session."));
-		return;
-	}
-
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Green, TEXT("Session destroyed successfully."));
+	if (!bWasSuccessful) return;
 
 	// 버튼 다시 활성화하여 재호스팅/재검색 가능하게 복구
 	if (HostButton) HostButton->SetIsEnabled(true);
@@ -229,14 +215,6 @@ void UMenu::OnDestroySession(bool bWasSuccessful)
 
 void UMenu::OnStartSession(bool bWasSuccessful)
 {
-	if (bWasSuccessful)
-	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Green, TEXT("Session started successfully."));
-	}
-	else
-	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("Failed to start session."));
-	}
 }
 
 void UMenu::OnHostButtonClicked()

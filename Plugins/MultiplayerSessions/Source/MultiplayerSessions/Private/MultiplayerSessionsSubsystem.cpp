@@ -21,16 +21,6 @@ UMultiplayerSessionsSubsystem::UMultiplayerSessionsSubsystem() :
 	{
 		// 서브시스템으로부터 세션 인터페이스 포인터 획득
 		SessionInterface = Subsystem->GetSessionInterface();
-
-		if (SessionInterface.IsValid())
-		{
-			// UE 5.7 로깅 시스템을 활용한 디버깅 확인 로그 
-			UE_LOG(LogTemp, Log, TEXT("Found Session Interface: %s"), *Subsystem->GetSubsystemName().ToString());
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed to find Online Subsystem!"));
 	}
 }
 
@@ -44,7 +34,6 @@ void UMultiplayerSessionsSubsystem::Initialize(FSubsystemCollectionBase& Collect
 		FNamedOnlineSession* ExistingSession = SessionInterface->GetNamedSession(NAME_GameSession);
 		if (ExistingSession)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Found leftover session on startup, destroying it."));
 			SessionInterface->DestroySession(NAME_GameSession);
 		}
 	}

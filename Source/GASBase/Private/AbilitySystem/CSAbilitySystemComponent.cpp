@@ -121,8 +121,7 @@ bool UCSAbilitySystemComponent::TryPickupAbility(UCSAbilityData* AbilityData)
 		{
 			AddToAbilityLevel(AbilityData->AbilityClass, 1);
 
-			UE_LOG(LogTemp, Warning, TEXT("[TryPickupAbility] RELEVEL Slot=%s Class=%s"),
-				*Entry.SlotTag.ToString(), *AbilityData->AbilityClass->GetName());
+			//UE_LOG(LogTemp, Warning, TEXT("[TryPickupAbility] RELEVEL Slot=%s Class=%s"),*Entry.SlotTag.ToString(), *AbilityData->AbilityClass->GetName());
 
 			// 레벨업 사실을 UI(스킬 슬롯)에도 알림 (기존엔 최초 습득 시에만 브로드캐스트되어 레벨업이 UI에 반영 안 됐음)
 			OnSlotAbilityChanged.Broadcast(Entry.SlotTag, AbilityData);
@@ -168,10 +167,10 @@ bool UCSAbilitySystemComponent::TryActivateAbilityBySlot(FGameplayTag SlotTag)
 	if (!Entry) return false;
 
 	// 디버그: 레벨 출력
-	if (const FGameplayAbilitySpec* Spec = FindAbilitySpecFromHandle(Entry->Handle))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[%s] Level: %d"), *SlotTag.ToString(), Spec->Level);
-	}
+	//if (const FGameplayAbilitySpec* Spec = FindAbilitySpecFromHandle(Entry->Handle))
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("[%s] Level: %d"), *SlotTag.ToString(), Spec->Level);
+	//}
 
 	return TryActivateAbility(Entry->Handle);
 }
@@ -202,9 +201,9 @@ int32 UCSAbilitySystemComponent::GetSlotAbilityLevel(FGameplayTag SlotTag)
 	const FGameplayAbilitySpec* Spec = FindAbilitySpecFromHandle(Entry->Handle);
 	if (!Spec) return 0;
 
-	UE_LOG(LogTemp, Warning, TEXT("[GetSlotAbilityLevel] Slot=%s Level=%d Handle=%s Role=%s"),
-		*SlotTag.ToString(), Spec->Level, *Entry->Handle.ToString(),
-		GetOwnerRole() == ROLE_Authority ? TEXT("Server") : TEXT("Client"));
+	//UE_LOG(LogTemp, Warning, TEXT("[GetSlotAbilityLevel] Slot=%s Level=%d Handle=%s Role=%s"),
+	//	*SlotTag.ToString(), Spec->Level, *Entry->Handle.ToString(),
+	//	GetOwnerRole() == ROLE_Authority ? TEXT("Server") : TEXT("Client"));
 
 	return Spec->Level;
 }
