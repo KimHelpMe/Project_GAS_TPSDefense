@@ -36,7 +36,7 @@ public:
 	// PelletCount 수만큼 SpreadAngleDegrees 범위 안에서 랜덤 방향으로 각각 트레이스를 수행한다.
 	// 맞지 않은 탄도 ImpactPoint가 최대 사거리 끝점으로 채워져 반환된다. (VFX 끝점 활용 가능)
 	UFUNCTION(BlueprintCallable, Category = "GAS|Aiming")
-	TArray<FHitResult> GetSpreadHitResults(int32 PelletCount, float SpreadAngleDegrees, FName MuzzleSocketName);
+	TArray<FHitResult> GetSpreadHitResults(int32 PelletCount, float SpreadAngleDegrees, FName MuzzleSocketName, float MaxRange);
 
 	UPROPERTY(BlueprintReadOnly, Category = "GAS|Aiming")
 	float TraceDistance = 100000.f;
