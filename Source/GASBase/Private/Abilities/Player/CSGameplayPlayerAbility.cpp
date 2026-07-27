@@ -70,7 +70,7 @@ FHitResult UCSGameplayPlayerAbility::GetAimpointHitResult(bool bIgnorePawns)
     return Hit;
 }
 
-TArray<FHitResult> UCSGameplayPlayerAbility::GetSpreadHitResults(int32 PelletCount, float SpreadAngleDegrees)
+TArray<FHitResult> UCSGameplayPlayerAbility::GetSpreadHitResults(int32 PelletCount, float SpreadAngleDegrees, FName MuzzleSocketName)
 {
     TArray<FHitResult> Results;
 
@@ -80,26 +80,38 @@ TArray<FHitResult> UCSGameplayPlayerAbility::GetSpreadHitResults(int32 PelletCou
         return Results;
     }
 
-    const FVector Start   = PC->PlayerCameraManager->GetCameraLocation();
-    const FVector Forward = PC->PlayerCameraManager->GetCameraRotation().Vector();
-
     // 자기 자신은 트레이스에서 제외
     FCollisionQueryParams QueryParams;
     QueryParams.AddIgnoredActor(GetAvatarActorFromActorInfo());
 
+    // 1. 카메라 기준으로 조준점 계산
+    const FVector CamStart   = PC->PlayerCameraManager->GetCameraLocation();
+    const FVector CamForward = PC->PlayerCameraManager->GetCameraRotation().Vector();
+    const FVector CamEnd     = CamStart + CamForward * TraceDistance;
+
+    FHitResult AimHit;
+    GetWorld()->LineTraceSingleByChannel(AimHit, CamStart, CamEnd, ECC_GameTraceChannel2, QueryParams);
+    const FVector AimPoint = AimHit.bBlockingHit ? AimHit.ImpactPoint : CamEnd;
+
+    // 2. 총구 소켓에서 AimPoint 방향으로 퍼짐 적용
+    USkeletalMeshComponent* Mesh = GetOwningComponentFromActorInfo();
+    if (!Mesh)
+    {
+        return Results;
+    }
+    const FVector MuzzleLoc     = Mesh->GetSocketLocation(MuzzleSocketName);
+    const FVector MuzzleForward = (AimPoint - MuzzleLoc).GetSafeNormal();
+
     for (int32 i = 0; i < PelletCount; i++)
     {
-        // Forward를 중심으로 SpreadAngleDegrees 범위 안에서 랜덤 방향 생성
+        // MuzzleForward를 중심으로 SpreadAngleDegrees 범위 안에서 랜덤 방향 생성
         // FMath::VRandCone은 라디안을 받으므로 DegreesToRadians 변환 필요
-        const FVector Direction = FMath::VRandCone(
-            Forward, FMath::DegreesToRadians(SpreadAngleDegrees));
-
-        const FVector End = Start + Direction * TraceDistance;
+        const FVector Direction = FMath::VRandCone(MuzzleForward, FMath::DegreesToRadians(SpreadAngleDegrees));
+        const FVector End       = MuzzleLoc + Direction * TraceDistance;
 
         FHitResult Hit;
-        GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_GameTraceChannel2, QueryParams);
+        GetWorld()->LineTraceSingleByChannel(Hit, MuzzleLoc, End, ECC_GameTraceChannel2, QueryParams);
 
-        // GetAimpointHitResult()와 동일한 패턴:
         // 안 맞았을 때도 ImpactPoint를 최대 사거리 끝점으로 채워둔다 (VFX 끝점용)
         if (!Hit.bBlockingHit)
         {
