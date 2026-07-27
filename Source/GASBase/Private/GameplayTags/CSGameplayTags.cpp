@@ -131,6 +131,7 @@ namespace CSGameplayTags
 		UE_DEFINE_GAMEPLAY_TAG(BulletParty, "CSGameplayTags.Cooldown.BulletParty");
 		UE_DEFINE_GAMEPLAY_TAG(Teleport, "CSGameplayTags.Cooldown.Teleport");
 		UE_DEFINE_GAMEPLAY_TAG(Laser, "CSGameplayTags.Cooldown.Laser");
+		UE_DEFINE_GAMEPLAY_TAG(Ray, "CSGameplayTags.Cooldown.Ray");
 	}
 
 	namespace Data
