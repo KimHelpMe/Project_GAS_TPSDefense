@@ -229,7 +229,10 @@ void ACSPlayerController::Q()
 	ActivateAbility(CSGameplayTags::Input::Q);
 	FGameplayEventData Payload;
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Input::Q, Payload);
-
+	if (!HasAuthority())
+	{
+		ServerSendGameplayEvent(CSGameplayTags::Input::Q);
+	}
 }
 
 void ACSPlayerController::E()
@@ -237,6 +240,10 @@ void ACSPlayerController::E()
 	ActivateAbility(CSGameplayTags::Input::E);
 	FGameplayEventData Payload;
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Input::E, Payload);
+	if (!HasAuthority())
+	{
+		ServerSendGameplayEvent(CSGameplayTags::Input::E);
+	}
 }
 
 void ACSPlayerController::R()
@@ -244,6 +251,10 @@ void ACSPlayerController::R()
 	ActivateAbility(CSGameplayTags::Input::R);
 	FGameplayEventData Payload;
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Input::R, Payload);
+	if (!HasAuthority())
+	{
+		ServerSendGameplayEvent(CSGameplayTags::Input::R);
+	}
 }
 
 void ACSPlayerController::T()
@@ -251,6 +262,10 @@ void ACSPlayerController::T()
 	ActivateAbility(CSGameplayTags::Input::T);
 	FGameplayEventData Payload;
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetPawn(), CSGameplayTags::Input::T, Payload);
+	if (!HasAuthority())
+	{
+		ServerSendGameplayEvent(CSGameplayTags::Input::T);
+	}
 }
 
 void ACSPlayerController::TestAbility()
